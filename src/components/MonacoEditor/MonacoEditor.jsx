@@ -61,7 +61,7 @@ function MonacoEditor(props) {
             setcurrentEditor(editor.create(editorRef.current, {
                 language: 'yaml',
                 theme: "vs-dark",
-                //path: rule.name,
+                automaticLayout: true,
             }));
         }
     }, []);
@@ -75,7 +75,7 @@ function MonacoEditor(props) {
 
     return (
         <>
-            <div ref={editorRef} style={{ width: props.width, height: props.height }} />
+            <div ref={editorRef} style={{ height: props.height }} />
         </>
     );
 }

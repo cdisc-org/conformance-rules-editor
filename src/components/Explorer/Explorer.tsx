@@ -3,12 +3,11 @@ import List from "@material-ui/core/List";
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from "@material-ui/core/ListItemText";
 import Typography from '@material-ui/core/Typography';
-import { Fragment } from "react";
 
-const Explorer: React.FC = ({ children }: { children: React.ReactNode }) => {
+const Explorer: React.FC = () => {
 
     return (
-        <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
+        <List sx={{ width: '100%', overflow: 'auto', bgcolor: 'background.paper' }}>
             <ListItem alignItems="flex-start">
                 <ListItemText
                     primary="RULEID1"
@@ -46,7 +45,234 @@ const Explorer: React.FC = ({ children }: { children: React.ReactNode }) => {
                     }
                 />
             </ListItem>
-
+            <Divider variant="inset" component="li" />
+            <ListItem alignItems="flex-start">
+                <ListItemText
+                    primary="RULEID3"
+                    secondary={
+                        <>
+                            <Typography
+                                sx={{ display: 'inline' }}
+                                component="span"
+                                variant="body2"
+                                color="text.primary"
+                            >
+                                RuleType3
+                            </Typography>
+                            {" Rule Description3"}
+                        </>
+                    }
+                />
+            </ListItem>
+            <Divider variant="inset" component="li" />
+            <ListItem alignItems="flex-start">
+                <ListItemText
+                    primary="RULEID3"
+                    secondary={
+                        <>
+                            <Typography
+                                sx={{ display: 'inline' }}
+                                component="span"
+                                variant="body2"
+                                color="text.primary"
+                            >
+                                RuleType3
+                            </Typography>
+                            {" Rule Description3"}
+                        </>
+                    }
+                />
+            </ListItem>
+            <Divider variant="inset" component="li" />
+            <ListItem alignItems="flex-start">
+                <ListItemText
+                    primary="RULEID3"
+                    secondary={
+                        <>
+                            <Typography
+                                sx={{ display: 'inline' }}
+                                component="span"
+                                variant="body2"
+                                color="text.primary"
+                            >
+                                RuleType3
+                            </Typography>
+                            {" Rule Description3"}
+                        </>
+                    }
+                />
+            </ListItem>
+            <Divider variant="inset" component="li" />
+            <ListItem alignItems="flex-start">
+                <ListItemText
+                    primary="RULEID3"
+                    secondary={
+                        <>
+                            <Typography
+                                sx={{ display: 'inline' }}
+                                component="span"
+                                variant="body2"
+                                color="text.primary"
+                            >
+                                RuleType3
+                            </Typography>
+                            {" Rule Description3"}
+                        </>
+                    }
+                />
+            </ListItem>
+            <Divider variant="inset" component="li" />
+            <ListItem alignItems="flex-start">
+                <ListItemText
+                    primary="RULEID3"
+                    secondary={
+                        <>
+                            <Typography
+                                sx={{ display: 'inline' }}
+                                component="span"
+                                variant="body2"
+                                color="text.primary"
+                            >
+                                RuleType3
+                            </Typography>
+                            {" Rule Description3"}
+                        </>
+                    }
+                />
+            </ListItem>
+            <Divider variant="inset" component="li" />
+            <ListItem alignItems="flex-start">
+                <ListItemText
+                    primary="RULEID3"
+                    secondary={
+                        <>
+                            <Typography
+                                sx={{ display: 'inline' }}
+                                component="span"
+                                variant="body2"
+                                color="text.primary"
+                            >
+                                RuleType3
+                            </Typography>
+                            {" Rule Description3"}
+                        </>
+                    }
+                />
+            </ListItem>
+            <Divider variant="inset" component="li" />
+            <ListItem alignItems="flex-start">
+                <ListItemText
+                    primary="RULEID3"
+                    secondary={
+                        <>
+                            <Typography
+                                sx={{ display: 'inline' }}
+                                component="span"
+                                variant="body2"
+                                color="text.primary"
+                            >
+                                RuleType3
+                            </Typography>
+                            {" Rule Description3"}
+                        </>
+                    }
+                />
+            </ListItem>
+            <Divider variant="inset" component="li" />
+            <ListItem alignItems="flex-start">
+                <ListItemText
+                    primary="RULEID3"
+                    secondary={
+                        <>
+                            <Typography
+                                sx={{ display: 'inline' }}
+                                component="span"
+                                variant="body2"
+                                color="text.primary"
+                            >
+                                RuleType3
+                            </Typography>
+                            {" Rule Description3"}
+                        </>
+                    }
+                />
+            </ListItem>
+            <Divider variant="inset" component="li" />
+            <ListItem alignItems="flex-start">
+                <ListItemText
+                    primary="RULEID3"
+                    secondary={
+                        <>
+                            <Typography
+                                sx={{ display: 'inline' }}
+                                component="span"
+                                variant="body2"
+                                color="text.primary"
+                            >
+                                RuleType3
+                            </Typography>
+                            {" Rule Description3"}
+                        </>
+                    }
+                />
+            </ListItem>
+            <Divider variant="inset" component="li" />
+            <ListItem alignItems="flex-start">
+                <ListItemText
+                    primary="RULEID3"
+                    secondary={
+                        <>
+                            <Typography
+                                sx={{ display: 'inline' }}
+                                component="span"
+                                variant="body2"
+                                color="text.primary"
+                            >
+                                RuleType3
+                            </Typography>
+                            {" Rule Description3"}
+                        </>
+                    }
+                />
+            </ListItem>
+            <Divider variant="inset" component="li" />
+            <ListItem alignItems="flex-start">
+                <ListItemText
+                    primary="RULEID3"
+                    secondary={
+                        <>
+                            <Typography
+                                sx={{ display: 'inline' }}
+                                component="span"
+                                variant="body2"
+                                color="text.primary"
+                            >
+                                RuleType3
+                            </Typography>
+                            {" Rule Description3"}
+                        </>
+                    }
+                />
+            </ListItem>
+            <Divider variant="inset" component="li" />
+            <ListItem alignItems="flex-start">
+                <ListItemText
+                    primary="RULEID3"
+                    secondary={
+                        <>
+                            <Typography
+                                sx={{ display: 'inline' }}
+                                component="span"
+                                variant="body2"
+                                color="text.primary"
+                            >
+                                RuleType3
+                            </Typography>
+                            {" Rule Description3"}
+                        </>
+                    }
+                />
+            </ListItem>
         </List>
     );
 }

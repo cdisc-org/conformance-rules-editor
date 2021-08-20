@@ -1,5 +1,5 @@
 
-import { API_URL, API_CLIENT_ID, API_CLIENT_SECRET, API_SCOPE, API_GRANT_TYPE, API_USERNAME, API_PASSWORD } from "../config";
+import { API_URL, API_CLIENT_ID, API_CLIENT_SECRET, API_SCOPE, API_GRANT_TYPE } from "../config";
 
 export class APIAuthService {
   private token: string

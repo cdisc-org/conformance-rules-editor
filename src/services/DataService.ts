@@ -28,6 +28,7 @@
 
     public getRules = async () => {
         const response = await this._fetch("/rules")
+        return response
     }
 
  }

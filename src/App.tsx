@@ -19,7 +19,6 @@ function App() {
   const { dataService } = useContext(AppContext)
   const [fileName, setFileName] = useState("rule1.yaml");
   const rule = testRules[fileName];
-  dataService.getRules()
   return (
     <>
       <UnauthenticatedTemplate>

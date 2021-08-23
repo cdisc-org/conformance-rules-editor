@@ -59,5 +59,3 @@
  export const API_CLIENT_SECRET = process.env.REACT_APP_API_CLIENT_SECRET
  export const API_GRANT_TYPE = process.env.REACT_APP_API_GRANT_TYPE
  export const API_SCOPE = process.env.REACT_APP_API_SCOPE
- export const API_USERNAME = process.env.REACT_APP_API_USERNAME
- export const API_PASSWORD = process.env.REACT_APP_API_PASSWORD

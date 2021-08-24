@@ -1,13 +1,22 @@
-const rulesSchema =
 {
     "id": "https://cdisc.org/rules/1-0",
-
     "$defs": {
         "Classes": {
             "type": "array",
             "items": {
                 "type": "string",
-                "enum": ["All", "Events", "Findings", "Findings About", "General Observations", "Interventions", "Relationship", "Special-Purpose", "Study Reference", "Trial Design"]
+                "enum": [
+                    "All",
+                    "Events",
+                    "Findings",
+                    "Findings About",
+                    "General Observations",
+                    "Interventions",
+                    "Relationship",
+                    "Special-Purpose",
+                    "Study Reference",
+                    "Trial Design"
+                ]
             }
         },
         "Domains": {
@@ -18,38 +27,64 @@ const rulesSchema =
             }
         }
     },
-
     "type": "object",
     "additionalProperties": false,
     "description": "Validation schema CDISC Rules 1.0",
-    "required": ["CoreId", "Version", "Authority", "Reference", "Description", "Sensitivity", "Scopes", "Rule Type", "Outcome", "Citations"],
+    "required": [
+        "CoreId",
+        "Version",
+        "Authority",
+        "Reference",
+        "Description",
+        "Sensitivity",
+        "Scopes",
+        "Rule Type",
+        "Outcome",
+        "Citations"
+    ],
     "properties": {
         "CoreId": {
             "type": "string"
         },
         "Version": {
             "type": "string",
-            "enum": ["1"]
+            "enum": [
+                "1"
+            ]
         },
         "Authority": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["Organization"],
+            "required": [
+                "Organization"
+            ],
             "properties": {
                 "Organization": {
                     "type": "string",
-                    "enum": ["CDISC"]
+                    "enum": [
+                        "CDISC"
+                    ]
                 }
             }
         },
         "Reference": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["Origin", "Version", "Id"],
+            "required": [
+                "Origin",
+                "Version",
+                "Id"
+            ],
             "properties": {
-                "Origin": { "type": "string" },
-                "Version": { "type": "string" },
-                "Id": { "type": "string" }
+                "Origin": {
+                    "type": "string"
+                },
+                "Version": {
+                    "type": "string"
+                },
+                "Id": {
+                    "type": "string"
+                }
             }
         },
         "Description": {
@@ -57,22 +92,43 @@ const rulesSchema =
         },
         "Sensitivity": {
             "type": "string",
-            "enum": ["Study", "Class", "Domain", "Dataset", "Variable", "Code_list", "Term", "Record", "Value"]
+            "enum": [
+                "Study",
+                "Class",
+                "Domain",
+                "Dataset",
+                "Variable",
+                "Code_list",
+                "Term",
+                "Record",
+                "Value"
+            ]
         },
         "Scopes": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["Standards", "Classes", "Domains"],
+            "required": [
+                "Standards",
+                "Classes",
+                "Domains"
+            ],
             "properties": {
                 "Standards": {
                     "type": "array",
                     "items": {
                         "type": "object",
                         "additionalProperties": false,
-                        "required": ["Name", "Version"],
+                        "required": [
+                            "Name",
+                            "Version"
+                        ],
                         "properties": {
-                            "Name": { "type": "string" },
-                            "Version": { "type": "string" }
+                            "Name": {
+                                "type": "string"
+                            },
+                            "Version": {
+                                "type": "string"
+                            }
                         }
                     }
                 },
@@ -81,17 +137,25 @@ const rulesSchema =
                         {
                             "type": "object",
                             "additionalProperties": false,
-                            "required": ["Include"],
+                            "required": [
+                                "Include"
+                            ],
                             "properties": {
-                                "Include": { "$ref": "#/$defs/Classes" }
+                                "Include": {
+                                    "$ref": "#/$defs/Classes"
+                                }
                             }
                         },
                         {
                             "type": "object",
                             "additionalProperties": false,
-                            "required": ["Exclude"],
+                            "required": [
+                                "Exclude"
+                            ],
                             "properties": {
-                                "Exclude": { "$ref": "#/$defs/Classes" }
+                                "Exclude": {
+                                    "$ref": "#/$defs/Classes"
+                                }
                             }
                         }
                     ]
@@ -101,21 +165,29 @@ const rulesSchema =
                         {
                             "type": "object",
                             "additionalProperties": false,
-                            "required": ["Include"],
+                            "required": [
+                                "Include"
+                            ],
                             "properties": {
-                                "Include": { "$ref": "#/$defs/Domains" }
+                                "Include": {
+                                    "$ref": "#/$defs/Domains"
+                                }
                             }
                         },
                         {
                             "type": "object",
                             "additionalProperties": false,
-                            "required": ["Exclude"],
+                            "required": [
+                                "Exclude"
+                            ],
                             "properties": {
-                                "Exclude": { "$ref": "#/$defs/Domains" }
+                                "Exclude": {
+                                    "$ref": "#/$defs/Domains"
+                                }
                             }
                         }
                     ]
-                },
+                }
             }
         },
         "Rule Type": {
@@ -123,14 +195,20 @@ const rulesSchema =
                 {
                     "type": "object",
                     "additionalProperties": false,
-                    "required": ["Value Presence"],
+                    "required": [
+                        "Value Presence"
+                    ],
                     "properties": {
                         "Value Presence": {
                             "type": "object",
                             "additionalProperties": false,
-                            "required": ["Check"],
+                            "required": [
+                                "Check"
+                            ],
                             "properties": {
-                                "Check": { "type": "string" }
+                                "Check": {
+                                    "type": "string"
+                                }
                             }
                         }
                     }
@@ -138,14 +216,20 @@ const rulesSchema =
                 {
                     "type": "object",
                     "additionalProperties": false,
-                    "required": ["Variable Presence"],
+                    "required": [
+                        "Variable Presence"
+                    ],
                     "properties": {
                         "Variable Presence": {
                             "type": "object",
                             "additionalProperties": false,
-                            "required": ["Check"],
+                            "required": [
+                                "Check"
+                            ],
                             "properties": {
-                                "Check": { "type": "string" }
+                                "Check": {
+                                    "type": "string"
+                                }
                             }
                         }
                     }
@@ -153,14 +237,20 @@ const rulesSchema =
                 {
                     "type": "object",
                     "additionalProperties": false,
-                    "required": ["Data pattern and format"],
+                    "required": [
+                        "Data pattern and format"
+                    ],
                     "properties": {
                         "Data pattern and format": {
                             "type": "object",
                             "additionalProperties": false,
-                            "required": ["Check"],
+                            "required": [
+                                "Check"
+                            ],
                             "properties": {
-                                "Check": { "type": "string" }
+                                "Check": {
+                                    "type": "string"
+                                }
                             }
                         }
                     }
@@ -168,14 +258,20 @@ const rulesSchema =
                 {
                     "type": "object",
                     "additionalProperties": false,
-                    "required": ["Value domain"],
+                    "required": [
+                        "Value domain"
+                    ],
                     "properties": {
                         "Value domain": {
                             "type": "object",
                             "additionalProperties": false,
-                            "required": ["Check"],
+                            "required": [
+                                "Check"
+                            ],
                             "properties": {
-                                "Check": { "type": "string" }
+                                "Check": {
+                                    "type": "string"
+                                }
                             }
                         }
                     }
@@ -183,14 +279,20 @@ const rulesSchema =
                 {
                     "type": "object",
                     "additionalProperties": false,
-                    "required": ["External dictionaries"],
+                    "required": [
+                        "External dictionaries"
+                    ],
                     "properties": {
                         "External dictionaries": {
                             "type": "object",
                             "additionalProperties": false,
-                            "required": ["Check"],
+                            "required": [
+                                "Check"
+                            ],
                             "properties": {
-                                "Check": { "type": "string" }
+                                "Check": {
+                                    "type": "string"
+                                }
                             }
                         }
                     }
@@ -198,14 +300,20 @@ const rulesSchema =
                 {
                     "type": "object",
                     "additionalProperties": false,
-                    "required": ["Referential integrity"],
+                    "required": [
+                        "Referential integrity"
+                    ],
                     "properties": {
                         "Referential integrity": {
                             "type": "object",
                             "additionalProperties": false,
-                            "required": ["Check"],
+                            "required": [
+                                "Check"
+                            ],
                             "properties": {
-                                "Check": { "type": "string" }
+                                "Check": {
+                                    "type": "string"
+                                }
                             }
                         }
                     }
@@ -213,14 +321,20 @@ const rulesSchema =
                 {
                     "type": "object",
                     "additionalProperties": false,
-                    "required": ["Metadata"],
+                    "required": [
+                        "Metadata"
+                    ],
                     "properties": {
                         "Metadata": {
                             "type": "object",
                             "additionalProperties": false,
-                            "required": ["Check"],
+                            "required": [
+                                "Check"
+                            ],
                             "properties": {
-                                "Check": { "type": "string" }
+                                "Check": {
+                                    "type": "string"
+                                }
                             }
                         }
                     }
@@ -228,14 +342,20 @@ const rulesSchema =
                 {
                     "type": "object",
                     "additionalProperties": false,
-                    "required": ["Consistency"],
+                    "required": [
+                        "Consistency"
+                    ],
                     "properties": {
                         "Consistency": {
                             "type": "object",
                             "additionalProperties": false,
-                            "required": ["Check"],
+                            "required": [
+                                "Check"
+                            ],
                             "properties": {
-                                "Check": { "type": "string" }
+                                "Check": {
+                                    "type": "string"
+                                }
                             }
                         }
                     }
@@ -243,14 +363,20 @@ const rulesSchema =
                 {
                     "type": "object",
                     "additionalProperties": false,
-                    "required": ["Range and limit"],
+                    "required": [
+                        "Range and limit"
+                    ],
                     "properties": {
                         "Range and limit": {
                             "type": "object",
                             "additionalProperties": false,
-                            "required": ["Check"],
+                            "required": [
+                                "Check"
+                            ],
                             "properties": {
-                                "Check": { "type": "string" }
+                                "Check": {
+                                    "type": "string"
+                                }
                             }
                         }
                     }
@@ -258,14 +384,20 @@ const rulesSchema =
                 {
                     "type": "object",
                     "additionalProperties": false,
-                    "required": ["Date/time arithmetic"],
+                    "required": [
+                        "Date/time arithmetic"
+                    ],
                     "properties": {
                         "Date/time arithmetic": {
                             "type": "object",
                             "additionalProperties": false,
-                            "required": ["Check"],
+                            "required": [
+                                "Check"
+                            ],
                             "properties": {
-                                "Check": { "type": "string" }
+                                "Check": {
+                                    "type": "string"
+                                }
                             }
                         }
                     }
@@ -273,16 +405,28 @@ const rulesSchema =
                 {
                     "type": "object",
                     "additionalProperties": false,
-                    "required": ["Data domain aggregation"],
+                    "required": [
+                        "Data domain aggregation"
+                    ],
                     "properties": {
                         "Data domain aggregation": {
                             "type": "object",
                             "additionalProperties": false,
-                            "required": ["Check", "Aggregation", "Group By"],
+                            "required": [
+                                "Check",
+                                "Aggregation",
+                                "Group By"
+                            ],
                             "properties": {
-                                "Check": { "type": "string" },
-                                "Aggregation": { "type": "string" },
-                                "Group By": { "type": "string" }
+                                "Check": {
+                                    "type": "string"
+                                },
+                                "Aggregation": {
+                                    "type": "string"
+                                },
+                                "Group By": {
+                                    "type": "string"
+                                }
                             }
                         }
                     }
@@ -290,26 +434,36 @@ const rulesSchema =
                 {
                     "type": "object",
                     "additionalProperties": false,
-                    "required": ["Dataset property"],
+                    "required": [
+                        "Dataset property"
+                    ],
                     "properties": {
                         "Dataset property": {
                             "type": "object",
                             "additionalProperties": false,
-                            "required": ["Check"],
+                            "required": [
+                                "Check"
+                            ],
                             "properties": {
-                                "Check": { "type": "string" }
+                                "Check": {
+                                    "type": "string"
+                                }
                             }
                         }
                     }
-                },
+                }
             ]
         },
         "Outcome": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["Message"],
+            "required": [
+                "Message"
+            ],
             "properties": {
-                "Message": { "type": "string" }
+                "Message": {
+                    "type": "string"
+                }
             }
         },
         "Citations": {
@@ -317,15 +471,23 @@ const rulesSchema =
             "items": {
                 "type": "object",
                 "additionalProperties": false,
-                "required": ["Document", "Section", "Cited Guidance"],
+                "required": [
+                    "Document",
+                    "Section",
+                    "Cited Guidance"
+                ],
                 "properties": {
-                    "Document": { "type": "string" },
-                    "Section": { "type": "string" },
-                    "Cited Guidance": { "type": "string" }
+                    "Document": {
+                        "type": "string"
+                    },
+                    "Section": {
+                        "type": "string"
+                    },
+                    "Cited Guidance": {
+                        "type": "string"
+                    }
                 }
             }
         }
     }
-};
-
-export default rulesSchema;
+}

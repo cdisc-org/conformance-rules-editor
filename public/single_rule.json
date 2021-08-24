@@ -1,0 +1,96 @@
+{
+    "jsonapi": {
+        "version": "1.0",
+        "meta": {
+            "links": {
+                "self": {
+                    "href": "http://jsonapi.org/format/1.0/"
+                }
+            }
+        }
+    },
+    "data": {
+        "type": "node--rule",
+        "id": "3074ee43-32b4-4ec1-940b-8035273143a2",
+        "links": {
+            "self": {
+                "href": "https://dev-cdisc-core-yaml.pantheonsite.io/jsonapi/node/rule/3074ee43-32b4-4ec1-940b-8035273143a2?resourceVersion=id%3A26"
+            }
+        },
+        "attributes": {
+            "drupal_internal__nid": 6,
+            "drupal_internal__vid": 26,
+            "langcode": "en",
+            "revision_timestamp": "2021-08-23T13:06:33+00:00",
+            "revision_log": null,
+            "status": true,
+            "title": "NICS RULE",
+            "created": "2021-08-23T03:22:20+00:00",
+            "changed": "2021-08-23T13:06:33+00:00",
+            "promote": true,
+            "sticky": false,
+            "default_langcode": true,
+            "revision_translation_affected": true,
+            "path": {
+                "alias": null,
+                "pid": null,
+                "langcode": "en"
+            },
+            "body": {
+                "value": "\r\nCoreId: Rule271828\r\nVersion: \"1\"\r\nAuthority:\r\n    Organization: CDISC\r\nReference:\r\n    Origin: SDTM Conformance Rules\r\n    Version: \"1.1\"\r\n    Id: CG0082\r\nDescription: Verify...\r\nSensitivity: Record\r\nScopes:\r\n    Standards:\r\n    - Name: SDTMIG\r\n      Version: \"3.3\"\r\n    - Name: SDTMIG\r\n      Version: \"3.4\"\r\n    Classes:\r\n        Include:\r\n        - Events\r\n        - Findings\r\n    Domains:\r\n        Include:\r\n        - All\r\nRule Type:\r\n    Value Presence:\r\n        Conditions: --BODSYS IS NULL\r\n        Check: --BDSYCD IS NOT NULL\r\nOutcome:\r\n    Message: --BDSYCD is populated when --BODSYS is null\r\nCitations:\r\n    - Document: SDTM v1.4\r\n      Section: 2.2.2\r\n      Cited Guidance: Variable Qualifier of --BODSYS\r\n",
+                "format": "ace",
+                "processed": "\nCoreId: Rule271828\nVersion: \"1\"\nAuthority:\n    Organization: CDISC\nReference:\n    Origin: SDTM Conformance Rules\n    Version: \"1.1\"\n    Id: CG0082\nDescription: Verify...\nSensitivity: Record\nScopes:\n    Standards:\n    - Name: SDTMIG\n      Version: \"3.3\"\n    - Name: SDTMIG\n      Version: \"3.4\"\n    Classes:\n        Include:\n        - Events\n        - Findings\n    Domains:\n        Include:\n        - All\nRule Type:\n    Value Presence:\n        Conditions: --BODSYS IS NULL\n        Check: --BDSYCD IS NOT NULL\nOutcome:\n    Message: --BDSYCD is populated when --BODSYS is null\nCitations:\n    - Document: SDTM v1.4\n      Section: 2.2.2\n      Cited Guidance: Variable Qualifier of --BODSYS\n",
+                "summary": ""
+            }
+        },
+        "relationships": {
+            "node_type": {
+                "data": {
+                    "type": "node_type--node_type",
+                    "id": "9266e81d-4206-4762-a29a-c6534c9f9c51"
+                },
+                "links": {
+                    "related": {
+                        "href": "https://dev-cdisc-core-yaml.pantheonsite.io/jsonapi/node/rule/3074ee43-32b4-4ec1-940b-8035273143a2/node_type?resourceVersion=id%3A26"
+                    },
+                    "self": {
+                        "href": "https://dev-cdisc-core-yaml.pantheonsite.io/jsonapi/node/rule/3074ee43-32b4-4ec1-940b-8035273143a2/relationships/node_type?resourceVersion=id%3A26"
+                    }
+                }
+            },
+            "revision_uid": {
+                "data": {
+                    "type": "user--user",
+                    "id": "7eef5fdd-27e6-402a-9342-a4110262ad20"
+                },
+                "links": {
+                    "related": {
+                        "href": "https://dev-cdisc-core-yaml.pantheonsite.io/jsonapi/node/rule/3074ee43-32b4-4ec1-940b-8035273143a2/revision_uid?resourceVersion=id%3A26"
+                    },
+                    "self": {
+                        "href": "https://dev-cdisc-core-yaml.pantheonsite.io/jsonapi/node/rule/3074ee43-32b4-4ec1-940b-8035273143a2/relationships/revision_uid?resourceVersion=id%3A26"
+                    }
+                }
+            },
+            "uid": {
+                "data": {
+                    "type": "user--user",
+                    "id": "7eef5fdd-27e6-402a-9342-a4110262ad20"
+                },
+                "links": {
+                    "related": {
+                        "href": "https://dev-cdisc-core-yaml.pantheonsite.io/jsonapi/node/rule/3074ee43-32b4-4ec1-940b-8035273143a2/uid?resourceVersion=id%3A26"
+                    },
+                    "self": {
+                        "href": "https://dev-cdisc-core-yaml.pantheonsite.io/jsonapi/node/rule/3074ee43-32b4-4ec1-940b-8035273143a2/relationships/uid?resourceVersion=id%3A26"
+                    }
+                }
+            }
+        }
+    },
+    "links": {
+        "self": {
+            "href": "https://dev-cdisc-core-yaml.pantheonsite.io/jsonapi/node/rule/3074ee43-32b4-4ec1-940b-8035273143a2"
+        }
+    }
+}

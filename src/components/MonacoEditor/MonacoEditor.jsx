@@ -39,20 +39,24 @@ function MonacoEditor(props) {
     //const [currentEditor, setcurrentEditor] = useState < editor.IStandaloneCodeEditor > ();
     const [currentEditor, setcurrentEditor] = useState();
 
-    setDiagnosticsOptions({
-        validate: true,
-        enableSchemaRequest: true,
-        format: true,
-        hover: true,
-        completion: true,
-        schemas: [
-            {
-                uri: "https://cdisc.org/rules/1-0",
-                fileMatch: ['*'],
-                schema: props.schema
-            },
-        ],
-    });
+    useEffect(() => {
+        if (props.schema) {
+            setDiagnosticsOptions({
+                validate: true,
+                enableSchemaRequest: true,
+                format: true,
+                hover: true,
+                completion: true,
+                schemas: [
+                    {
+                        uri: "https://cdisc.org/rules/1-0",
+                        fileMatch: ['*'],
+                        schema: props.schema
+                    },
+                ],
+            });
+        }
+    }, [props.schema]);
 
     /* Initialize the editor */
     useEffect(() => {

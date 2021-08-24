@@ -11,7 +11,7 @@
       },
       {
         "route": "/login",
-        "rewrite": "/.auth/login/adb2c"
+        "rewrite": "/.auth/login/aad"
       },
       {
         "route": "/.auth/login/twitter",
@@ -56,27 +56,5 @@
         ".json": "text/json",
         ".js": "text/javascript",
         ".css": "text/css"
-    },
-    "auth": {
-        "identityProviders": {
-          "customOpenIdConnectProviders": {
-            "adb2c": {
-              "registration": {
-                "clientIdSettingName": "MY_PROVIDER_CLIENT_ID",
-                "clientCredential": {
-                  "clientSecretSettingName": "MY_PROVIDER_CLIENT_SECRET"
-                },
-                "openIdConnectConfiguration": {
-                  "wellKnownOpenIdConfiguration": "https://cdisclibrary.b2clogin.com/cdisclibrary.onmicrosoft.com/B2C_1_library-sign-in/.well-known/openid-configuration"
-                }
-              },
-              "login": {
-                "nameClaimType": "emails",
-                "scopes": ["read.all"],
-                "loginParameterNames": []
-              }
-            }
-          }
-        }
-      }
+    }
   }

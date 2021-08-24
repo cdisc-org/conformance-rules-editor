@@ -67,12 +67,8 @@
                   "clientSecretSettingName": "MY_PROVIDER_CLIENT_SECRET"
                 },
                 "openIdConnectConfiguration": {
-                  "wellKnownOpenIdConfiguration": "https://cdisclibrary.b2clogin.com/cdisclibrary.onmicrosoft.com/B2C_1_library-sign-in/.well-known/openid-configuration?p=B2C_1_signupsignin1"
+                  "wellKnownOpenIdConfiguration": "https://cdisclibrary.b2clogin.com/cdisclibrary.onmicrosoft.com/B2C_1_library-sign-in/.well-known/openid-configuration"
                 }
-              },
-              "login": {
-                "nameClaimType": "emails",
-                "scopes": ["openid", "profile"]
               }
             }
           }

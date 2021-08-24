@@ -11,7 +11,7 @@
       },
       {
         "route": "/login",
-        "rewrite": "/.auth/login/aad"
+        "rewrite": "/.auth/login/adb2c"
       },
       {
         "route": "/.auth/login/twitter",

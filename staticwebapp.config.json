@@ -11,7 +11,7 @@
       },
       {
         "route": "/login",
-        "rewrite": "/.auth/login/adb2c"
+        "rewrite": "/.auth/login/aad"
       },
       {
         "route": "/.auth/login/twitter",
@@ -19,10 +19,6 @@
       },
       {
         "route": "/.auth/login/github",
-        "statusCode": 404
-      },
-      {
-        "route": "/.auth/login/aad",
         "statusCode": 404
       },
       {

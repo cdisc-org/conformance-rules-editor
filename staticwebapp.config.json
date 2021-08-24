@@ -33,6 +33,10 @@
         ]
       }
     ],
+    "navigationFallback": {
+        "rewrite": "index.html",
+        "exclude": ["/images/*.{png,jpg,gif}", "/css/*"]
+      },
     "responseOverrides": {
       "400": {
         "rewrite": "/invalid-invitation-error.html"

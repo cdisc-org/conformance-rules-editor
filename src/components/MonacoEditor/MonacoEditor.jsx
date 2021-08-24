@@ -39,20 +39,24 @@ function MonacoEditor(props) {
     //const [currentEditor, setcurrentEditor] = useState < editor.IStandaloneCodeEditor > ();
     const [currentEditor, setcurrentEditor] = useState();
 
-    setDiagnosticsOptions({
-        validate: true,
-        enableSchemaRequest: true,
-        format: true,
-        hover: true,
-        completion: true,
-        schemas: [
-            {
-                uri: "https://cdisc.org/rules/1-0",
-                fileMatch: ['*'],
-                schema: props.schema
-            },
-        ],
-    });
+    useEffect(() => {
+        if (props.schema) {
+            setDiagnosticsOptions({
+                validate: true,
+                enableSchemaRequest: true,
+                format: true,
+                hover: true,
+                completion: true,
+                schemas: [
+                    {
+                        uri: "https://cdisc.org/rules/1-0",
+                        fileMatch: ['*'],
+                        schema: props.schema
+                    },
+                ],
+            });
+        }
+    }, [props.schema]);
 
     /* Initialize the editor */
     useEffect(() => {
@@ -61,21 +65,34 @@ function MonacoEditor(props) {
             setcurrentEditor(editor.create(editorRef.current, {
                 language: 'yaml',
                 theme: "vs-dark",
-                //path: rule.name,
+                automaticLayout: true,
             }));
         }
     }, []);
 
     /* Load the editor with a new value */
     useEffect(() => {
-        if (currentEditor) {
-            currentEditor.setValue(props.value);
+        if (currentEditor && props.selectedRule) {
+            fetch(`storage/${props.selectedRule}.json`
+                , {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                }
+            )
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (responseJson) {
+                    currentEditor.setValue(responseJson.data.attributes.body.value);
+                });
         }
-    }, [currentEditor, props.value]);
+    }, [currentEditor, props.selectedRule]);
 
     return (
         <>
-            <div ref={editorRef} style={{ width: props.width, height: props.height }} />
+            <div ref={editorRef} style={{ height: props.height }} />
         </>
     );
 }

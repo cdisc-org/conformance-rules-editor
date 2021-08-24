@@ -5,18 +5,16 @@ import ExplorerItem from "../ExplorerItem/ExplorerItem";
 import Stack from "@material-ui/core/Stack";
 import Controls from "../Controls/Controls";
 import { useEffect, useState } from "react";
-import testRules from "../../resources/TestRules";
 import SplitPane from "react-split-pane"
 import './Resizer.css'
 
 const Layout: React.FC = () => {
 
-    const [fileName, setFileName] = useState("rule1.yaml");
-    const rule = testRules[fileName];
+    const [selectedRule, setSelectedRule] = useState();
 
     const [rulesSchema, setRulesSchema] = useState([]);
     const getRulesSchema = () => {
-        fetch('RulesSchema.json'
+        fetch('schema/RulesSchema.json'
             , {
                 headers: {
                     'Content-Type': 'application/json',
@@ -37,7 +35,7 @@ const Layout: React.FC = () => {
 
     const [rulesList, setRulesList] = useState([]);
     const getRulesList = () => {
-        fetch('all_rules.json'
+        fetch('storage/all_rules.json'
             , {
                 headers: {
                     'Content-Type': 'application/json',
@@ -49,9 +47,9 @@ const Layout: React.FC = () => {
                 return response.json();
             })
             .then(function (responseJson) {
-                setRulesList(responseJson.data.map(item => (
-                    <ExplorerItem storageId={item.id} coreId="RULEID1" ruleType={item.type} description="Rule description1" />
-                )))
+                setRulesList(responseJson.data.map((ruleItem, ruleIndex) => (
+                    <ExplorerItem storageId={ruleItem.id} coreId={ruleItem.attributes.title} ruleType={ruleItem.type} description={`Rule Description${ruleIndex + 1}`} setSelectedRule={setSelectedRule} />
+                )));
             });
     }
     useEffect(() => {
@@ -61,11 +59,11 @@ const Layout: React.FC = () => {
     return (
         <SplitPane split="vertical" defaultSize={200} allowResize={true}>
             <Stack sx={{ maxHeight: '100%', overflow: 'auto' }}>
-                <Controls fileName={fileName} setFileName={setFileName} />
+                <Controls />
                 <ExplorerList items={rulesList} />
             </Stack>
             <Stack >
-                <MonacoEditor height="100vh" schema={rulesSchema} value={rule.value} />
+                <MonacoEditor height="100vh" schema={rulesSchema} selectedRule={selectedRule} />
             </Stack>
         </SplitPane>
     );

@@ -72,10 +72,23 @@ function MonacoEditor(props) {
 
     /* Load the editor with a new value */
     useEffect(() => {
-        if (currentEditor) {
-            currentEditor.setValue(props.value);
+        if (currentEditor && props.selectedRule) {
+            fetch(`storage/${props.selectedRule}.json`
+                , {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                }
+            )
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (responseJson) {
+                    currentEditor.setValue(responseJson.data.attributes.body.value);
+                });
         }
-    }, [currentEditor, props.value]);
+    }, [currentEditor, props.selectedRule]);
 
     return (
         <>

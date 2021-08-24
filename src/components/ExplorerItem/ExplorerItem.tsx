@@ -8,14 +8,15 @@ interface Props {
     coreId,
     ruleType,
     description,
+    setSelectedRule,
 }
 
 const ExplorerItem: React.FC<Props> = (props) => {
 
     return (
         <>
-            <Divider variant="inset" component="li" />
-            <ListItem alignItems="flex-start">
+            <Divider variant="fullWidth" component="li" />
+            <ListItem key={props.storageId} alignItems="flex-start" onClick={() => props.setSelectedRule(props.storageId)}>
                 <ListItemText
                     primary={props.coreId}
                     secondary={

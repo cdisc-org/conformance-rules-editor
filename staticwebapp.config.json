@@ -66,8 +66,8 @@
                 }
               },
               "login": {
-                "nameClaimType": "https://cdisclibrary.onmicrosoft.com/cdisc-library-apim-dev/read.all",
-                "scopes": [],
+                "nameClaimType": "emails",
+                "scopes": ["read.all"],
                 "loginParameterNames": []
               }
             }

@@ -82,7 +82,7 @@ function MonacoEditor(props) {
                     currentEditor.setValue(JSON.parse(responseJson.body).data.attributes.body.value);
                 });
         }
-    }, [currentEditor, props.selectedRule]);
+    }, [currentEditor, props.selectedRule, dataService]);
 
     return (
         <>

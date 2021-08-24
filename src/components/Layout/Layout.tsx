@@ -36,7 +36,7 @@ const Layout: React.FC = () => {
     }, []);
 
     const [rulesList, setRulesList] = useState([]);
-    const getRulesList = () => {
+    useEffect(() => {
         dataService.get_rules()
             .then(function (response) {
                 return response.json();
@@ -46,10 +46,7 @@ const Layout: React.FC = () => {
                     <ExplorerItem storageId={ruleItem.id} coreId={ruleItem.attributes.title} ruleType={ruleItem.type} description={`Rule Description${ruleIndex + 1}`} setSelectedRule={setSelectedRule} />
                 )));
             });
-    }
-    useEffect(() => {
-        getRulesList()
-    }, []);
+    }, [dataService]);
 
     return (
         <SplitPane split="vertical" defaultSize={200} allowResize={true}>

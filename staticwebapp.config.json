@@ -35,7 +35,7 @@
     ],
     "navigationFallback": {
         "rewrite": "index.html",
-        "exclude": ["/images/*.{png,jpg,gif}", "/css/*"]
+        "exclude": ["/images/*.{png,jpg,gif}", "/*.{css,scss,js}"]
       },
     "responseOverrides": {
       "400": {

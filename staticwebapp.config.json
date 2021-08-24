@@ -59,7 +59,8 @@
       "content-security-policy": "'unsafe-eval' 'unsafe-inline'; object-src 'none'"
     },
     "mimeTypes": {
-      ".json": "text/json"
+      ".json": "text/json",
+      ".html": "text/html"
     },
     "auth": {
         "identityProviders": {

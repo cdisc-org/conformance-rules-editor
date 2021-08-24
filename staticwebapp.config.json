@@ -51,9 +51,6 @@
         "rewrite": "/404.html"
       }
     },
-    "globalHeaders": {
-      "content-security-policy": "'unsafe-eval' 'unsafe-inline'; object-src 'none'"
-    },
     "mimeTypes": {
         ".json": "text/json",
         ".js": "text/javascript",

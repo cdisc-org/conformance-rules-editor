@@ -1,13 +1,9 @@
 import React, { useState } from "react";
-import { AuthService } from "../services/AuthService";
-import { APIAuthService } from "../services/APIAuthService";
 import { DataService } from "../services/DataService";
 import AppContext,  { IAppError } from "./AppContext";
 
 const AppContextProvider: React.FC = ({ children }: { children: React.ReactNode }) => {
-    const [ authService ] = useState<AuthService>(() => new AuthService());
-    const [ apiAuthService ] = useState<APIAuthService>(() => new APIAuthService());
-    const [ dataService ] = useState<DataService>(() => new DataService(apiAuthService));
+    const [ dataService ] = useState<DataService>(() => new DataService());
     const [ appError, setAppError ] = useState<IAppError>();
 
     const clearError = () => appError ? setAppError(null) : undefined;
@@ -21,7 +17,7 @@ const AppContextProvider: React.FC = ({ children }: { children: React.ReactNode 
   }
 
     const appContext = {
-      authService, appError, clearError, setError, apiAuthService, dataService
+         appError, clearError, setError, dataService
     };
 
     return (

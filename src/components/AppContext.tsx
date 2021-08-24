@@ -1,6 +1,4 @@
 import React from "react";
-import { AuthService } from "../services/AuthService";
-import { APIAuthService } from "../services/APIAuthService";
 import { DataService } from "../services/DataService";
 
 
@@ -13,16 +11,12 @@ export interface IAppError {
 export interface IAppContext {
   appError: IAppError;
   setError: (title: string, message: string) => void;
-  authService: AuthService
-  apiAuthService: APIAuthService
   dataService: DataService
 }
 
 export const defaultAppContext: IAppContext = {
   appError: null,
   setError: () => { /* Placeholder */ },
-  authService: null,
-  apiAuthService: null,
   dataService: null,
 };
 

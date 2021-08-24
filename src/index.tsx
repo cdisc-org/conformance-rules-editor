@@ -4,14 +4,11 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import AppContextProvider from "./components/AppContextProvider";
-import AuthenticationProvider from "./components/AuthenticationProvider";
 
 ReactDOM.render(
   <>
     <AppContextProvider>
-      <AuthenticationProvider>
-          <App />
-      </AuthenticationProvider>
+        <App />
     </AppContextProvider>
   </>,
   document.getElementById("root")

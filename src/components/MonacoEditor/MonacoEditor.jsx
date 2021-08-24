@@ -1,5 +1,5 @@
 import '../../App.css';
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useContext } from "react";
 
 /* Uncomment to convert from jsx to tsx */
 //import { editor, Environment } from 'monaco-editor';
@@ -13,6 +13,7 @@ import { setDiagnosticsOptions } from 'monaco-yaml';
 import EditorWorker from 'worker-loader!monaco-editor/esm/vs/editor/editor.worker?filename=editor.worker.js';
 // eslint-disable-next-line import/no-webpack-loader-syntax
 import YamlWorker from 'worker-loader!monaco-yaml/lib/esm/yaml.worker?filename=yaml.worker.js';
+import AppContext from "../AppContext";
 
 
 /* Uncomment to convert from jsx to tsx */
@@ -38,7 +39,7 @@ function MonacoEditor(props) {
     /* Uncomment to convert from jsx to tsx */
     //const [currentEditor, setcurrentEditor] = useState < editor.IStandaloneCodeEditor > ();
     const [currentEditor, setcurrentEditor] = useState();
-
+    const { dataService } = useContext(AppContext)
     useEffect(() => {
         if (props.schema) {
             setDiagnosticsOptions({
@@ -73,19 +74,12 @@ function MonacoEditor(props) {
     /* Load the editor with a new value */
     useEffect(() => {
         if (currentEditor && props.selectedRule) {
-            fetch(`storage/${props.selectedRule}.json`
-                , {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    }
-                }
-            )
+            dataService.get_rule(props.selectedRule)
                 .then(function (response) {
                     return response.json();
                 })
                 .then(function (responseJson) {
-                    currentEditor.setValue(responseJson.data.attributes.body.value);
+                    currentEditor.setValue(JSON.parse(responseJson.body).data.attributes.body.value);
                 });
         }
     }, [currentEditor, props.selectedRule]);

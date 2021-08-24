@@ -4,9 +4,11 @@ const Authenticator = require("../utils/AuthService")
 module.exports = async function (context, req) {
     const url = process.env["API_BASE_URL"]
     const token = await Authenticator.getToken()
+    const ruleId = context.bindingData.id
+    
     const options = {
         hostname: url,
-        path: '/jsonapi/node/rule',
+        path: `/jsonapi/node/rule/${ruleId}`,
         method: 'GET',
         headers: {
             "Authorization": "Bearer " + token

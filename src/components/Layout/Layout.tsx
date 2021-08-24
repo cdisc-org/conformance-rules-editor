@@ -4,8 +4,9 @@ import ExplorerList from "../ExplorerList/ExplorerList";
 import ExplorerItem from "../ExplorerItem/ExplorerItem";
 import Stack from "@material-ui/core/Stack";
 import Controls from "../Controls/Controls";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import SplitPane from "react-split-pane"
+import AppContext from "../AppContext";
 import './Resizer.css'
 
 const Layout: React.FC = () => {
@@ -13,6 +14,7 @@ const Layout: React.FC = () => {
     const [selectedRule, setSelectedRule] = useState();
 
     const [rulesSchema, setRulesSchema] = useState([]);
+    const { dataService } = useContext(AppContext)
     const getRulesSchema = () => {
         fetch('schema/RulesSchema.json'
             , {
@@ -35,19 +37,12 @@ const Layout: React.FC = () => {
 
     const [rulesList, setRulesList] = useState([]);
     const getRulesList = () => {
-        fetch('storage/all_rules.json'
-            , {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                }
-            }
-        )
+        dataService.get_rules()
             .then(function (response) {
                 return response.json();
             })
             .then(function (responseJson) {
-                setRulesList(responseJson.data.map((ruleItem, ruleIndex) => (
+                setRulesList(JSON.parse(responseJson.body).data.map((ruleItem, ruleIndex) => (
                     <ExplorerItem storageId={ruleItem.id} coreId={ruleItem.attributes.title} ruleType={ruleItem.type} description={`Rule Description${ruleIndex + 1}`} setSelectedRule={setSelectedRule} />
                 )));
             });

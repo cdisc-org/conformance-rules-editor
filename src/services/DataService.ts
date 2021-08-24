@@ -1,12 +1,20 @@
 
 export class DataService {
-    public get_rules= async (): Promise<Object> => {
-        const result = await fetch(`/api/rules`, {
+    public get_rules= async () => {
+        return await fetch(`/api/rules`, {
             method: 'GET',
             headers: {
               'Accept': "application/json",
             }
           });
-        return await result.json()
+    }
+
+    public get_rule = async (ruleId: string) => {
+        return await fetch(`/api/rules/${ruleId}`, {
+            method: 'GET',
+            headers: {
+              'Accept': "application/json",
+            }
+          });
     }
 }

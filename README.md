@@ -2,24 +2,31 @@
 
 ## Environment Setup 
 
+### Install dependencies
 1. Run the command: `npm install`
-2. Create a .env file with the following environment variables defined:
+2. Install static web app node libraries by running the following commands:
+```
+npm install -g @azure/static-web-apps-cli
+npm install -g azure-functions-core-tools@3
+```
+3. Create a local.settings.json in the API folder to support local development of the API. It should contain the following values:
 
 ```
-REACT_APP_B2C_API_TOKEN_SCOPES=<Azure ADB2C Token scopes>
-REACT_APP_B2C_TENANT_NAME=<Azure ADB2C Tenant name>
-REACT_APP_B2C_CLIENT_ID=<Client name in ADB2C Tenant>
-REACT_APP_B2C_FLOW_SIGN_IN_NAME=<Sign in flow name>
-REACT_APP_B2C_FLOW_SIGN_IN_ENDPOINT=<Sign in endpoint>
-REACT_APP_FORCE_LOGIN=<true or false>
-REACT_APP_API_GRANT_TYPE=<API GRANT TYPE>
-REACT_APP_API_SCOPE=<SCOPE>
-REACT_APP_API_BASE_URL=<URL>
-REACT_APP_API_CLIENT_ID=<API CLIENT ID>
-REACT_APP_API_CLIENT_SECRET=<API CLIENT SECRET>
+{
+    "IsEncrypted": false,
+    "Values": {
+      "FUNCTIONS_WORKER_RUNTIME":"node",
+      "API_BASE_URL": "<API_URL>,
+      "API_GRANT_TYPE": "<API_GRANT_TYPE>",
+      "API_SCOPE": "<API_SCOPE>",
+      "API_CLIENT_ID": "<API_CLIENT_ID>",
+      "API_CLIENT_SECRET": "<API_CLIENT_SECRET>"
+    }
+}
 ```
 
 ## Running the App
 
-1. Run the command `npm start`
-2. View the app running at: http://localhost:3000/
+1. Run the command `npm run build`
+2. Run the app with the command: `swa start build --api api`
+3. View the app running at: http://localhost:4280/

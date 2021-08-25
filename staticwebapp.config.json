@@ -71,7 +71,7 @@
                 }
               },
               "login": {
-                "scopes": ["openid"]
+                "scopes": ["openid", "offline_access" ]
               }
             }
           }

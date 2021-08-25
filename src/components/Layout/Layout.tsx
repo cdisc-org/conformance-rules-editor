@@ -12,10 +12,15 @@ import './Resizer.css'
 const Layout: React.FC = () => {
 
     const [selectedRule, setSelectedRule] = useState();
-
     const [rulesSchema, setRulesSchema] = useState([]);
-    const { dataService } = useContext(AppContext)
-    const getRulesSchema = () => {
+    const [rulesList, setRulesList] = useState([]);
+    const [preEditRule, setPreEditRule] = useState();
+    const [postEditRule, setPostEditRule] = useState();
+
+    const { dataService } = useContext(AppContext);
+
+    /* Load yaml schema for editor validation */
+    useEffect(() => {
         fetch('schema/RulesSchema.json'
             , {
                 headers: {
@@ -30,12 +35,9 @@ const Layout: React.FC = () => {
             .then(function (responseJson) {
                 setRulesSchema(responseJson)
             });
-    }
-    useEffect(() => {
-        getRulesSchema()
     }, []);
 
-    const [rulesList, setRulesList] = useState([]);
+    /* Load list of rules */
     useEffect(() => {
         dataService.get_rules()
             .then(function (response) {
@@ -51,11 +53,11 @@ const Layout: React.FC = () => {
     return (
         <SplitPane split="vertical" defaultSize={200} allowResize={true}>
             <Stack sx={{ maxHeight: '100%', overflow: 'auto' }}>
-                <Controls />
+                <Controls preEditRule={preEditRule} setPreEditRule={setPreEditRule} postEditRule={postEditRule} setPosEditRule={setPostEditRule} />
                 <ExplorerList items={rulesList} />
             </Stack>
             <Stack >
-                <MonacoEditor height="100vh" schema={rulesSchema} selectedRule={selectedRule} />
+                <MonacoEditor height="100vh" schema={rulesSchema} selectedRule={selectedRule} preEditRule={preEditRule} setPreEditRule={setPreEditRule} postEditRule={postEditRule} setPostEditRule={setPostEditRule} />
             </Stack>
         </SplitPane>
     );

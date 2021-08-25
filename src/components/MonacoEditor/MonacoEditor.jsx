@@ -62,12 +62,16 @@ function MonacoEditor(props) {
     /* Initialize the editor */
     useEffect(() => {
         if (editorRef.current) {
-            console.log(editorRef.current)
-            setcurrentEditor(editor.create(editorRef.current, {
+            const initialEditor = editor.create(editorRef.current, {
                 language: 'yaml',
                 theme: "vs-dark",
                 automaticLayout: true,
-            }));
+            });
+            setcurrentEditor(initialEditor);
+            /* Listen for editor text changes and set the postedit value to be used by other components */
+            initialEditor.onDidChangeModelContent(e => {
+                props.setPostEditRule(initialEditor.getValue());
+            });
         }
     }, []);
 
@@ -80,6 +84,8 @@ function MonacoEditor(props) {
                 })
                 .then(function (responseJson) {
                     currentEditor.setValue(JSON.parse(responseJson.body).data.attributes.body.value);
+                    props.setPreEditRule(currentEditor.getValue());
+                    props.setPostEditRule(currentEditor.getValue());
                 });
         }
     }, [currentEditor, props.selectedRule, dataService]);

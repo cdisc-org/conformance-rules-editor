@@ -16,7 +16,7 @@ npm install -g azure-functions-core-tools@3
     "IsEncrypted": false,
     "Values": {
       "FUNCTIONS_WORKER_RUNTIME":"node",
-      "API_BASE_URL": "<API_URL>,
+      "API_BASE_URL": "<API_URL>",
       "API_GRANT_TYPE": "<API_GRANT_TYPE>",
       "API_SCOPE": "<API_SCOPE>",
       "API_CLIENT_ID": "<API_CLIENT_ID>",

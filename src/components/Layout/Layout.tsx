@@ -45,7 +45,7 @@ const Layout: React.FC = () => {
             })
             .then(function (responseJson) {
                 setRulesList(JSON.parse(responseJson.body).data.map((ruleItem, ruleIndex) => (
-                    <ExplorerItem storageId={ruleItem.id} coreId={ruleItem.attributes.title} ruleType={ruleItem.type} description={`Rule Description${ruleIndex + 1}`} setSelectedRule={setSelectedRule} />
+                    <ExplorerItem storageId={ruleItem.id} coreId={ruleItem.attributes.title} ruleType={ruleItem.type} description={`Rule Description${ruleIndex + 1}`} setSelectedRule={setSelectedRule} preEditRule={preEditRule} postEditRule={postEditRule} />
                 )));
             });
     }, [dataService]);

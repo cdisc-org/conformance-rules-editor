@@ -9,6 +9,8 @@ interface Props {
     ruleType,
     description,
     setSelectedRule,
+    preEditRule,
+    postEditRule
 }
 
 const ExplorerItem: React.FC<Props> = (props) => {
@@ -16,7 +18,7 @@ const ExplorerItem: React.FC<Props> = (props) => {
     return (
         <>
             <Divider variant="fullWidth" component="li" />
-            <ListItem key={props.storageId} alignItems="flex-start" onClick={() => props.setSelectedRule(props.storageId)}>
+            <ListItem key={props.storageId} alignItems="flex-start" onClick={() => props.setSelectedRule(props.storageId)} disabled={props.preEditRule !== props.postEditRule}>
                 <ListItemText
                     primary={props.coreId}
                     secondary={

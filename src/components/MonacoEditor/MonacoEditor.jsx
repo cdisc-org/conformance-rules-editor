@@ -83,12 +83,19 @@ function MonacoEditor(props) {
                     return response.json();
                 })
                 .then(function (responseJson) {
-                    currentEditor.setValue(JSON.parse(responseJson.body).data.attributes.body.value);
-                    props.setPreEditRule(currentEditor.getValue());
-                    props.setPostEditRule(currentEditor.getValue());
+                    const content = JSON.parse(responseJson.body).data.attributes.body.value;
+                    props.setPreEditRule(content);
+                    props.setPostEditRule(content);
                 });
         }
     }, [currentEditor, props.selectedRule, dataService]);
+
+    /* Set value of editor based on changes to Pre Edit Rule */
+    useEffect(() => {
+        if (currentEditor && props.preEditRule !== undefined) {
+            currentEditor.setValue(props.preEditRule);
+        }
+    }, [currentEditor, props.preEditRule]);
 
     return (
         <>

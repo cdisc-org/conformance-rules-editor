@@ -13,10 +13,11 @@ interface Props {
 
 export default function ExplorerItem(props: Props) {
 
-    const { selectedRule, setSelectedRule, isRuleDirty } = useContext(AppContext);
+    const { selectedRule, setSelectedRule, isRuleDirty, setIsNewRuleSelected } = useContext(AppContext);
 
     const handleListItemClick = (event) => {
         setSelectedRule(props.storageId);
+        setIsNewRuleSelected(true);
     };
 
     return (

@@ -13,17 +13,19 @@ export default function ExplorerList(props: Props) {
 
     /* Load list of rules */
     useEffect(() => {
-        dataService.get_rules()
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (responseJson) {
-                setRulesList(JSON.parse(responseJson.body).data.map((ruleItem, ruleIndex) => (
-                    <ExplorerItem key={ruleItem.id} storageId={ruleItem.id} coreId={ruleItem.attributes.title} ruleType={ruleItem.type} description={`Rule Description${ruleIndex + 1}`} />
-                )));
-                setDirtyExplorerList(false);
-            });
-    }, [dataService, dirtyExplorerList]);
+        if (dirtyExplorerList) {
+            dataService.get_rules()
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (responseJson) {
+                    setRulesList(JSON.parse(responseJson.body).data.map((ruleItem, ruleIndex) => (
+                        <ExplorerItem key={ruleItem.id} storageId={ruleItem.id} coreId={ruleItem.attributes.title} ruleType={ruleItem.type} description={`Rule Description${ruleIndex + 1}`} />
+                    )));
+                    setDirtyExplorerList(false);
+                });
+        }
+    }, [dataService, dirtyExplorerList, setDirtyExplorerList]);
 
     return (
         <List sx={{ width: '100%', overflow: 'auto', bgcolor: 'background.paper' }} >

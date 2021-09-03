@@ -40,7 +40,7 @@ export default function MonacoEditor(props) {
     /* Uncomment to convert from jsx to tsx */
     //const [currentEditor, setcurrentEditor] = useState < editor.IStandaloneCodeEditor > ();
     const [currentEditor, setcurrentEditor] = useState();
-    const { dataService, selectedRule, isRuleSelected, unmodifiedRule, setUnmodifiedRule, autoModifiedRule, setAutoModifiedRule, setUserModifiedRule } = useContext(AppContext);
+    const { dataService, selectedRule, isRuleSelected, unmodifiedRule, setUnmodifiedRule, autoModifiedRule, setAutoModifiedRule, setUserModifiedRule, isNewRuleSelected, setIsNewRuleSelected } = useContext(AppContext);
 
     /* Load yaml schema for editor validation */
     useEffect(() => {
@@ -87,11 +87,11 @@ export default function MonacoEditor(props) {
                 setUserModifiedRule(initialEditor.getValue());
             });
         }
-    }, []);
+    }, [setUserModifiedRule]);
 
     /* Load the editor with a new value */
     useEffect(() => {
-        if (currentEditor && isRuleSelected()) {
+        if (currentEditor && isRuleSelected() && isNewRuleSelected) {
             dataService.get_rule(selectedRule)
                 .then(function (response) {
                     return response.json();
@@ -100,9 +100,10 @@ export default function MonacoEditor(props) {
                     const content = JSON.parse(responseJson.body).data.attributes.body.value;
                     setUnmodifiedRule(content);
                     setUserModifiedRule(content);
+                    setIsNewRuleSelected(false);
                 });
         }
-    }, [currentEditor, selectedRule, dataService]);
+    }, [currentEditor, selectedRule, dataService, isRuleSelected, setUserModifiedRule, setUnmodifiedRule, isNewRuleSelected, setIsNewRuleSelected]);
 
     /* Set value of editor based on changes to Unmodified Rule */
     useEffect(() => {
@@ -117,7 +118,7 @@ export default function MonacoEditor(props) {
             currentEditor.setValue(autoModifiedRule);
             setAutoModifiedRule(null);
         }
-    }, [currentEditor, autoModifiedRule]);
+    }, [currentEditor, autoModifiedRule, setAutoModifiedRule]);
 
     return (
         <>

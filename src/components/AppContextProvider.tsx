@@ -10,6 +10,7 @@ const AppContextProvider: React.FC = ({ children }: { children: React.ReactNode 
   const [autoModifiedRule, setAutoModifiedRule] = useState<string>();
   const [userModifiedRule, setUserModifiedRule] = useState<string>();
   const [dirtyExplorerList, setDirtyExplorerList] = useState<boolean>(true);
+  const [isNewRuleSelected, setIsNewRuleSelected] = useState<boolean>(false);
 
   const clearError = () => appError ? setAppError(null) : undefined;
 
@@ -25,7 +26,7 @@ const AppContextProvider: React.FC = ({ children }: { children: React.ReactNode 
   const isRuleDirty = () => unmodifiedRule !== userModifiedRule;
 
   const appContext = {
-    appError, clearError, setError, dataService, selectedRule, setSelectedRule, isRuleSelected, unmodifiedRule, setUnmodifiedRule, autoModifiedRule, setAutoModifiedRule, userModifiedRule, setUserModifiedRule, dirtyExplorerList, setDirtyExplorerList, isRuleDirty
+    appError, clearError, setError, dataService, selectedRule, setSelectedRule, isRuleSelected, unmodifiedRule, setUnmodifiedRule, autoModifiedRule, setAutoModifiedRule, userModifiedRule, setUserModifiedRule, dirtyExplorerList, setDirtyExplorerList, isRuleDirty, isNewRuleSelected, setIsNewRuleSelected
   };
 
   return (

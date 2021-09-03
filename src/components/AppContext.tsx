@@ -24,6 +24,8 @@ export interface IAppContext {
   dirtyExplorerList: boolean;
   setDirtyExplorerList: (dirtyExplorerList: boolean) => void;
   isRuleDirty: () => boolean;
+  isNewRuleSelected: boolean;
+  setIsNewRuleSelected: (isNewRuleSelected: boolean) => void;
 }
 
 export const defaultAppContext: IAppContext = {
@@ -42,6 +44,8 @@ export const defaultAppContext: IAppContext = {
   dirtyExplorerList: true,
   setDirtyExplorerList: () => { /* Placeholder */ },
   isRuleDirty: () => false,
+  isNewRuleSelected: true,
+  setIsNewRuleSelected: () => { /* Placeholder */ },
 };
 
 

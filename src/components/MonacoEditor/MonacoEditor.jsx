@@ -33,31 +33,45 @@ window.MonacoEnvironment = {
 };
 
 
-function MonacoEditor(props) {
+export default function MonacoEditor(props) {
+
     const editorRef = useRef();
 
     /* Uncomment to convert from jsx to tsx */
     //const [currentEditor, setcurrentEditor] = useState < editor.IStandaloneCodeEditor > ();
     const [currentEditor, setcurrentEditor] = useState();
-    const { dataService } = useContext(AppContext)
+    const { dataService, selectedRule, isRuleSelected, unmodifiedRule, setUnmodifiedRule, autoModifiedRule, setAutoModifiedRule, setUserModifiedRule } = useContext(AppContext);
+
+    /* Load yaml schema for editor validation */
     useEffect(() => {
-        if (props.schema) {
-            setDiagnosticsOptions({
-                validate: true,
-                enableSchemaRequest: true,
-                format: true,
-                hover: true,
-                completion: true,
-                schemas: [
-                    {
-                        uri: "https://cdisc.org/rules/1-0",
-                        fileMatch: ['*'],
-                        schema: props.schema
-                    },
-                ],
+        fetch('schema/RulesSchema.json'
+            , {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            }
+        )
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (rulesSchema) {
+                setDiagnosticsOptions({
+                    validate: true,
+                    enableSchemaRequest: true,
+                    format: true,
+                    hover: true,
+                    completion: true,
+                    schemas: [
+                        {
+                            uri: "https://cdisc.org/rules/1-0",
+                            fileMatch: ['*'],
+                            schema: rulesSchema
+                        },
+                    ],
+                });
             });
-        }
-    }, [props.schema]);
+    }, []);
 
     /* Initialize the editor */
     useEffect(() => {
@@ -70,32 +84,40 @@ function MonacoEditor(props) {
             setcurrentEditor(initialEditor);
             /* Listen for editor text changes and set the postedit value to be used by other components */
             initialEditor.onDidChangeModelContent(e => {
-                props.setPostEditRule(initialEditor.getValue());
+                setUserModifiedRule(initialEditor.getValue());
             });
         }
     }, []);
 
     /* Load the editor with a new value */
     useEffect(() => {
-        if (currentEditor && props.selectedRule) {
-            dataService.get_rule(props.selectedRule)
+        if (currentEditor && isRuleSelected()) {
+            dataService.get_rule(selectedRule)
                 .then(function (response) {
                     return response.json();
                 })
                 .then(function (responseJson) {
                     const content = JSON.parse(responseJson.body).data.attributes.body.value;
-                    props.setPreEditRule(content);
-                    props.setPostEditRule(content);
+                    setUnmodifiedRule(content);
+                    setUserModifiedRule(content);
                 });
         }
-    }, [currentEditor, props.selectedRule, dataService]);
+    }, [currentEditor, selectedRule, dataService]);
 
-    /* Set value of editor based on changes to Pre Edit Rule */
+    /* Set value of editor based on changes to Unmodified Rule */
     useEffect(() => {
-        if (currentEditor && props.preEditRule !== undefined) {
-            currentEditor.setValue(props.preEditRule);
+        if (currentEditor && unmodifiedRule !== undefined) {
+            currentEditor.setValue(unmodifiedRule);
         }
-    }, [currentEditor, props.preEditRule]);
+    }, [currentEditor, unmodifiedRule]);
+
+    /* Set value of editor based on changes to Auto-modified Rule */
+    useEffect(() => {
+        if (currentEditor && autoModifiedRule !== undefined) {
+            currentEditor.setValue(autoModifiedRule);
+            setAutoModifiedRule(null);
+        }
+    }, [currentEditor, autoModifiedRule]);
 
     return (
         <>
@@ -103,5 +125,3 @@ function MonacoEditor(props) {
         </>
     );
 }
-
-export default MonacoEditor;

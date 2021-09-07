@@ -28,7 +28,6 @@ export default function Controls(props: Props) {
                 .then(function (responseJson) {
                     return JSON.parse(responseJson.body);
                 });
-            setUnmodifiedRule(userModifiedRule);
         } else {
             //Postrule
             const newSelectedRule = await dataService.post_rule(userModifiedRule)
@@ -40,6 +39,7 @@ export default function Controls(props: Props) {
                 });
             setSelectedRule(newSelectedRule);
         }
+        setUnmodifiedRule(userModifiedRule);
         setDirtyExplorerList(true);
     }
 

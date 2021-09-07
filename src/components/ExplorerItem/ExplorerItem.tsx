@@ -1,22 +1,29 @@
-import Divider from "@material-ui/core/Divider";
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from "@material-ui/core/ListItemText";
 import Typography from '@material-ui/core/Typography';
+import { useContext } from "react";
+import AppContext from "../AppContext";
 
 interface Props {
     storageId,
     coreId,
     ruleType,
-    description,
-    setSelectedRule,
+    description
 }
 
-const ExplorerItem: React.FC<Props> = (props) => {
+export default function ExplorerItem(props: Props) {
+
+    const { selectedRule, setSelectedRule, isRuleDirty, setIsNewRuleSelected } = useContext(AppContext);
+
+    const handleListItemClick = (event) => {
+        setSelectedRule(props.storageId);
+        setIsNewRuleSelected(true);
+    };
 
     return (
         <>
-            <Divider variant="fullWidth" component="li" />
-            <ListItem key={props.storageId} alignItems="flex-start" onClick={() => props.setSelectedRule(props.storageId)}>
+            <ListItem alignItems="flex-start" onClick={(event) => handleListItemClick(event)} disabled={isRuleDirty()} selected={selectedRule === props.storageId}
+                divider={true} button={true}>
                 <ListItemText
                     primary={props.coreId}
                     secondary={
@@ -34,9 +41,6 @@ const ExplorerItem: React.FC<Props> = (props) => {
                     }
                 />
             </ListItem>
-            <Divider variant="fullWidth" component="li" />
         </>
     );
 }
-
-export default ExplorerItem;

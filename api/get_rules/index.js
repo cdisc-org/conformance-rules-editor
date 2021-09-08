@@ -6,7 +6,7 @@ module.exports = async function (context, req) {
     const token = await Authenticator.getToken()
     const options = {
         hostname: url,
-        path: '/jsonapi/node/rule',
+        path: '/jsonapi/node/rule?fields[node--rule]=title,field_rule_type,uid&fields[user--user]=name&include=uid',
         method: 'GET',
         headers: {
             "Authorization": "Bearer " + token

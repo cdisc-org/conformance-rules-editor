@@ -92,6 +92,8 @@ export default function MonacoEditor(props) {
     /* Load the editor with a new value */
     useEffect(() => {
         if (currentEditor && isRuleSelected() && isNewRuleSelected) {
+            /* Unset before the async call so that api is only called once */
+            setIsNewRuleSelected(false);
             dataService.get_rule(selectedRule)
                 .then(function (response) {
                     return response.json();
@@ -100,7 +102,6 @@ export default function MonacoEditor(props) {
                     const content = JSON.parse(responseJson.body).data.attributes.body.value;
                     setUnmodifiedRule(content);
                     setUserModifiedRule(content);
-                    setIsNewRuleSelected(false);
                 });
         }
     }, [currentEditor, selectedRule, dataService, isRuleSelected, setUserModifiedRule, setUnmodifiedRule, isNewRuleSelected, setIsNewRuleSelected]);

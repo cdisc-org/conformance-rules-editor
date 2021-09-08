@@ -14,15 +14,17 @@ export default function ExplorerList(props: Props) {
     /* Load list of rules */
     useEffect(() => {
         if (dirtyExplorerList) {
+            /* Unset before the async call so that api is only called once */
+            setDirtyExplorerList(false);
             dataService.get_rules()
                 .then(function (response) {
                     return response.json();
                 })
                 .then(function (responseJson) {
+                    console.log(JSON.parse(responseJson.body));
                     setRulesList(JSON.parse(responseJson.body).data.map((ruleItem, ruleIndex) => (
-                        <ExplorerItem key={ruleItem.id} storageId={ruleItem.id} coreId={ruleItem.attributes.title} ruleType={ruleItem.type} description={`Rule Description${ruleIndex + 1}`} />
+                        <ExplorerItem key={ruleItem.id} storageId={ruleItem.id} coreId={ruleItem.attributes.title} ruleType={ruleItem.attributes.field_rule_type} description={`Rule Description${ruleIndex + 1}`} />
                     )));
-                    setDirtyExplorerList(false);
                 });
         }
     }, [dataService, dirtyExplorerList, setDirtyExplorerList]);

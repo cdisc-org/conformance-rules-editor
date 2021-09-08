@@ -1,8 +1,22 @@
 const yaml = require("js-yaml");
 
-function getCoreId(body: string) {
+function getCoreId(rule: any) {
+  return (rule !== undefined && "CoreId" in rule) ? rule["CoreId"] : `<Rule missing 'CoreId' attribute>`;
+}
+
+function getRuleType(rule: any) {
+  if (rule !== undefined && "Rule Type" in rule) {
+    const ruleType = Object.keys(rule["Rule Type"]);
+    if (ruleType.length === 1) {
+      return ruleType[0];
+    }
+  }
+  return `<Rule missing 'Rule Type' attribute>`;
+}
+
+function getAttributes(body: string) {
   const rule = yaml.load(body);
-  return (rule !== undefined && "CoreId" in rule) ? rule.CoreId : "<Rule missing 'CoreId' attribute>";
+  return { title: getCoreId(rule), field_rule_type: getRuleType(rule), body: { value: body } };
 }
 
 export class DataService {
@@ -30,7 +44,7 @@ export class DataService {
       headers: {
         'Accept': "application/json",
       },
-      body: JSON.stringify({ data: { id: ruleId, type: "node--rule", attributes: { title: getCoreId(body), body: { value: body } } } })
+      body: JSON.stringify({ data: { id: ruleId, type: "node--rule", attributes: getAttributes(body) } })
     });
   }
 
@@ -40,7 +54,7 @@ export class DataService {
       headers: {
         'Accept': "application/json",
       },
-      body: JSON.stringify({ data: { type: "node--rule", attributes: { title: getCoreId(body), body: { value: body } } } })
+      body: JSON.stringify({ data: { type: "node--rule", attributes: getAttributes(body) } })
     });
   }
 

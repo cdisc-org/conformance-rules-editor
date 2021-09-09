@@ -1,11 +1,11 @@
-const yaml = require("js-yaml");
+import yaml, { YAMLException } from 'js-yaml';
 
 function getCoreId(rule: any) {
-  return (rule !== undefined && "CoreId" in rule) ? rule["CoreId"] : `<Rule missing 'CoreId' attribute>`;
+  return (isValidYaml(rule) && "CoreId" in rule) ? rule["CoreId"] : `<Rule missing 'CoreId' attribute>`;
 }
 
 function getRuleType(rule: any) {
-  if (rule !== undefined && "Rule Type" in rule) {
+  if (isValidYaml(rule) && "Rule Type" in rule) {
     const ruleType = Object.keys(rule["Rule Type"]);
     if (ruleType.length === 1) {
       return ruleType[0];
@@ -14,12 +14,47 @@ function getRuleType(rule: any) {
   return `<Rule missing 'Rule Type' attribute>`;
 }
 
-function getAttributes(body: string) {
-  const rule = yaml.load(body);
-  return { title: getCoreId(rule), field_rule_type: getRuleType(rule), body: { value: body } };
+function isValidYaml(rule: any) {
+  return rule !== undefined && rule !== null && typeof rule === 'object';
 }
 
 export class DataService {
+
+  getAttributes = (body: string) => {
+    const rule = (() => {
+      try {
+        return yaml.load(body);
+      } catch (yamlException: YAMLException) {
+        return undefined;
+      }
+    }
+    )();
+    return {
+      title: getCoreId(rule),
+      field_rule_type: getRuleType(rule),
+      body: { value: body }
+    };
+  }
+
+  public get_me = async () => {
+    return await fetch(`/.auth/me`, {
+      method: 'GET',
+      headers: {
+        'Accept': "application/json",
+      }
+    });
+  }
+
+  public get_username = async () => {
+    return await this.get_me()
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (responseJson) {
+        return responseJson.clientPrincipal.userDetails;
+      });
+  }
+
   public get_rules = async () => {
     return await fetch(`/api/rules`, {
       method: 'GET',
@@ -44,7 +79,13 @@ export class DataService {
       headers: {
         'Accept': "application/json",
       },
-      body: JSON.stringify({ data: { id: ruleId, type: "node--rule", attributes: getAttributes(body) } })
+      body: JSON.stringify({
+        data: {
+          id: ruleId,
+          type: "node--rule",
+          attributes: this.getAttributes(body)
+        }
+      })
     });
   }
 
@@ -54,7 +95,15 @@ export class DataService {
       headers: {
         'Accept': "application/json",
       },
-      body: JSON.stringify({ data: { type: "node--rule", attributes: getAttributes(body) } })
+      body: JSON.stringify({
+        data: {
+          type: "node--rule",
+          attributes: {
+            ...this.getAttributes(body),
+            field_creator: await this.get_username()
+          }
+        }
+      })
     });
   }
 

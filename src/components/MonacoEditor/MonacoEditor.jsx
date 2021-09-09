@@ -108,14 +108,14 @@ export default function MonacoEditor(props) {
 
     /* Set value of editor based on changes to Unmodified Rule */
     useEffect(() => {
-        if (currentEditor && unmodifiedRule !== undefined) {
+        if (currentEditor) {
             currentEditor.setValue(unmodifiedRule);
         }
     }, [currentEditor, unmodifiedRule]);
 
     /* Set value of editor based on changes to Auto-modified Rule */
     useEffect(() => {
-        if (currentEditor && autoModifiedRule !== undefined) {
+        if (currentEditor) {
             currentEditor.setValue(autoModifiedRule);
             setAutoModifiedRule(null);
         }

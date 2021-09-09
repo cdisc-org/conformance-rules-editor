@@ -1,6 +1,6 @@
 import React from "react";
 import { DataService } from "../services/DataService";
-
+import { AlertState } from "./GeneralAlert/GeneralAlert";
 
 export interface IAppError {
   title: string;
@@ -26,6 +26,8 @@ export interface IAppContext {
   isRuleDirty: () => boolean;
   isNewRuleSelected: boolean;
   setIsNewRuleSelected: (isNewRuleSelected: boolean) => void;
+  alertState: AlertState;
+  setAlertState: (alertState: AlertState) => void;
 }
 
 export const defaultAppContext: IAppContext = {
@@ -46,6 +48,8 @@ export const defaultAppContext: IAppContext = {
   isRuleDirty: () => false,
   isNewRuleSelected: true,
   setIsNewRuleSelected: () => { /* Placeholder */ },
+  alertState: null,
+  setAlertState: () => { /* Placeholder */ },
 };
 
 

@@ -21,9 +21,8 @@ export default function ExplorerList(props: Props) {
                     return response.json();
                 })
                 .then(function (responseJson) {
-                    console.log(JSON.parse(responseJson.body));
                     setRulesList(JSON.parse(responseJson.body).data.map((ruleItem, ruleIndex) => (
-                        <ExplorerItem key={ruleItem.id} storageId={ruleItem.id} coreId={ruleItem.attributes.title} ruleType={ruleItem.attributes.field_rule_type} description={`Rule Description${ruleIndex + 1}`} />
+                        <ExplorerItem key={ruleItem.id} storageId={ruleItem.id} coreId={ruleItem.attributes.title} ruleType={ruleItem.attributes.field_rule_type} creator={ruleItem.attributes.field_creator} />
                     )));
                 });
         }

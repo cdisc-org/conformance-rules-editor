@@ -1,4 +1,4 @@
-import yaml, { YAMLException } from 'js-yaml';
+import yaml from 'js-yaml';
 
 function getCoreId(rule: any) {
   return (isValidYaml(rule) && "CoreId" in rule) ? rule["CoreId"] : `<Rule missing 'CoreId' attribute>`;
@@ -24,7 +24,7 @@ export class DataService {
     const rule = (() => {
       try {
         return yaml.load(body);
-      } catch (yamlException: YAMLException) {
+      } catch (yamlException) {
         return undefined;
       }
     }

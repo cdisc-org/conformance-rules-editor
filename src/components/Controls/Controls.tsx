@@ -21,7 +21,7 @@ export default function Controls(props: Props) {
     const saveRule = async () => {
         if (isRuleSelected()) {
             //Patchrule
-            const patchedRule = await dataService.patch_rule(selectedRule, userModifiedRule)
+            await dataService.patch_rule(selectedRule, userModifiedRule)
                 .then(function (response) {
                     return response.json();
                 })

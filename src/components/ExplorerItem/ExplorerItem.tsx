@@ -8,7 +8,7 @@ interface Props {
     storageId,
     coreId,
     ruleType,
-    description
+    creator
 }
 
 export default function ExplorerItem(props: Props) {
@@ -36,7 +36,7 @@ export default function ExplorerItem(props: Props) {
                             >
                                 {props.ruleType}
                             </Typography>
-                            <br />{props.description}
+                            <br />{props.creator}
                         </>
                     }
                 />

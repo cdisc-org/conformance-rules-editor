@@ -5,8 +5,8 @@ class Authenticator {
     constructor() {
         this.token = "";
         this.expires = Date.now();
-      }
-    async generatToken() {
+    }
+    async generateToken() {
         const url = process.env["API_BASE_URL"]
         const options = {
             hostname: url,
@@ -43,7 +43,7 @@ class Authenticator {
     async getToken() {
         if (this.token === "" || Date.now() > this.expires) {
             console.log("generating new token")
-            const data = await this.generatToken()
+            const data = await this.generateToken()
             const json_data = JSON.parse(data)
             this.token = json_data["access_token"]
             this.expires = Date.now() + json_data["expires_in"]

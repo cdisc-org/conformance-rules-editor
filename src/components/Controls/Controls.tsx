@@ -11,7 +11,7 @@ export default function Controls(props: Props) {
 
     const [discardDialog, setDiscardDialog] = useState<boolean>(false);
     const [deleteDialog, setDeleteDialog] = useState<boolean>(false);
-    const { dataService, selectedRule, setSelectedRule, isRuleSelected, unmodifiedRule, setUnmodifiedRule, setAutoModifiedRule, userModifiedRule, setDirtyExplorerList, isRuleDirty } = useContext(AppContext);
+    const { dataService, selectedRule, setSelectedRule, isRuleSelected, unmodifiedRule, setUnmodifiedRule, setAutoModifiedRule, userModifiedRule, setDirtyExplorerList, isRuleDirty, setAlertState } = useContext(AppContext);
 
     const newRule = () => {
         setUnmodifiedRule("");
@@ -41,6 +41,7 @@ export default function Controls(props: Props) {
         }
         setUnmodifiedRule(userModifiedRule);
         setDirtyExplorerList(true);
+        setAlertState({ message: "Saved successfully", severity: "success" });
     }
 
     const discardChanges = () => {
@@ -59,6 +60,9 @@ export default function Controls(props: Props) {
             setUnmodifiedRule("");
             setSelectedRule(null);
             setDirtyExplorerList(true);
+            setAlertState({ message: "Deleted rule successfully", severity: "success" });
+        } else {
+            setAlertState({ message: "Rule not deleted", severity: "error" });
         }
     }
 

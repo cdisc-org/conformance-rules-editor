@@ -1,6 +1,43 @@
 {
     "id": "https://cdisc.org/rules/1-0",
     "$defs": {
+        "Check": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "Check"
+            ],
+            "properties": {
+                "Check": {
+                    "oneOf": [
+                        {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "required": [
+                                "all"
+                            ],
+                            "properties": {
+                                "all": {
+                                    "$ref": "#/$defs/Operation"
+                                }
+                            }
+                        },
+                        {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "required": [
+                                "any"
+                            ],
+                            "properties": {
+                                "any": {
+                                    "$ref": "#/$defs/Operation"
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        },
         "Classes": {
             "type": "array",
             "items": {
@@ -24,6 +61,39 @@
             "items": {
                 "type": "string",
                 "pattern": "^(All|[A-Z]{2})$"
+            }
+        },
+        "Operation": {
+            "type": "array",
+            "items": {
+                "$ref": "#/$defs/Operator"
+            }
+        },
+        "Operator": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "name",
+                "operator"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "operator": {
+                    "type": "string",
+                    "enum": [
+                        "equal_to",
+                        "missing",
+                        "not_null",
+                        "null",
+                        "present",
+                        "regex"
+                    ]
+                },
+                "value": {
+                    "type": "string"
+                }
             }
         }
     },
@@ -200,16 +270,7 @@
                     ],
                     "properties": {
                         "Value Presence": {
-                            "type": "object",
-                            "additionalProperties": false,
-                            "required": [
-                                "Check"
-                            ],
-                            "properties": {
-                                "Check": {
-                                    "type": "string"
-                                }
-                            }
+                            "$ref": "#/$defs/Check"
                         }
                     }
                 },
@@ -221,16 +282,7 @@
                     ],
                     "properties": {
                         "Variable Presence": {
-                            "type": "object",
-                            "additionalProperties": false,
-                            "required": [
-                                "Check"
-                            ],
-                            "properties": {
-                                "Check": {
-                                    "type": "string"
-                                }
-                            }
+                            "$ref": "#/$defs/Check"
                         }
                     }
                 },
@@ -242,16 +294,7 @@
                     ],
                     "properties": {
                         "Data pattern and format": {
-                            "type": "object",
-                            "additionalProperties": false,
-                            "required": [
-                                "Check"
-                            ],
-                            "properties": {
-                                "Check": {
-                                    "type": "string"
-                                }
-                            }
+                            "$ref": "#/$defs/Check"
                         }
                     }
                 },
@@ -263,16 +306,7 @@
                     ],
                     "properties": {
                         "Value domain": {
-                            "type": "object",
-                            "additionalProperties": false,
-                            "required": [
-                                "Check"
-                            ],
-                            "properties": {
-                                "Check": {
-                                    "type": "string"
-                                }
-                            }
+                            "$ref": "#/$defs/Check"
                         }
                     }
                 },
@@ -284,16 +318,7 @@
                     ],
                     "properties": {
                         "External dictionaries": {
-                            "type": "object",
-                            "additionalProperties": false,
-                            "required": [
-                                "Check"
-                            ],
-                            "properties": {
-                                "Check": {
-                                    "type": "string"
-                                }
-                            }
+                            "$ref": "#/$defs/Check"
                         }
                     }
                 },
@@ -305,16 +330,7 @@
                     ],
                     "properties": {
                         "Referential integrity": {
-                            "type": "object",
-                            "additionalProperties": false,
-                            "required": [
-                                "Check"
-                            ],
-                            "properties": {
-                                "Check": {
-                                    "type": "string"
-                                }
-                            }
+                            "$ref": "#/$defs/Check"
                         }
                     }
                 },
@@ -326,16 +342,7 @@
                     ],
                     "properties": {
                         "Metadata": {
-                            "type": "object",
-                            "additionalProperties": false,
-                            "required": [
-                                "Check"
-                            ],
-                            "properties": {
-                                "Check": {
-                                    "type": "string"
-                                }
-                            }
+                            "$ref": "#/$defs/Check"
                         }
                     }
                 },
@@ -347,16 +354,7 @@
                     ],
                     "properties": {
                         "Consistency": {
-                            "type": "object",
-                            "additionalProperties": false,
-                            "required": [
-                                "Check"
-                            ],
-                            "properties": {
-                                "Check": {
-                                    "type": "string"
-                                }
-                            }
+                            "$ref": "#/$defs/Check"
                         }
                     }
                 },
@@ -368,16 +366,7 @@
                     ],
                     "properties": {
                         "Range and limit": {
-                            "type": "object",
-                            "additionalProperties": false,
-                            "required": [
-                                "Check"
-                            ],
-                            "properties": {
-                                "Check": {
-                                    "type": "string"
-                                }
-                            }
+                            "$ref": "#/$defs/Check"
                         }
                     }
                 },
@@ -389,16 +378,7 @@
                     ],
                     "properties": {
                         "Date/time arithmetic": {
-                            "type": "object",
-                            "additionalProperties": false,
-                            "required": [
-                                "Check"
-                            ],
-                            "properties": {
-                                "Check": {
-                                    "type": "string"
-                                }
-                            }
+                            "$ref": "#/$defs/Check"
                         }
                     }
                 },
@@ -439,16 +419,7 @@
                     ],
                     "properties": {
                         "Dataset property": {
-                            "type": "object",
-                            "additionalProperties": false,
-                            "required": [
-                                "Check"
-                            ],
-                            "properties": {
-                                "Check": {
-                                    "type": "string"
-                                }
-                            }
+                            "$ref": "#/$defs/Check"
                         }
                     }
                 }

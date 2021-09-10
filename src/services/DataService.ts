@@ -31,7 +31,7 @@ export class DataService {
     )();
     return {
       title: getCoreId(rule),
-      field_rule_type: getRuleType(rule),
+      field_conformance_rule_type: getRuleType(rule),
       body: { value: body }
     };
   }
@@ -82,7 +82,7 @@ export class DataService {
       body: JSON.stringify({
         data: {
           id: ruleId,
-          type: "node--rule",
+          type: "node--conformance_rule",
           attributes: this.getAttributes(body)
         }
       })
@@ -97,10 +97,10 @@ export class DataService {
       },
       body: JSON.stringify({
         data: {
-          type: "node--rule",
+          type: "node--conformance_rule",
           attributes: {
             ...this.getAttributes(body),
-            field_creator: await this.get_username()
+            field_conformance_rule_creator: await this.get_username()
           }
         }
       })

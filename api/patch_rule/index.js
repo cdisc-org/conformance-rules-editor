@@ -8,7 +8,7 @@ module.exports = async function (context, req) {
 
     const options = {
         hostname: url,
-        path: `/jsonapi/node/rule/${ruleId}`,
+        path: `/jsonapi/node/conformance_rule/${ruleId}`,
         method: 'PATCH',
         headers: {
             "Authorization": "Bearer " + token,

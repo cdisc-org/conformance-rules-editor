@@ -22,7 +22,7 @@ export default function ExplorerList(props: Props) {
                 })
                 .then(function (responseJson) {
                     setRulesList(JSON.parse(responseJson.body).data.map((ruleItem, ruleIndex) => (
-                        <ExplorerItem key={ruleItem.id} storageId={ruleItem.id} coreId={ruleItem.attributes.title} ruleType={ruleItem.attributes.field_rule_type} creator={ruleItem.attributes.field_creator} />
+                        <ExplorerItem key={ruleItem.id} storageId={ruleItem.id} coreId={ruleItem.attributes.title} ruleType={ruleItem.attributes.field_conformance_rule_type} creator={ruleItem.attributes.field_conformance_rule_creator} />
                     )));
                 });
         }

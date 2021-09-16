@@ -56,7 +56,7 @@ export class DataService {
   }
 
   public get_rules = async (offset: number, limit: number) => {
-    return await fetch(`/api/rules/${offset}/${limit}`, {
+    return await fetch(`/api/rules?pageOffset=${offset}&pageLimit=${limit}`, {
       method: 'GET',
       headers: {
         'Accept': "application/json",

@@ -1,18 +1,21 @@
 const https = require('https');
 const Authenticator = require("../utils/AuthService")
 
+const propIfDefined = (name, value) => value !== undefined && { [name]: value };
+
 module.exports = async function (context, req) {
     const url = process.env["API_BASE_URL"]
     const token = await Authenticator.getToken()
-    // If the bind value is set to 0, a string object is given instead of int. Maybe a bug in swa?
-    const pageOffset = context.bindingData.pageOffset === null || typeof context.bindingData.pageOffset === 'object' ? 0 : context.bindingData.pageOffset;
-    const pageLimit = context.bindingData.pageLimit
+    const pageOffset = context.bindingData.query.pageOffset;
+    const pageLimit = context.bindingData.query.pageLimit
 
-    console.log(`/jsonapi/node/conformance_rule?page[offset]=${pageOffset}&page[limit]=${pageLimit}`);
-    console.log(pageOffset);
     const options = {
         hostname: url,
-        path: `/jsonapi/node/conformance_rule?page[offset]=${pageOffset}&page[limit]=${pageLimit}`,
+        path: "/jsonapi/node/conformance_rule?" +
+            new URLSearchParams({
+                ...propIfDefined("page[offset]", pageOffset),
+                ...propIfDefined("page[limit]", pageLimit),
+            }),
         method: 'GET',
         headers: {
             "Authorization": "Bearer " + token

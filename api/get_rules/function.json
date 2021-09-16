@@ -8,7 +8,7 @@
       "methods": [
         "get"
       ],
-      "route": "rules/{pageOffset:int=0}/{pageLimit:int=50}"
+      "route": "rules"
     },
     {
       "type": "http",

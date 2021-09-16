@@ -44,7 +44,6 @@ export default function ExplorerList() {
     /* Fetch from api data service */
     useEffect(() => {
         if (dataService && fetchParams) {
-            console.log(`Scroll-fetching rules offset: ${fetchParams.pageOffset}`);
             dataService.get_rules(fetchParams.pageOffset, fetchParams.pageLimit)
                 .then(function (response) {
                     return response.json();

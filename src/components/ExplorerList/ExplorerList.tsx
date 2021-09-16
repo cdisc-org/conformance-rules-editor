@@ -14,11 +14,6 @@ export interface PaginationLinks {
     next?: PaginationLink;
 }
 
-export interface FetchParams {
-    pageOffset: number;
-    pageLimit: number;
-}
-
 export default function ExplorerList() {
 
     const { dataService, dirtyExplorerList, setDirtyExplorerList } = useContext(AppContext);
@@ -26,7 +21,7 @@ export default function ExplorerList() {
     const [wantsMoreRules, setWantsMoreRules] = useState<boolean>(false);
     const [paginationLinks, setPaginationLinks] = useState<PaginationLinks>(null);
     const [rulesLoaded, setRulesLoaded] = useState<boolean>(false);
-    const [fetchParams, setFetchParams] = useState<FetchParams>(null);
+    const [fetchParams, setFetchParams] = useState<string>(null);
     const rulesListRef = useRef<any>();
 
     /* More rules exist than the ones already loaded in the scroll pane */
@@ -43,8 +38,8 @@ export default function ExplorerList() {
 
     /* Fetch from api data service */
     useEffect(() => {
-        if (dataService && fetchParams) {
-            dataService.get_rules(fetchParams.pageOffset, fetchParams.pageLimit)
+        if (dataService && fetchParams !== null) {
+            dataService.get_rules(fetchParams)
                 .then(function (response) {
                     return response.json();
                 })
@@ -74,7 +69,7 @@ export default function ExplorerList() {
         if (dirtyExplorerList) {
             setPaginationLinks(null);
             setRulesList([]);
-            setFetchParams({ pageOffset: 0, pageLimit: 50 });
+            setFetchParams("");
             setDirtyExplorerList(false);
             setRulesLoaded(false);
         }
@@ -83,11 +78,7 @@ export default function ExplorerList() {
     /* More rules requested or rules didn't fill scrollbars. Load additional rules. */
     useEffect(() => {
         if (rulesLoaded && hasMoreRules() && (wantsMoreRules || scrollbarsMissing())) {
-            const pageOffsetRegex = /page%5Boffset%5D=(?<pageOffset>\d+)/;
-            const pageLimitRegex = /page%5Blimit%5D=(?<pageLimit>\d+)/;
-            const pageOffset = parseInt(paginationLinks.next.href.match(pageOffsetRegex).groups.pageOffset);
-            const pageLimit = parseInt(paginationLinks.next.href.match(pageLimitRegex).groups.pageLimit);
-            setFetchParams({ pageOffset: pageOffset, pageLimit: pageLimit });
+            setFetchParams(paginationLinks.next.href.split("?")[1]);
             setWantsMoreRules(false);
             setRulesLoaded(false);
         }

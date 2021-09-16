@@ -6,8 +6,8 @@ const propIfDefined = (name, value) => value !== undefined && { [name]: value };
 module.exports = async function (context, req) {
     const url = process.env["API_BASE_URL"]
     const token = await Authenticator.getToken()
-    const pageOffset = context.bindingData.query.pageOffset;
-    const pageLimit = context.bindingData.query.pageLimit
+    const pageOffset = context.bindingData.query["page[offset]"];
+    const pageLimit = context.bindingData.query["page[limit]"];
 
     const options = {
         hostname: url,

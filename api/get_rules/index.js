@@ -1,12 +1,21 @@
 const https = require('https');
 const Authenticator = require("../utils/AuthService")
 
+const propIfDefined = (name, value) => value !== undefined && { [name]: value };
+
 module.exports = async function (context, req) {
     const url = process.env["API_BASE_URL"]
     const token = await Authenticator.getToken()
+    const pageOffset = context.bindingData.query["page[offset]"];
+    const pageLimit = context.bindingData.query["page[limit]"];
+
     const options = {
         hostname: url,
-        path: '/jsonapi/node/conformance_rule',
+        path: "/jsonapi/node/conformance_rule?" +
+            new URLSearchParams({
+                ...propIfDefined("page[offset]", pageOffset),
+                ...propIfDefined("page[limit]", pageLimit),
+            }),
         method: 'GET',
         headers: {
             "Authorization": "Bearer " + token

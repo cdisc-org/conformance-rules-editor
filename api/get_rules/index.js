@@ -8,14 +8,16 @@ module.exports = async function (context, req) {
     const token = await Authenticator.getToken()
     const pageOffset = context.bindingData.query["page[offset]"];
     const pageLimit = context.bindingData.query["page[limit]"];
-
+    let path = "/jsonapi/node/conformance_rule"
+    if ((pageOffset !== undefined) || (pageLimit !== undefined)) {
+        path = path + "?" + new URLSearchParams({
+            ...propIfDefined("page[offset]", pageOffset),
+            ...propIfDefined("page[limit]", pageLimit),
+        })
+    }
     const options = {
         hostname: url,
-        path: "/jsonapi/node/conformance_rule?" +
-            new URLSearchParams({
-                ...propIfDefined("page[offset]", pageOffset),
-                ...propIfDefined("page[limit]", pageLimit),
-            }),
+        path: path,
         method: 'GET',
         headers: {
             "Authorization": "Bearer " + token

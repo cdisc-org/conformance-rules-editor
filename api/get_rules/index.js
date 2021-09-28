@@ -6,7 +6,7 @@ const propIfDefined = (name, value) => value !== undefined && { [name]: value };
 module.exports = async function (context, req) {
     const url = process.env["API_BASE_URL"]
     const token = await Authenticator.getToken()
-    const pageOffset = context.bindingData.query["page[offset]"] || 0;
+    const pageOffset = context.bindingData.query["page[offset]"];
     const pageLimit = context.bindingData.query["page[limit]"] || 50;
     let path = "/jsonapi/node/conformance_rule"
     path = path + "?" + new URLSearchParams({

@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
-import Snackbar, { SnackbarOrigin } from '@material-ui/core/Snackbar';
-import Alert from '@material-ui/core/Alert';
+import Snackbar, { SnackbarOrigin } from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 import AppContext from "../AppContext";
-import { AlertColor } from "@material-ui/core";
+import { AlertColor } from "@mui/material";
 
 interface Props {
     anchorOrigin: SnackbarOrigin

@@ -1,6 +1,6 @@
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from "@material-ui/core/ListItemText";
-import Typography from '@material-ui/core/Typography';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from "@mui/material/ListItemText";
+import Typography from '@mui/material/Typography';
 import { useContext } from "react";
 import AppContext from "../AppContext";
 

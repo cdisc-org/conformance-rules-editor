@@ -1,4 +1,4 @@
-import List from "@material-ui/core/List";
+import List from "@mui/material/List";
 import ExplorerItem from "../ExplorerItem/ExplorerItem";
 import AppContext from "../AppContext";
 import { useEffect, useState, useContext, useCallback, useRef } from "react";

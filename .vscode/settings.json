@@ -1,9 +1,3 @@
 {
-  "azureFunctions.deploySubpath": ".",
-  "azureFunctions.postDeployTask": "npm install (functions)",
-  "azureFunctions.projectLanguage": "TypeScript",
-  "azureFunctions.projectRuntime": "~3",
-  "debug.internalConsoleOptions": "neverOpen",
-  "azureFunctions.preDeployTask": "npm prune (functions)",
   "editor.defaultFormatter": "esbenp.prettier-vscode"
 }

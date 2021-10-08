@@ -9,7 +9,7 @@ import GeneralAlert from "../GeneralAlert/GeneralAlert";
 export default function Layout() {
     return (
         <>
-            <SplitPane split="vertical" defaultSize={200} allowResize={true}>
+            <SplitPane split="vertical" defaultSize={"40%"} allowResize={true}>
                 <Stack sx={{ maxHeight: '100%', overflow: 'auto' }}>
                     <Controls />
                     <ExplorerList />

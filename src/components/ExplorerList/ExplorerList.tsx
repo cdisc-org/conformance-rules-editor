@@ -1,8 +1,11 @@
-import List from "@mui/material/List";
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableContainer from '@mui/material/TableContainer';
 import ExplorerItem from "../ExplorerItem/ExplorerItem";
 import AppContext from "../AppContext";
 import { useEffect, useState, useContext, useCallback, useRef } from "react";
 import InfiniteScroll from 'react-infinite-scroll-component';
+import ExplorerHead, { headCells, HeadCell } from "../ExplorerHead/ExplorerHead";
 
 export interface PaginationLink {
     href: string;
@@ -16,7 +19,7 @@ export interface PaginationLinks {
 
 export default function ExplorerList() {
 
-    const { dataService, dirtyExplorerList, setDirtyExplorerList } = useContext(AppContext);
+    const { dataService, dirtyExplorerList, setDirtyExplorerList, order, orderBy, searchText } = useContext(AppContext);
     const [rulesList, setRulesList] = useState<typeof ExplorerItem[]>([]);
     const [wantsMoreRules, setWantsMoreRules] = useState<boolean>(false);
     const [paginationLinks, setPaginationLinks] = useState<PaginationLinks>(null);
@@ -55,6 +58,8 @@ export default function ExplorerList() {
                                 coreId={ruleItem.attributes.title}
                                 ruleType={ruleItem.attributes.field_conformance_rule_type}
                                 creator={ruleItem.attributes.field_conformance_rule_creator}
+                                created={ruleItem.attributes.created}
+                                changed={ruleItem.attributes.changed}
                             />
                         ))
                     ]);
@@ -69,11 +74,23 @@ export default function ExplorerList() {
         if (dirtyExplorerList) {
             setPaginationLinks(null);
             setRulesList([]);
-            setFetchParams("");
+            const sortParams = orderBy ? "sort=" + (order === "desc" ? "-" : "") + orderBy : "";
+            const filterParams = Object.entries(searchText).reduce(
+                (previousValue, currentValue) => {
+                    return previousValue
+                        + ((previousValue && currentValue[1]) ? "&" : "")
+                        + (currentValue[1] ? `filter[${currentValue[0]}][operator]=CONTAINS&filter[${currentValue[0]}][value]=${currentValue[1]}` : "")
+                },
+                ""
+            );
+            const includeParams = "fields[node--conformance_rule]=" + headCells.map(
+                (headCell: HeadCell) => headCell.queryParam
+            ).join(",");
+            setFetchParams([includeParams, sortParams, filterParams].filter((value: string) => value).join("&"));
             setDirtyExplorerList(false);
             setRulesLoaded(false);
         }
-    }, [dirtyExplorerList, setDirtyExplorerList]);
+    }, [dirtyExplorerList, setDirtyExplorerList, orderBy, order, searchText]);
 
     /* More rules requested or rules didn't fill scrollbars. Load additional rules. */
     useEffect(() => {
@@ -84,13 +101,26 @@ export default function ExplorerList() {
         }
     }, [rulesLoaded, hasMoreRules, wantsMoreRules, scrollbarsMissing, paginationLinks]);
 
+    useEffect(() => {
+        setDirtyExplorerList(true);
+    }, [setDirtyExplorerList, searchText, order, orderBy]);
+
+
     return (
-        <List ref={rulesListRef} id="rulesList" sx={{ width: '100%', overflow: 'auto', bgcolor: 'background.paper' }} >
+        <>
+            <TableContainer id="rulesList" ref={rulesListRef} sx={{ width: '100%', overflow: 'auto', bgcolor: 'background.paper' }} >
+                <Table stickyHeader size="small">
+                    <ExplorerHead/>
+                    <TableBody>
+                        {rulesList}
+                    </TableBody>
+                </Table>
+            </TableContainer>
             <InfiniteScroll
                 dataLength={rulesList.length}
                 next={() => setWantsMoreRules(true)}
                 hasMore={hasMoreRules()}
-                loader={<h4>Loading rules list...</h4>}
+                loader={<h4>More rules available...</h4>}
                 endMessage={
                     <p style={{ textAlign: 'center' }}>
                         <b>All rules loaded.</b>
@@ -110,8 +140,7 @@ export default function ExplorerList() {
                 }
 
             >
-                {rulesList}
             </InfiniteScroll>
-        </List>
+        </>
     );
 }

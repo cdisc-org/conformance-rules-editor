@@ -1,8 +1,7 @@
-import { styled } from '@mui/material/styles';
 import { useContext } from "react";
 import AppContext from "../AppContext";
 import TableRow from '@mui/material/TableRow';
-import TableCell, { tableCellClasses } from '@mui/material/TableCell';
+import TableCell from '@mui/material/TableCell';
 
 interface Props {
     storageId,
@@ -26,26 +25,14 @@ export default function ExplorerItem(props: Props) {
         }
     };
 
-    const StyledTableCell = styled(TableCell)(({ theme }) => ({
-        [`&.${tableCellClasses.head}`]: {
-            backgroundColor: theme.palette.common.black,
-            color: theme.palette.common.white,
-        },
-        [`&.${tableCellClasses.body}`]: {
-            fontSize: 14,
-        },
-    }));
-
     return (
-        <>
-            <TableRow hover={!isRuleDirty()} onClick={(event) => handleListItemClick(event)} selected={selectedRule === storageId}>
-                <StyledTableCell>{coreId}</StyledTableCell>
-                <StyledTableCell>{ruleType}</StyledTableCell>
-                <StyledTableCell>{creator}</StyledTableCell>
-                <StyledTableCell>{storageId}</StyledTableCell>
-                <StyledTableCell>{(new Date(created)).toLocaleString('en-US')}</StyledTableCell>
-                <StyledTableCell>{(new Date(changed)).toLocaleString('en-US')}</StyledTableCell>
-            </TableRow>
-        </>
+        <TableRow hover={!isRuleDirty()} onClick={(event) => handleListItemClick(event)} selected={selectedRule === storageId}>
+            <TableCell>{coreId}</TableCell>
+            <TableCell>{ruleType}</TableCell>
+            <TableCell>{creator}</TableCell>
+            <TableCell>{storageId}</TableCell>
+            <TableCell>{(new Date(created)).toLocaleString('en-US')}</TableCell>
+            <TableCell>{(new Date(changed)).toLocaleString('en-US')}</TableCell>
+        </TableRow>
     );
 }

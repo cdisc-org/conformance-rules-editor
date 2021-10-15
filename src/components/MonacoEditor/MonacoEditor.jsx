@@ -16,13 +16,6 @@ import YamlWorker from 'worker-loader!monaco-yaml/lib/esm/yaml.worker?filename=y
 import AppContext from "../AppContext";
 
 
-/* Uncomment to convert from jsx to tsx */
-// declare global {
-//     interface Window {
-//         MonacoEnvironment: Environment;
-//     }
-// }
-
 window.MonacoEnvironment = {
     getWorker(workerId, label) {
         if (label === 'yaml') {

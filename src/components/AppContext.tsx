@@ -8,6 +8,8 @@ export interface IAppError {
   isUncaught: boolean;
 }
 
+export type Order = "asc" | "desc";
+
 export interface IAppContext {
   appError: IAppError;
   setError: (title: string, message: string) => void;
@@ -28,6 +30,14 @@ export interface IAppContext {
   setIsNewRuleSelected: (isNewRuleSelected: boolean) => void;
   alertState: AlertState;
   setAlertState: (alertState: AlertState) => void;
+  username: string;
+  setUsername: (username: string) => void;
+  order: Order;
+  setOrder: (order: Order) => void;
+  orderBy: string;
+  setOrderBy: (orderBy: string) => void;
+  searchText: { [key: string]: string };
+  setSearchText: (searchText: { [key: string]: string }) => void;
 }
 
 export const defaultAppContext: IAppContext = {
@@ -43,13 +53,22 @@ export const defaultAppContext: IAppContext = {
   setAutoModifiedRule: () => { /* Placeholder */ },
   userModifiedRule: null,
   setUserModifiedRule: () => { /* Placeholder */ },
-  dirtyExplorerList: true,
+  /* False, because it will be set to true by the initial filter and sort values */
+  dirtyExplorerList: false,
   setDirtyExplorerList: () => { /* Placeholder */ },
   isRuleDirty: () => false,
   isNewRuleSelected: true,
   setIsNewRuleSelected: () => { /* Placeholder */ },
   alertState: null,
   setAlertState: () => { /* Placeholder */ },
+  username: null,
+  setUsername: () => { /* Placeholder */ },
+  order: 'desc',
+  setOrder: () => { /* Placeholder */ },
+  orderBy: 'changed',
+  setOrderBy: () => { /* Placeholder */ },
+  searchText: {},
+  setSearchText: () => { /* Placeholder */ },
 };
 
 

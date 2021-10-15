@@ -1,7 +1,7 @@
 import yaml from 'js-yaml';
 
 function getCoreId(rule: any) {
-  return (isValidYaml(rule) && "CoreId" in rule) ? rule["CoreId"] : `<Rule missing 'CoreId' attribute>`;
+  return (isValidYaml(rule) && "CoreId" in rule) ? rule["CoreId"] : `<Missing 'CoreId'>`;
 }
 
 function getRuleType(rule: any) {
@@ -11,7 +11,7 @@ function getRuleType(rule: any) {
       return ruleType[0];
     }
   }
-  return `<Rule missing 'Rule Type' attribute>`;
+  return `<Missing 'Rule Type'>`;
 }
 
 function isValidYaml(rule: any) {

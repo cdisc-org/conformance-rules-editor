@@ -1,47 +1,56 @@
 {
-    "id": "https://cdisc.org/rules/1-0",
     "$defs": {
         "Check": {
-            "type": "object",
             "additionalProperties": false,
+            "properties": {
+                "Check": {
+                    "$ref": "#/$defs/CheckItem"
+                }
+            },
             "required": [
                 "Check"
             ],
-            "properties": {
-                "Check": {
-                    "oneOf": [
-                        {
-                            "type": "object",
-                            "additionalProperties": false,
-                            "required": [
-                                "all"
-                            ],
-                            "properties": {
-                                "all": {
-                                    "$ref": "#/$defs/Operation"
-                                }
-                            }
-                        },
-                        {
-                            "type": "object",
-                            "additionalProperties": false,
-                            "required": [
-                                "any"
-                            ],
-                            "properties": {
-                                "any": {
-                                    "$ref": "#/$defs/Operation"
-                                }
-                            }
+            "type": "object"
+        },
+        "CheckItem": {
+            "oneOf": [
+                {
+                    "additionalProperties": false,
+                    "properties": {
+                        "all": {
+                            "$ref": "#/$defs/CheckList"
                         }
-                    ]
+                    },
+                    "required": [
+                        "all"
+                    ],
+                    "type": "object"
+                },
+                {
+                    "additionalProperties": false,
+                    "properties": {
+                        "any": {
+                            "$ref": "#/$defs/CheckList"
+                        }
+                    },
+                    "required": [
+                        "any"
+                    ],
+                    "type": "object"
+                },
+                {
+                    "$ref": "#/$defs/Operator"
                 }
-            }
+            ]
+        },
+        "CheckList": {
+            "items": {
+                "$ref": "#/$defs/CheckItem"
+            },
+            "type": "array"
         },
         "Classes": {
-            "type": "array",
             "items": {
-                "type": "string",
                 "enum": [
                     "All",
                     "Events",
@@ -53,115 +62,495 @@
                     "Special-Purpose",
                     "Study Reference",
                     "Trial Design"
-                ]
-            }
+                ],
+                "type": "string"
+            },
+            "type": "array"
+        },
+        "Domain": {
+            "pattern": "^(All|RELREC|RELSUB|SUPP|[A-Z]{2})$",
+            "type": "string"
         },
         "Domains": {
-            "type": "array",
             "items": {
-                "type": "string",
-                "pattern": "^(All|[A-Z]{2})$"
-            }
+                "$ref": "#/$defs/Domain"
+            },
+            "type": "array"
         },
         "Operation": {
-            "type": "array",
             "items": {
                 "$ref": "#/$defs/Operator"
-            }
+            },
+            "type": "array"
         },
         "Operator": {
-            "type": "object",
             "additionalProperties": false,
-            "required": [
-                "name",
-                "operator"
-            ],
             "properties": {
+                "date_component": {
+                    "enum": [
+                        "year",
+                        "month",
+                        "day",
+                        "hour",
+                        "minute",
+                        "second",
+                        "microsecond"
+                    ],
+                    "type": "string"
+                },
                 "name": {
                     "type": "string"
                 },
                 "operator": {
-                    "type": "string",
                     "enum": [
+                        "contains",
+                        "contains_all",
+                        "contains_case_insensitive",
+                        "date_equal_to",
+                        "date_greater_than",
+                        "date_greater_than_or_equal_to",
+                        "date_less_than",
+                        "date_less_than_or_equal_to",
+                        "date_not_equal_to",
+                        "does_not_contain",
+                        "does_not_contain_case_insensitive",
+                        "empty",
+                        "ends_with",
                         "equal_to",
-                        "missing",
-                        "not_null",
-                        "null",
-                        "present",
-                        "regex"
-                    ]
+                        "equal_to_case_insensitive",
+                        "exists",
+                        "greater_than",
+                        "greater_than_or_equal_to",
+                        "has_equal_length",
+                        "has_not_equal_length",
+                        "invalid_date",
+                        "is_contained_by",
+                        "is_contained_by_case_insensitive",
+                        "is_false",
+                        "is_incomplete_date",
+                        "is_not_contained_by",
+                        "is_not_contained_by_case_insensitive",
+                        "is_not_unique_relationship",
+                        "is_not_unique_set",
+                        "is_true",
+                        "is_unique_relationship",
+                        "is_unique_set",
+                        "less_than",
+                        "less_than_or_equal_to",
+                        "longer_than",
+                        "longer_than_or_equal_to",
+                        "matches_regex",
+                        "non_empty",
+                        "not_contains_all",
+                        "not_equal_to",
+                        "not_equal_to_case_insensitive",
+                        "not_exists",
+                        "not_matches_regex",
+                        "not_prefix_matches_regex",
+                        "not_suffix_matches_regex",
+                        "num_equal_to",
+                        "num_not_equal_to",
+                        "prefix_matches_regex",
+                        "shares_at_least_one_element_with",
+                        "shares_exactly_one_element_with",
+                        "shares_no_elements_with",
+                        "shorter_than",
+                        "shorter_than_or_equal_to",
+                        "starts_with",
+                        "str_equal_to",
+                        "str_not_equal_to",
+                        "suffix_matches_regex"
+                    ],
+                    "type": "string"
+                },
+                "prefix": {
+                    "type": "integer"
+                },
+                "suffix": {
+                    "type": "integer"
                 },
                 "value": {
                     "type": "string"
                 }
-            }
+            },
+            "required": [
+                "name",
+                "operator"
+            ],
+            "type": "object"
         }
     },
-    "type": "object",
     "additionalProperties": false,
     "description": "Validation schema CDISC Rules 1.0",
-    "required": [
-        "CoreId",
-        "Version",
-        "Authority",
-        "Reference",
-        "Description",
-        "Sensitivity",
-        "Scopes",
-        "Rule Type",
-        "Outcome",
-        "Citations"
-    ],
+    "id": "https://cdisc.org/rules/1-0",
     "properties": {
-        "CoreId": {
-            "type": "string"
-        },
-        "Version": {
-            "type": "string",
-            "enum": [
-                "1"
-            ]
-        },
         "Authority": {
-            "type": "object",
             "additionalProperties": false,
+            "properties": {
+                "Organization": {
+                    "enum": [
+                        "CDISC"
+                    ],
+                    "type": "string"
+                }
+            },
             "required": [
                 "Organization"
             ],
+            "type": "object"
+        },
+        "Citations": {
+            "items": {
+                "additionalProperties": false,
+                "properties": {
+                    "Cited Guidance": {
+                        "type": "string"
+                    },
+                    "Document": {
+                        "type": "string"
+                    },
+                    "Item": {
+                        "type": "string"
+                    },
+                    "Section": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "Document",
+                    "Section",
+                    "Cited Guidance"
+                ],
+                "type": "object"
+            },
+            "type": "array"
+        },
+        "CoreId": {
+            "type": "string"
+        },
+        "Description": {
+            "type": "string"
+        },
+        "Operations": {
+            "items": {
+                "additionalProperties": false,
+                "properties": {
+                    "domain": {
+                        "$ref": "#/$defs/Domain"
+                    },
+                    "id": {
+                        "pattern": "^\\$.+$",
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "operator": {
+                        "enum": [
+                            "distinct",
+                            "max",
+                            "max_date",
+                            "mean",
+                            "min",
+                            "min_date"
+                        ],
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "domain",
+                    "id",
+                    "name",
+                    "operator"
+                ],
+                "type": "object"
+            },
+            "type": "array"
+        },
+        "Outcome": {
+            "additionalProperties": false,
             "properties": {
-                "Organization": {
-                    "type": "string",
-                    "enum": [
-                        "CDISC"
-                    ]
+                "Message": {
+                    "type": "string"
                 }
-            }
+            },
+            "required": [
+                "Message"
+            ],
+            "type": "object"
         },
         "Reference": {
-            "type": "object",
             "additionalProperties": false,
-            "required": [
-                "Origin",
-                "Version",
-                "Id"
-            ],
             "properties": {
+                "Id": {
+                    "type": "string"
+                },
                 "Origin": {
                     "type": "string"
                 },
                 "Version": {
                     "type": "string"
-                },
-                "Id": {
-                    "type": "string"
                 }
-            }
+            },
+            "required": [
+                "Origin",
+                "Version",
+                "Id"
+            ],
+            "type": "object"
         },
-        "Description": {
-            "type": "string"
+        "Rule Type": {
+            "oneOf": [
+                {
+                    "additionalProperties": false,
+                    "properties": {
+                        "Consistency": {
+                            "$ref": "#/$defs/Check"
+                        }
+                    },
+                    "required": [
+                        "Consistency"
+                    ],
+                    "type": "object"
+                },
+                {
+                    "additionalProperties": false,
+                    "properties": {
+                        "Data domain aggregation": {
+                            "additionalProperties": false,
+                            "properties": {
+                                "Aggregation": {
+                                    "type": "string"
+                                },
+                                "Check": {
+                                    "type": "string"
+                                },
+                                "Group By": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "Check",
+                                "Aggregation",
+                                "Group By"
+                            ],
+                            "type": "object"
+                        }
+                    },
+                    "required": [
+                        "Data domain aggregation"
+                    ],
+                    "type": "object"
+                },
+                {
+                    "additionalProperties": false,
+                    "properties": {
+                        "Data pattern and format": {
+                            "$ref": "#/$defs/Check"
+                        }
+                    },
+                    "required": [
+                        "Data pattern and format"
+                    ],
+                    "type": "object"
+                },
+                {
+                    "additionalProperties": false,
+                    "properties": {
+                        "Dataset property": {
+                            "$ref": "#/$defs/Check"
+                        }
+                    },
+                    "required": [
+                        "Dataset property"
+                    ],
+                    "type": "object"
+                },
+                {
+                    "additionalProperties": false,
+                    "properties": {
+                        "Date/time arithmetic": {
+                            "$ref": "#/$defs/Check"
+                        }
+                    },
+                    "required": [
+                        "Date/time arithmetic"
+                    ],
+                    "type": "object"
+                },
+                {
+                    "additionalProperties": false,
+                    "properties": {
+                        "External dictionaries": {
+                            "$ref": "#/$defs/Check"
+                        }
+                    },
+                    "required": [
+                        "External dictionaries"
+                    ],
+                    "type": "object"
+                },
+                {
+                    "additionalProperties": false,
+                    "properties": {
+                        "Metadata": {
+                            "$ref": "#/$defs/Check"
+                        }
+                    },
+                    "required": [
+                        "Metadata"
+                    ],
+                    "type": "object"
+                },
+                {
+                    "additionalProperties": false,
+                    "properties": {
+                        "Range and limit": {
+                            "$ref": "#/$defs/Check"
+                        }
+                    },
+                    "required": [
+                        "Range and limit"
+                    ],
+                    "type": "object"
+                },
+                {
+                    "additionalProperties": false,
+                    "properties": {
+                        "Referential integrity": {
+                            "$ref": "#/$defs/Check"
+                        }
+                    },
+                    "required": [
+                        "Referential integrity"
+                    ],
+                    "type": "object"
+                },
+                {
+                    "additionalProperties": false,
+                    "properties": {
+                        "Value domain": {
+                            "$ref": "#/$defs/Check"
+                        }
+                    },
+                    "required": [
+                        "Value domain"
+                    ],
+                    "type": "object"
+                },
+                {
+                    "additionalProperties": false,
+                    "properties": {
+                        "Value presence": {
+                            "$ref": "#/$defs/Check"
+                        }
+                    },
+                    "required": [
+                        "Value presence"
+                    ],
+                    "type": "object"
+                },
+                {
+                    "additionalProperties": false,
+                    "properties": {
+                        "Variable presence": {
+                            "$ref": "#/$defs/Check"
+                        }
+                    },
+                    "required": [
+                        "Variable presence"
+                    ],
+                    "type": "object"
+                }
+            ]
+        },
+        "Scopes": {
+            "additionalProperties": false,
+            "properties": {
+                "Classes": {
+                    "oneOf": [
+                        {
+                            "additionalProperties": false,
+                            "properties": {
+                                "Include": {
+                                    "$ref": "#/$defs/Classes"
+                                }
+                            },
+                            "required": [
+                                "Include"
+                            ],
+                            "type": "object"
+                        },
+                        {
+                            "additionalProperties": false,
+                            "properties": {
+                                "Exclude": {
+                                    "$ref": "#/$defs/Classes"
+                                }
+                            },
+                            "required": [
+                                "Exclude"
+                            ],
+                            "type": "object"
+                        }
+                    ]
+                },
+                "Domains": {
+                    "oneOf": [
+                        {
+                            "additionalProperties": false,
+                            "properties": {
+                                "Include": {
+                                    "$ref": "#/$defs/Domains"
+                                }
+                            },
+                            "required": [
+                                "Include"
+                            ],
+                            "type": "object"
+                        },
+                        {
+                            "additionalProperties": false,
+                            "properties": {
+                                "Exclude": {
+                                    "$ref": "#/$defs/Domains"
+                                }
+                            },
+                            "required": [
+                                "Exclude"
+                            ],
+                            "type": "object"
+                        }
+                    ]
+                },
+                "Standards": {
+                    "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                            "Name": {
+                                "type": "string"
+                            },
+                            "Version": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "Name",
+                            "Version"
+                        ],
+                        "type": "object"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "Standards",
+                "Classes",
+                "Domains"
+            ],
+            "type": "object"
         },
         "Sensitivity": {
-            "type": "string",
             "enum": [
                 "Study",
                 "Class",
@@ -172,293 +561,27 @@
                 "Term",
                 "Record",
                 "Value"
-            ]
-        },
-        "Scopes": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": [
-                "Standards",
-                "Classes",
-                "Domains"
             ],
-            "properties": {
-                "Standards": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "additionalProperties": false,
-                        "required": [
-                            "Name",
-                            "Version"
-                        ],
-                        "properties": {
-                            "Name": {
-                                "type": "string"
-                            },
-                            "Version": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                },
-                "Classes": {
-                    "oneOf": [
-                        {
-                            "type": "object",
-                            "additionalProperties": false,
-                            "required": [
-                                "Include"
-                            ],
-                            "properties": {
-                                "Include": {
-                                    "$ref": "#/$defs/Classes"
-                                }
-                            }
-                        },
-                        {
-                            "type": "object",
-                            "additionalProperties": false,
-                            "required": [
-                                "Exclude"
-                            ],
-                            "properties": {
-                                "Exclude": {
-                                    "$ref": "#/$defs/Classes"
-                                }
-                            }
-                        }
-                    ]
-                },
-                "Domains": {
-                    "oneOf": [
-                        {
-                            "type": "object",
-                            "additionalProperties": false,
-                            "required": [
-                                "Include"
-                            ],
-                            "properties": {
-                                "Include": {
-                                    "$ref": "#/$defs/Domains"
-                                }
-                            }
-                        },
-                        {
-                            "type": "object",
-                            "additionalProperties": false,
-                            "required": [
-                                "Exclude"
-                            ],
-                            "properties": {
-                                "Exclude": {
-                                    "$ref": "#/$defs/Domains"
-                                }
-                            }
-                        }
-                    ]
-                }
-            }
+            "type": "string"
         },
-        "Rule Type": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "additionalProperties": false,
-                    "required": [
-                        "Value Presence"
-                    ],
-                    "properties": {
-                        "Value Presence": {
-                            "$ref": "#/$defs/Check"
-                        }
-                    }
-                },
-                {
-                    "type": "object",
-                    "additionalProperties": false,
-                    "required": [
-                        "Variable Presence"
-                    ],
-                    "properties": {
-                        "Variable Presence": {
-                            "$ref": "#/$defs/Check"
-                        }
-                    }
-                },
-                {
-                    "type": "object",
-                    "additionalProperties": false,
-                    "required": [
-                        "Data pattern and format"
-                    ],
-                    "properties": {
-                        "Data pattern and format": {
-                            "$ref": "#/$defs/Check"
-                        }
-                    }
-                },
-                {
-                    "type": "object",
-                    "additionalProperties": false,
-                    "required": [
-                        "Value domain"
-                    ],
-                    "properties": {
-                        "Value domain": {
-                            "$ref": "#/$defs/Check"
-                        }
-                    }
-                },
-                {
-                    "type": "object",
-                    "additionalProperties": false,
-                    "required": [
-                        "External dictionaries"
-                    ],
-                    "properties": {
-                        "External dictionaries": {
-                            "$ref": "#/$defs/Check"
-                        }
-                    }
-                },
-                {
-                    "type": "object",
-                    "additionalProperties": false,
-                    "required": [
-                        "Referential integrity"
-                    ],
-                    "properties": {
-                        "Referential integrity": {
-                            "$ref": "#/$defs/Check"
-                        }
-                    }
-                },
-                {
-                    "type": "object",
-                    "additionalProperties": false,
-                    "required": [
-                        "Metadata"
-                    ],
-                    "properties": {
-                        "Metadata": {
-                            "$ref": "#/$defs/Check"
-                        }
-                    }
-                },
-                {
-                    "type": "object",
-                    "additionalProperties": false,
-                    "required": [
-                        "Consistency"
-                    ],
-                    "properties": {
-                        "Consistency": {
-                            "$ref": "#/$defs/Check"
-                        }
-                    }
-                },
-                {
-                    "type": "object",
-                    "additionalProperties": false,
-                    "required": [
-                        "Range and limit"
-                    ],
-                    "properties": {
-                        "Range and limit": {
-                            "$ref": "#/$defs/Check"
-                        }
-                    }
-                },
-                {
-                    "type": "object",
-                    "additionalProperties": false,
-                    "required": [
-                        "Date/time arithmetic"
-                    ],
-                    "properties": {
-                        "Date/time arithmetic": {
-                            "$ref": "#/$defs/Check"
-                        }
-                    }
-                },
-                {
-                    "type": "object",
-                    "additionalProperties": false,
-                    "required": [
-                        "Data domain aggregation"
-                    ],
-                    "properties": {
-                        "Data domain aggregation": {
-                            "type": "object",
-                            "additionalProperties": false,
-                            "required": [
-                                "Check",
-                                "Aggregation",
-                                "Group By"
-                            ],
-                            "properties": {
-                                "Check": {
-                                    "type": "string"
-                                },
-                                "Aggregation": {
-                                    "type": "string"
-                                },
-                                "Group By": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    }
-                },
-                {
-                    "type": "object",
-                    "additionalProperties": false,
-                    "required": [
-                        "Dataset property"
-                    ],
-                    "properties": {
-                        "Dataset property": {
-                            "$ref": "#/$defs/Check"
-                        }
-                    }
-                }
-            ]
-        },
-        "Outcome": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": [
-                "Message"
+        "Version": {
+            "enum": [
+                "1"
             ],
-            "properties": {
-                "Message": {
-                    "type": "string"
-                }
-            }
-        },
-        "Citations": {
-            "type": "array",
-            "items": {
-                "type": "object",
-                "additionalProperties": false,
-                "required": [
-                    "Document",
-                    "Section",
-                    "Cited Guidance"
-                ],
-                "properties": {
-                    "Document": {
-                        "type": "string"
-                    },
-                    "Section": {
-                        "type": "string"
-                    },
-                    "Cited Guidance": {
-                        "type": "string"
-                    }
-                }
-            }
+            "type": "string"
         }
-    }
+    },
+    "required": [
+        "Authority",
+        "Citations",
+        "CoreId",
+        "Description",
+        "Outcome",
+        "Reference",
+        "Rule Type",
+        "Scopes",
+        "Sensitivity",
+        "Version"
+    ],
+    "type": "object"
 }

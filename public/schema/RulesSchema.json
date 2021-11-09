@@ -317,24 +317,7 @@
                     "additionalProperties": false,
                     "properties": {
                         "Data domain aggregation": {
-                            "additionalProperties": false,
-                            "properties": {
-                                "Aggregation": {
-                                    "type": "string"
-                                },
-                                "Check": {
-                                    "type": "string"
-                                },
-                                "Group By": {
-                                    "type": "string"
-                                }
-                            },
-                            "required": [
-                                "Check",
-                                "Aggregation",
-                                "Group By"
-                            ],
-                            "type": "object"
+                            "$ref": "#/$defs/Check"
                         }
                     },
                     "required": [

@@ -42,35 +42,58 @@ export interface IAppContext {
 
 export const defaultAppContext: IAppContext = {
   appError: null,
-  setError: () => { /* Placeholder */ },
+  setError: () => {
+    /* Placeholder */
+  },
   dataService: null,
   selectedRule: null,
-  setSelectedRule: () => { /* Placeholder */ },
+  setSelectedRule: () => {
+    /* Placeholder */
+  },
   isRuleSelected: () => false,
   unmodifiedRule: null,
-  setUnmodifiedRule: () => { /* Placeholder */ },
+  setUnmodifiedRule: () => {
+    /* Placeholder */
+  },
   autoModifiedRule: null,
-  setAutoModifiedRule: () => { /* Placeholder */ },
+  setAutoModifiedRule: () => {
+    /* Placeholder */
+  },
   userModifiedRule: null,
-  setUserModifiedRule: () => { /* Placeholder */ },
+  setUserModifiedRule: () => {
+    /* Placeholder */
+  },
   /* False, because it will be set to true by the initial filter and sort values */
   dirtyExplorerList: false,
-  setDirtyExplorerList: () => { /* Placeholder */ },
+  setDirtyExplorerList: () => {
+    /* Placeholder */
+  },
   isRuleDirty: () => false,
   isNewRuleSelected: true,
-  setIsNewRuleSelected: () => { /* Placeholder */ },
+  setIsNewRuleSelected: () => {
+    /* Placeholder */
+  },
   alertState: null,
-  setAlertState: () => { /* Placeholder */ },
+  setAlertState: () => {
+    /* Placeholder */
+  },
   username: null,
-  setUsername: () => { /* Placeholder */ },
-  order: 'desc',
-  setOrder: () => { /* Placeholder */ },
-  orderBy: 'changed',
-  setOrderBy: () => { /* Placeholder */ },
+  setUsername: () => {
+    /* Placeholder */
+  },
+  order: "desc",
+  setOrder: () => {
+    /* Placeholder */
+  },
+  orderBy: "changed",
+  setOrderBy: () => {
+    /* Placeholder */
+  },
   searchText: {},
-  setSearchText: () => { /* Placeholder */ },
+  setSearchText: () => {
+    /* Placeholder */
+  },
 };
-
 
 const AppContext = React.createContext<IAppContext>(defaultAppContext);
 

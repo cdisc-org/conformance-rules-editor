@@ -10,6 +10,25 @@ export interface IAppError {
 
 export type Order = "asc" | "desc";
 
+export enum Status {
+  Pending,
+  Pass,
+  Fail,
+}
+
+export interface IResults {
+  status: Status;
+  details: any[];
+}
+
+export enum Steps {
+  Syntax,
+  Schema,
+  JSON,
+  Load,
+  Test,
+}
+
 export interface IAppContext {
   appError: IAppError;
   setError: (title: string, message: string) => void;
@@ -19,10 +38,8 @@ export interface IAppContext {
   isRuleSelected: () => boolean;
   unmodifiedRule: string;
   setUnmodifiedRule: (unmodifiedRule: string) => void;
-  autoModifiedRule: string;
-  setAutoModifiedRule: (autoModifiedRule: string) => void;
-  userModifiedRule: string;
-  setUserModifiedRule: (userModifiedRule: string) => void;
+  modifiedRule: string;
+  setModifiedRule: (modifiedRule: string) => void;
   dirtyExplorerList: boolean;
   setDirtyExplorerList: (dirtyExplorerList: boolean) => void;
   isRuleDirty: () => boolean;
@@ -38,6 +55,10 @@ export interface IAppContext {
   setOrderBy: (orderBy: string) => void;
   searchText: { [key: string]: string };
   setSearchText: (searchText: { [key: string]: string }) => void;
+  loadCheck: IResults;
+  setLoadCheck: (loadCheck: IResults) => void;
+  testStepExpanded: Steps | false;
+  setTestStepExpanded: (testStepExpanded: Steps | false) => void;
 }
 
 export const defaultAppContext: IAppContext = {
@@ -55,12 +76,8 @@ export const defaultAppContext: IAppContext = {
   setUnmodifiedRule: () => {
     /* Placeholder */
   },
-  autoModifiedRule: null,
-  setAutoModifiedRule: () => {
-    /* Placeholder */
-  },
-  userModifiedRule: null,
-  setUserModifiedRule: () => {
+  modifiedRule: null,
+  setModifiedRule: () => {
     /* Placeholder */
   },
   /* False, because it will be set to true by the initial filter and sort values */
@@ -91,6 +108,17 @@ export const defaultAppContext: IAppContext = {
   },
   searchText: {},
   setSearchText: () => {
+    /* Placeholder */
+  },
+  loadCheck: {
+    status: Status.Pending,
+    details: [],
+  },
+  setLoadCheck: () => {
+    /* Placeholder */
+  },
+  testStepExpanded: false,
+  setTestStepExpanded: () => {
     /* Placeholder */
   },
 };

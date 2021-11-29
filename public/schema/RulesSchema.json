@@ -180,9 +180,9 @@
             "type": "object"
         }
     },
+    "$id": "https://cdisc.org/rules/1-0",
     "additionalProperties": false,
     "description": "Validation schema CDISC Rules 1.0",
-    "id": "https://cdisc.org/rules/1-0",
     "properties": {
         "Authority": {
             "additionalProperties": false,

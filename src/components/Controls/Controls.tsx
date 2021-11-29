@@ -20,23 +20,24 @@ export default function Controls() {
     isRuleSelected,
     unmodifiedRule,
     setUnmodifiedRule,
-    setAutoModifiedRule,
-    userModifiedRule,
+    modifiedRule,
+    setModifiedRule,
     setDirtyExplorerList,
     isRuleDirty,
     setAlertState,
   } = useContext(AppContext);
 
   const newRule = () => {
-    setUnmodifiedRule("");
     setSelectedRule(null);
+    setUnmodifiedRule("");
+    setModifiedRule("");
   };
 
   const saveRule = async () => {
     if (isRuleSelected()) {
       //Patchrule
       await dataService
-        .patch_rule(selectedRule, userModifiedRule)
+        .patch_rule(selectedRule, modifiedRule)
         .then(function (response) {
           return response.json();
         })
@@ -46,7 +47,7 @@ export default function Controls() {
     } else {
       //Postrule
       const newSelectedRule = await dataService
-        .post_rule(userModifiedRule)
+        .post_rule(modifiedRule)
         .then(function (response) {
           return response.json();
         })
@@ -55,13 +56,13 @@ export default function Controls() {
         });
       setSelectedRule(newSelectedRule);
     }
-    setUnmodifiedRule(userModifiedRule);
+    setUnmodifiedRule(modifiedRule);
     setDirtyExplorerList(true);
     setAlertState({ message: "Saved successfully", severity: "success" });
   };
 
   const discardChanges = () => {
-    setAutoModifiedRule(unmodifiedRule);
+    setModifiedRule(unmodifiedRule);
   };
 
   const deleteRule = async () => {
@@ -74,8 +75,7 @@ export default function Controls() {
         return JSON.parse(responseJson.body);
       });
     if (statusCode === 204) {
-      setUnmodifiedRule("");
-      setSelectedRule(null);
+      newRule();
       setDirtyExplorerList(true);
       setAlertState({
         message: "Deleted rule successfully",

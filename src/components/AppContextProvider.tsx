@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { DataService } from "../services/DataService";
-import AppContext, { IAppError, Order } from "./AppContext";
+import AppContext, {
+  IAppError,
+  Order,
+  Status,
+  IResults,
+  Steps,
+} from "./AppContext";
 import { AlertState } from "./GeneralAlert/GeneralAlert";
+import { setDiagnosticsOptions } from "monaco-yaml/lib/esm/monaco.contribution";
 
 const AppContextProvider: React.FC = ({
   children,
@@ -12,8 +19,7 @@ const AppContextProvider: React.FC = ({
   const [appError, setAppError] = useState<IAppError>();
   const [selectedRule, setSelectedRule] = useState<string>(null);
   const [unmodifiedRule, setUnmodifiedRule] = useState<string>("");
-  const [autoModifiedRule, setAutoModifiedRule] = useState<string>("");
-  const [userModifiedRule, setUserModifiedRule] = useState<string>("");
+  const [modifiedRule, setModifiedRule] = useState<string>("");
   /* False, because it will be set to true by the initial filter and sort values */
   const [dirtyExplorerList, setDirtyExplorerList] = useState<boolean>(false);
   const [isNewRuleSelected, setIsNewRuleSelected] = useState<boolean>(false);
@@ -22,6 +28,13 @@ const AppContextProvider: React.FC = ({
   const [order, setOrder] = useState<Order>("desc");
   const [orderBy, setOrderBy] = useState<string>("changed");
   const [searchText, setSearchText] = useState<{ [key: string]: string }>({});
+  const [loadCheck, setLoadCheck] = useState<IResults>({
+    status: Status.Pending,
+    details: [],
+  });
+  const [testStepExpanded, setTestStepExpanded] = useState<Steps | false>(
+    false
+  );
 
   const clearError = () => (appError ? setAppError(null) : undefined);
 
@@ -39,7 +52,7 @@ const AppContextProvider: React.FC = ({
   };
 
   const isRuleSelected = () => selectedRule !== null;
-  const isRuleDirty = () => unmodifiedRule !== userModifiedRule;
+  const isRuleDirty = () => unmodifiedRule !== modifiedRule;
 
   const appContext = {
     appError,
@@ -51,10 +64,8 @@ const AppContextProvider: React.FC = ({
     isRuleSelected,
     unmodifiedRule,
     setUnmodifiedRule,
-    autoModifiedRule,
-    setAutoModifiedRule,
-    userModifiedRule,
-    setUserModifiedRule,
+    modifiedRule,
+    setModifiedRule,
     dirtyExplorerList,
     setDirtyExplorerList,
     isRuleDirty,
@@ -70,6 +81,10 @@ const AppContextProvider: React.FC = ({
     setOrderBy,
     searchText,
     setSearchText,
+    loadCheck,
+    setLoadCheck,
+    testStepExpanded,
+    setTestStepExpanded,
   };
 
   useEffect(() => {
@@ -79,6 +94,33 @@ const AppContextProvider: React.FC = ({
       });
     }
   }, [dataService, setUsername]);
+
+  useEffect(() => {
+    setLoadCheck({
+      status: Status.Pending,
+      details: [],
+    });
+  }, [selectedRule]);
+
+  /* Load yaml schema for editor validation */
+  useEffect(() => {
+    dataService.get_rules_schema().then(function (rulesSchema) {
+      setDiagnosticsOptions({
+        validate: true,
+        enableSchemaRequest: true,
+        format: true,
+        hover: true,
+        completion: true,
+        schemas: [
+          {
+            uri: "https://cdisc.org/rules/1-0",
+            fileMatch: ["*"],
+            schema: rulesSchema,
+          },
+        ],
+      });
+    });
+  }, [dataService]);
 
   return (
     <AppContext.Provider value={appContext}>{children}</AppContext.Provider>

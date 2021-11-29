@@ -28,6 +28,12 @@ export default function ExplorerList() {
     order,
     orderBy,
     searchText,
+    selectedRule,
+    isRuleSelected,
+    setModifiedRule,
+    setUnmodifiedRule,
+    isNewRuleSelected,
+    setIsNewRuleSelected,
   } = useContext(AppContext);
   const [rulesList, setRulesList] = useState<typeof ExplorerItem[]>([]);
   const [wantsMoreRules, setWantsMoreRules] = useState<boolean>(false);
@@ -131,6 +137,33 @@ export default function ExplorerList() {
     paginationLinks,
   ]);
 
+  /* Load the editor with a new value */
+  useEffect(() => {
+    if (isRuleSelected() && isNewRuleSelected) {
+      /* Unset before the async call so that api is only called once */
+      setIsNewRuleSelected(false);
+      dataService
+        .get_rule(selectedRule)
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (responseJson) {
+          const content = JSON.parse(responseJson.body).data.attributes.body
+            .value;
+          setUnmodifiedRule(content);
+          setModifiedRule(content);
+        });
+    }
+  }, [
+    selectedRule,
+    dataService,
+    isRuleSelected,
+    setModifiedRule,
+    setUnmodifiedRule,
+    isNewRuleSelected,
+    setIsNewRuleSelected,
+  ]);
+
   useEffect(() => {
     setDirtyExplorerList(true);
   }, [setDirtyExplorerList, searchText, order, orderBy]);
@@ -168,6 +201,7 @@ export default function ExplorerList() {
         releaseToRefreshContent={
           <h3 style={{ textAlign: "center" }}>&#8593; Release to refresh</h3>
         }
+        children=""
       ></InfiniteScroll>
     </>
   );

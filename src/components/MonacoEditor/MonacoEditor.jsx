@@ -33,7 +33,7 @@ export default function MonacoEditor(props) {
     /* Uncomment to convert from jsx to tsx */
     //const [currentEditor, setcurrentEditor] = useState < editor.IStandaloneCodeEditor > ();
     const [currentEditor, setcurrentEditor] = useState();
-    const { dataService, selectedRule, isRuleSelected, unmodifiedRule, setUnmodifiedRule, autoModifiedRule, setAutoModifiedRule, setUserModifiedRule, isNewRuleSelected, setIsNewRuleSelected } = useContext(AppContext);
+    const { dataService, selectedRule, isRuleSelected, unmodifiedRule, setUnmodifiedRule, autoModifiedRule, setAutoModifiedRule, setUserModifiedRule, isNewRuleSelected, setIsNewRuleSelected, setCreator } = useContext(AppContext);
 
     /* Load yaml schema for editor validation */
     useEffect(() => {
@@ -92,12 +92,14 @@ export default function MonacoEditor(props) {
                     return response.json();
                 })
                 .then(function (responseJson) {
-                    const content = JSON.parse(responseJson.body).data.attributes.body.value;
+                    const attributes = JSON.parse(responseJson.body).data.attributes;
+                    setCreator(attributes.field_conformance_rule_creator);
+                    const content = attributes.body.value;
                     setUnmodifiedRule(content);
                     setUserModifiedRule(content);
                 });
         }
-    }, [currentEditor, selectedRule, dataService, isRuleSelected, setUserModifiedRule, setUnmodifiedRule, isNewRuleSelected, setIsNewRuleSelected]);
+    }, [currentEditor, selectedRule, dataService, isRuleSelected, setUserModifiedRule, setUnmodifiedRule, isNewRuleSelected, setIsNewRuleSelected, setCreator]);
 
     /* Set value of editor based on changes to Unmodified Rule */
     useEffect(() => {

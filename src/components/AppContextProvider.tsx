@@ -18,6 +18,7 @@ const AppContextProvider: React.FC = ({ children }: { children: React.ReactNode 
   const [order, setOrder] = useState<Order>('desc');
   const [orderBy, setOrderBy] = useState<string>('changed');
   const [searchText, setSearchText] = useState<{ [key: string]: string; }>({});
+  const [creator, setCreator] = useState<string>(null);
 
   const clearError = () => appError ? setAppError(null) : undefined;
 
@@ -31,9 +32,10 @@ const AppContextProvider: React.FC = ({ children }: { children: React.ReactNode 
 
   const isRuleSelected = () => selectedRule !== null;
   const isRuleDirty = () => unmodifiedRule !== userModifiedRule;
+  const isMyRule = () => username === creator;
 
   const appContext = {
-    appError, clearError, setError, dataService, selectedRule, setSelectedRule, isRuleSelected, unmodifiedRule, setUnmodifiedRule, autoModifiedRule, setAutoModifiedRule, userModifiedRule, setUserModifiedRule, dirtyExplorerList, setDirtyExplorerList, isRuleDirty, isNewRuleSelected, setIsNewRuleSelected, alertState, setAlertState, username, setUsername, order, setOrder, orderBy, setOrderBy, searchText, setSearchText
+    appError, clearError, setError, dataService, selectedRule, setSelectedRule, isRuleSelected, unmodifiedRule, setUnmodifiedRule, autoModifiedRule, setAutoModifiedRule, userModifiedRule, setUserModifiedRule, dirtyExplorerList, setDirtyExplorerList, isRuleDirty, isNewRuleSelected, setIsNewRuleSelected, alertState, setAlertState, username, setUsername, order, setOrder, orderBy, setOrderBy, searchText, setSearchText, creator, setCreator, isMyRule
   };
 
   useEffect(() => {

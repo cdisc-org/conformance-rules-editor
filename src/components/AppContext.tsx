@@ -38,6 +38,9 @@ export interface IAppContext {
   setOrderBy: (orderBy: string) => void;
   searchText: { [key: string]: string };
   setSearchText: (searchText: { [key: string]: string }) => void;
+  creator: string;
+  setCreator: (creator: string) => void;
+  isMyRule: () => boolean;
 }
 
 export const defaultAppContext: IAppContext = {
@@ -69,6 +72,9 @@ export const defaultAppContext: IAppContext = {
   setOrderBy: () => { /* Placeholder */ },
   searchText: {},
   setSearchText: () => { /* Placeholder */ },
+  creator: null,
+  setCreator: () => { /* Placeholder */ },
+  isMyRule: () => false,
 };
 
 

@@ -110,10 +110,17 @@ export default function TestPanel() {
     dataService
       .generate_rule_json(modifiedRule)
       .then((response) => {
-        setJsonCheck({
-          status: Status.Pass,
-          details: [response],
-        });
+        if ("error" in response) {
+          setJsonCheck({
+            status: Status.Fail,
+            details: [`${response.error}: ${response.message}`],
+          });
+        } else {
+          setJsonCheck({
+            status: Status.Pass,
+            details: [response],
+          });
+        }
       })
       .catch((exception) => {
         setJsonCheck({
@@ -128,15 +135,27 @@ export default function TestPanel() {
       dataService
         .test_rule(jsonCheck.details[0], loadCheck.details[1])
         .then((response) => {
+          const hasUnexpectedErrors = Object.values(response).reduce(
+            (aggregateDomainResult: boolean, currentDomainResult: {}[]) =>
+              aggregateDomainResult ||
+              (currentDomainResult &&
+                currentDomainResult.reduce(
+                  (aggregateRecordResult: Boolean, currentRecordResult: {}) =>
+                    aggregateRecordResult ||
+                    !("rule_id" in currentRecordResult),
+                  false
+                )),
+            false
+          );
           setTestCheck({
-            status: Status.Pass,
+            status: hasUnexpectedErrors ? Status.Fail : Status.Pass,
             details: [
               "Request",
               {
                 rule: jsonCheck.details[0],
                 datasets: loadCheck.details[1],
               },
-              "Response",
+              "Results",
               response,
             ],
           });
@@ -150,7 +169,7 @@ export default function TestPanel() {
                 rule: jsonCheck.details[0],
                 datasets: loadCheck.details[1],
               },
-              `Response - Fail: ${exception}`,
+              `Results - Fail: ${exception}`,
             ],
           });
         });
@@ -188,7 +207,7 @@ export default function TestPanel() {
           onChange={handleFileSelected}
         />
       </TestStep>
-      <TestStep title="Test Rule" step={Steps.Test} results={testCheck} />
+      <TestStep title="Test Results" step={Steps.Test} results={testCheck} />
     </>
   );
 }

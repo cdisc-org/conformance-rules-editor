@@ -133,7 +133,7 @@ export default function TestPanel() {
   useEffect(() => {
     if (jsonCheck.status === Status.Pass && loadCheck.status === Status.Pass) {
       dataService
-        .test_rule(jsonCheck.details[0], loadCheck.details[1])
+        .execute_rule(jsonCheck.details[0], loadCheck.details[1])
         .then((response) => {
           const hasUnexpectedErrors = Object.values(response).reduce(
             (aggregateDomainResult: boolean, currentDomainResult: {}[]) =>

@@ -129,18 +129,15 @@ export class DataService {
   };
 
   public generate_rule_json = async (rule: string) => {
-    return await fetch(
-      "https://cdisc-library-conformance-rules-generator-dev.azurewebsites.net/api/RulesGeneratorHttp?code=R90KWQElkx9QNcGEe36ljBNXptC9kodb769EIaDMCHXhDNCaaVENwQ==",
-      {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-        },
-        body: JSON.stringify({
-          definition: rule,
-        }),
-      }
-    ).then(function (response) {
+    return await fetch(`/api/rules/generate`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        definition: rule,
+      }),
+    }).then(function (response) {
       if (response.status === 200) {
         return response.json();
       } else {
@@ -149,20 +146,17 @@ export class DataService {
     });
   };
 
-  public test_rule = async (rule: object, datasets: IDataset[]) => {
-    return await fetch(
-      "https://core-engine-func-dev.azurewebsites.net/api/rule_test_function?code=ALd1IfA3llqASuqeKaca1St3hwmk0bdLqnuLxERcXG6ImEUQY4qHEw==",
-      {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-        },
-        body: JSON.stringify({
-          rule: rule,
-          datasets: datasets,
-        }),
-      }
-    ).then(function (response) {
+  public execute_rule = async (rule: object, datasets: IDataset[]) => {
+    return await fetch(`/api/rules/execute`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        rule: rule,
+        datasets: datasets,
+      }),
+    }).then(function (response) {
       if (response.status === 200) {
         return response.json();
       } else {

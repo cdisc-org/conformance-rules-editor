@@ -46,6 +46,7 @@ export default function TestPanel() {
   };
 
   useEffect(() => {
+    let isSubscribed = true;
     setSyntaxCheck({
       status: Status.Pending,
       details: [],
@@ -74,18 +75,20 @@ export default function TestPanel() {
         /* Schema Check */
         const ajv = new Ajv({ allErrors: true });
         dataService.get_rules_schema().then((rulesSchema) => {
-          const validate = ajv.compile(rulesSchema);
-          const valid = validate(yamlDoc);
-          if (valid) {
-            setSchemaCheck({
-              status: Status.Pass,
-              details: ["Pass"],
-            });
-          } else {
-            setSchemaCheck({
-              status: Status.Fail,
-              details: [validate.errors],
-            });
+          if (isSubscribed) {
+            const validate = ajv.compile(rulesSchema);
+            const valid = validate(yamlDoc);
+            setSchemaCheck(
+              valid
+                ? {
+                    status: Status.Pass,
+                    details: ["Pass"],
+                  }
+                : {
+                    status: Status.Fail,
+                    details: [validate.errors],
+                  }
+            );
           }
         });
       } else {
@@ -99,79 +102,93 @@ export default function TestPanel() {
         });
       }
     } catch (e) {
-      setSyntaxCheck({ status: Status.Fail, details: [e.message] });
-      setSchemaCheck({
-        status: Status.Fail,
-        details: ["Fail Syntax Check"],
-      });
+      if (isSubscribed) {
+        setSyntaxCheck({ status: Status.Fail, details: [e.message] });
+        setSchemaCheck({
+          status: Status.Fail,
+          details: ["Fail Syntax Check"],
+        });
+      }
     }
 
     /* Convert YAML to JSON Executable */
     dataService
       .generate_rule_json(modifiedRule)
       .then((response) => {
-        if ("error" in response) {
-          setJsonCheck({
-            status: Status.Fail,
-            details: [`${response.error}: ${response.message}`],
-          });
-        } else {
-          setJsonCheck({
-            status: Status.Pass,
-            details: [response],
-          });
+        if (isSubscribed) {
+          setJsonCheck(
+            "error" in response
+              ? {
+                  status: Status.Fail,
+                  details: [`${response.error}: ${response.message}`],
+                }
+              : {
+                  status: Status.Pass,
+                  details: [response],
+                }
+          );
         }
       })
       .catch((exception) => {
-        setJsonCheck({
-          status: Status.Fail,
-          details: [`Fail: ${exception}`],
-        });
+        if (isSubscribed) {
+          setJsonCheck({
+            status: Status.Fail,
+            details: [`Fail: ${exception}`],
+          });
+        }
       });
+    return () => {
+      isSubscribed = false;
+    };
   }, [modifiedRule, dataService]);
 
   useEffect(() => {
+    let isSubscribed = true;
     if (jsonCheck.status === Status.Pass && loadCheck.status === Status.Pass) {
       dataService
         .execute_rule(jsonCheck.details[0], loadCheck.details[1])
         .then((response) => {
-          const hasUnexpectedErrors = Object.values(response).reduce(
-            (aggregateDomainResult: boolean, currentDomainResult: {}[]) =>
-              aggregateDomainResult ||
-              (currentDomainResult &&
-                currentDomainResult.reduce(
-                  (aggregateRecordResult: Boolean, currentRecordResult: {}) =>
-                    aggregateRecordResult ||
-                    !("rule_id" in currentRecordResult),
-                  false
-                )),
-            false
-          );
-          setTestCheck({
-            status: hasUnexpectedErrors ? Status.Fail : Status.Pass,
-            details: [
-              "Request",
-              {
-                rule: jsonCheck.details[0],
-                datasets: loadCheck.details[1],
-              },
-              "Results",
-              response,
-            ],
-          });
+          if (isSubscribed) {
+            const hasUnexpectedErrors = Object.values(response).reduce(
+              (aggregateDomainResult: boolean, currentDomainResult: {}[]) =>
+                aggregateDomainResult ||
+                (currentDomainResult &&
+                  currentDomainResult.reduce(
+                    (aggregateRecordResult: Boolean, currentRecordResult: {}) =>
+                      aggregateRecordResult ||
+                      !("rule_id" in currentRecordResult),
+                    false
+                  )),
+              false
+            );
+            setTestCheck({
+              status: hasUnexpectedErrors ? Status.Fail : Status.Pass,
+              details: [
+                "Request",
+                {
+                  rule: jsonCheck.details[0],
+                  datasets: loadCheck.details[1],
+                },
+                "Results",
+                response,
+              ],
+            });
+          }
         })
         .catch((exception) => {
-          setTestCheck({
-            status: Status.Fail,
-            details: [
-              "Request",
-              {
-                rule: jsonCheck.details[0],
-                datasets: loadCheck.details[1],
-              },
-              `Results - Fail: ${exception}`,
-            ],
-          });
+          if (isSubscribed) {
+            setTestCheck({
+              status: Status.Fail,
+              details: [
+                "Request",
+                {
+                  rule: jsonCheck.details[0],
+                  datasets: loadCheck.details[1],
+                },
+                `Results - Fail: ${exception}`,
+              ],
+            });
+          }
         });
     } else {
       setTestCheck({
@@ -181,6 +198,9 @@ export default function TestPanel() {
         ],
       });
     }
+    return () => {
+      isSubscribed = false;
+    };
   }, [jsonCheck, loadCheck, dataService]);
 
   return (

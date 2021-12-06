@@ -58,7 +58,7 @@ export default function TestStep(props: Props) {
               <p>Filetype: {detail.type}</p>
               <p>Size in bytes: {detail.size}</p>
               <p>
-                lastModifiedDate:{" "}
+                Last modified date:{" "}
                 {new Date(detail.lastModified).toLocaleString("en-US")}
               </p>
             </div>

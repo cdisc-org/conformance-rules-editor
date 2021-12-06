@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { DataService } from "../services/DataService";
 import AppContext, {
   IAppError,
@@ -22,7 +22,6 @@ const AppContextProvider: React.FC = ({
   const [modifiedRule, setModifiedRule] = useState<string>("");
   /* False, because it will be set to true by the initial filter and sort values */
   const [dirtyExplorerList, setDirtyExplorerList] = useState<boolean>(false);
-  const [isNewRuleSelected, setIsNewRuleSelected] = useState<boolean>(false);
   const [alertState, setAlertState] = useState<AlertState>(null);
   const [username, setUsername] = useState<string>(null);
   const [order, setOrder] = useState<Order>("desc");
@@ -51,8 +50,13 @@ const AppContextProvider: React.FC = ({
     }
   };
 
-  const isRuleSelected = () => selectedRule !== null;
-  const isRuleDirty = () => unmodifiedRule !== modifiedRule;
+  const isRuleSelected = useCallback(() => selectedRule !== null, [
+    selectedRule,
+  ]);
+  const isRuleDirty = useCallback(() => unmodifiedRule !== modifiedRule, [
+    unmodifiedRule,
+    modifiedRule,
+  ]);
 
   const appContext = {
     appError,
@@ -69,8 +73,6 @@ const AppContextProvider: React.FC = ({
     dirtyExplorerList,
     setDirtyExplorerList,
     isRuleDirty,
-    isNewRuleSelected,
-    setIsNewRuleSelected,
     alertState,
     setAlertState,
     username,

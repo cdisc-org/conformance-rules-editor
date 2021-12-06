@@ -43,8 +43,6 @@ export interface IAppContext {
   dirtyExplorerList: boolean;
   setDirtyExplorerList: (dirtyExplorerList: boolean) => void;
   isRuleDirty: () => boolean;
-  isNewRuleSelected: boolean;
-  setIsNewRuleSelected: (isNewRuleSelected: boolean) => void;
   alertState: AlertState;
   setAlertState: (alertState: AlertState) => void;
   username: string;
@@ -86,10 +84,6 @@ export const defaultAppContext: IAppContext = {
     /* Placeholder */
   },
   isRuleDirty: () => false,
-  isNewRuleSelected: true,
-  setIsNewRuleSelected: () => {
-    /* Placeholder */
-  },
   alertState: null,
   setAlertState: () => {
     /* Placeholder */

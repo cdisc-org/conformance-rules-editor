@@ -32,8 +32,6 @@ export default function ExplorerList() {
     isRuleSelected,
     setModifiedRule,
     setUnmodifiedRule,
-    isNewRuleSelected,
-    setIsNewRuleSelected,
   } = useContext(AppContext);
   const [rulesList, setRulesList] = useState<typeof ExplorerItem[]>([]);
   const [wantsMoreRules, setWantsMoreRules] = useState<boolean>(false);
@@ -139,9 +137,8 @@ export default function ExplorerList() {
 
   /* Load the editor with a new value */
   useEffect(() => {
-    if (isRuleSelected() && isNewRuleSelected) {
+    if (isRuleSelected()) {
       /* Unset before the async call so that api is only called once */
-      setIsNewRuleSelected(false);
       dataService
         .get_rule(selectedRule)
         .then(function (response) {
@@ -160,8 +157,6 @@ export default function ExplorerList() {
     isRuleSelected,
     setModifiedRule,
     setUnmodifiedRule,
-    isNewRuleSelected,
-    setIsNewRuleSelected,
   ]);
 
   useEffect(() => {

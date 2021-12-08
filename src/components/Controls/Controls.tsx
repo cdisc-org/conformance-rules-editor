@@ -26,6 +26,7 @@ export default function Controls() {
         setDirtyExplorerList,
         isRuleDirty,
         setAlertState,
+        isMyRule
       } = useContext(AppContext);
 
     const newRule = () => {
@@ -116,7 +117,7 @@ export default function Controls() {
 
                 <Tooltip title="Delete Rule">
                     <span>
-                        <IconButton disabled={!isRuleSelected()} onClick={() => setDeleteDialog(true)}>
+                        <IconButton disabled={!isRuleSelected() || !isMyRule()} onClick={() => setDeleteDialog(true)}>
                             <DeleteIcon />
                         </IconButton>
                     </span>

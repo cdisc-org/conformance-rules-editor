@@ -34,6 +34,7 @@ const AppContextProvider: React.FC = ({
   const [testStepExpanded, setTestStepExpanded] = useState<Steps | false>(
     false
   );
+  const [creator, setCreator] = useState<string>(null);
 
   const clearError = () => (appError ? setAppError(null) : undefined);
 
@@ -57,6 +58,8 @@ const AppContextProvider: React.FC = ({
     unmodifiedRule,
     modifiedRule,
   ]);
+
+  const isMyRule = useCallback(() => username === creator, [username, creator]);
 
   const appContext = {
     appError,
@@ -87,6 +90,9 @@ const AppContextProvider: React.FC = ({
     setLoadCheck,
     testStepExpanded,
     setTestStepExpanded,
+    creator,
+    setCreator,
+    isMyRule,
   };
 
   useEffect(() => {

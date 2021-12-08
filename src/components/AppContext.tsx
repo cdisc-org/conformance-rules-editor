@@ -57,6 +57,9 @@ export interface IAppContext {
   setLoadCheck: (loadCheck: IResults) => void;
   testStepExpanded: Steps | false;
   setTestStepExpanded: (testStepExpanded: Steps | false) => void;
+  creator: string;
+  setCreator: (creator: string) => void;
+  isMyRule: () => boolean;
 }
 
 export const defaultAppContext: IAppContext = {
@@ -115,6 +118,11 @@ export const defaultAppContext: IAppContext = {
   setTestStepExpanded: () => {
     /* Placeholder */
   },
+  creator: null,
+  setCreator: () => {
+    /* Placeholder */
+  },
+  isMyRule: () => false,
 };
 
 const AppContext = React.createContext<IAppContext>(defaultAppContext);

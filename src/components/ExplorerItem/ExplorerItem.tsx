@@ -25,7 +25,7 @@ export default function ExplorerItem(props: Props) {
     };
 
     return (
-        <TableRow hover={!isRuleDirty()} onClick={(event) => handleListItemClick(event)} selected={selectedRule === storageId}>
+        <TableRow hover={!isRuleDirty()} onClick={handleListItemClick} selected={selectedRule === storageId}>
             <TableCell>{coreId}</TableCell>
             <TableCell>{ruleType}</TableCell>
             <TableCell>{creator}</TableCell>

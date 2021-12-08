@@ -32,6 +32,7 @@ export default function ExplorerList() {
     isRuleSelected,
     setModifiedRule,
     setUnmodifiedRule,
+    setCreator,
   } = useContext(AppContext);
   const [rulesList, setRulesList] = useState<typeof ExplorerItem[]>([]);
   const [wantsMoreRules, setWantsMoreRules] = useState<boolean>(false);
@@ -145,8 +146,9 @@ export default function ExplorerList() {
           return response.json();
         })
         .then(function (responseJson) {
-          const content = JSON.parse(responseJson.body).data.attributes.body
-            .value;
+          const attributes = JSON.parse(responseJson.body).data.attributes;
+          setCreator(attributes.field_conformance_rule_creator);
+          const content = attributes.body.value;
           setUnmodifiedRule(content);
           setModifiedRule(content);
         });
@@ -157,6 +159,7 @@ export default function ExplorerList() {
     isRuleSelected,
     setModifiedRule,
     setUnmodifiedRule,
+    setCreator,
   ]);
 
   useEffect(() => {

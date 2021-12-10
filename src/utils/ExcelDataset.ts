@@ -12,9 +12,9 @@ export interface IDataset {
 
 export interface IVariable {
   name: string;
-  label: string;
-  type: string;
-  length: string;
+  label?: string;
+  type?: string;
+  length?: string;
 }
 
 const datasetsSheetName: string = "Datasets";
@@ -56,21 +56,23 @@ const getVariables = (cols: string[], rows: {}[]): IVariable[] => {
   return cols.map<IVariable>(
     (col: string): IVariable => ({
       name: col,
-      label: rows[0][col],
-      type: rows[1][col],
-      length: rows[2][col],
+      ...(rows.length > 0 ? { label: rows[0][col] } : {}),
+      ...(rows.length > 1 ? { type: rows[1][col] } : {}),
+      ...(rows.length > 2 ? { length: rows[2][col] } : {}),
     })
   );
 };
 
 const getRecords = (cols: string[], rows: {}[]): {} => {
   return Object.fromEntries(
-    cols.map((col) => [
-      col,
-      rows
-        .slice(3)
-        .map<string>((row: {}): string => (row[col] ? row[col] : "")),
-    ])
+    cols
+      .filter((col) => col)
+      .map((col) => [
+        col,
+        rows
+          .slice(3)
+          .map<string>((row: {}): string => (row[col] ? row[col] : "")),
+      ])
   );
 };
 
@@ -92,9 +94,10 @@ export const excelToJsonDatasets = async (file: File): Promise<IDataset[]> => {
       dataset.domain = rows[3]["DOMAIN"];
     }
 
-    const cols: string[] = XLSX.utils.sheet_to_json<string[]>(sheet, {
+    const sheetJson: string[][] = XLSX.utils.sheet_to_json<string[]>(sheet, {
       header: 1,
-    })[0];
+    });
+    const cols: string[] = sheetJson.length ? sheetJson[0] : [];
     dataset.variables = getVariables(cols, rows);
     dataset.records = getRecords(cols, rows);
   }

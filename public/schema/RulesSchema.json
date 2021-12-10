@@ -449,24 +449,24 @@
                 {
                     "additionalProperties": false,
                     "properties": {
-                        "Range Check": {
+                        "Range & Limit": {
                             "$ref": "#/$defs/Check"
                         }
                     },
                     "required": [
-                        "Range Check"
+                        "Range & Limit"
                     ],
                     "type": "object"
                 },
                 {
                     "additionalProperties": false,
                     "properties": {
-                        "Relationship Integrity": {
+                        "Relationship Integrity Check": {
                             "$ref": "#/$defs/Check"
                         }
                     },
                     "required": [
-                        "Relationship Integrity"
+                        "Relationship Integrity Check"
                     ],
                     "type": "object"
                 },

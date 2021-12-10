@@ -45,6 +45,19 @@ export default function TestPanel() {
     }
   };
 
+  const testResultsHaveUnexpectedErrors = (json: object) =>
+    Object.values(json).reduce(
+      (aggregateDomainResult: boolean, currentDomainResult: {}[]) =>
+        aggregateDomainResult ||
+        (currentDomainResult &&
+          currentDomainResult.reduce(
+            (aggregateRecordResult: Boolean, currentRecordResult: {}) =>
+              aggregateRecordResult || !("rule_id" in currentRecordResult),
+            false
+          )),
+      false
+    );
+
   useEffect(() => {
     let isSubscribed = true;
     setSyntaxCheck({
@@ -149,20 +162,10 @@ export default function TestPanel() {
         .execute_rule(jsonCheck.details[0], loadCheck.details[1])
         .then((response) => {
           if (isSubscribed) {
-            const hasUnexpectedErrors = Object.values(response).reduce(
-              (aggregateDomainResult: boolean, currentDomainResult: {}[]) =>
-                aggregateDomainResult ||
-                (currentDomainResult &&
-                  currentDomainResult.reduce(
-                    (aggregateRecordResult: Boolean, currentRecordResult: {}) =>
-                      aggregateRecordResult ||
-                      !("rule_id" in currentRecordResult),
-                    false
-                  )),
-              false
-            );
             setTestCheck({
-              status: hasUnexpectedErrors ? Status.Fail : Status.Pass,
+              status: testResultsHaveUnexpectedErrors(response)
+                ? Status.Fail
+                : Status.Pass,
               details: [
                 "Request",
                 {

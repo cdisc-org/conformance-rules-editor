@@ -45,17 +45,27 @@ export default function TestPanel() {
     }
   };
 
-  const testResultsHaveUnexpectedErrors = (json: object) =>
+  const testResultsHaveUnexpectedErrors = (json: object): boolean =>
     Object.values(json).reduce(
       (aggregateDomainResult: boolean, currentDomainResult: {}[]) =>
         aggregateDomainResult ||
         (currentDomainResult &&
           currentDomainResult.reduce(
-            (aggregateRecordResult: Boolean, currentRecordResult: {}) =>
+            (aggregateRecordResult: boolean, currentRecordResult: {}) =>
               aggregateRecordResult || !("rule_id" in currentRecordResult),
             false
           )),
       false
+    );
+
+  const testResultsErrorCount = (json: object): number =>
+    Object.values(json).reduce(
+      (aggregateDomainResult: number, currentDomainResult: {}[]) =>
+        aggregateDomainResult +
+        currentDomainResult.filter(
+          (currentRecordResult: {}) => "error" in currentRecordResult
+        ).length,
+      0
     );
 
   useEffect(() => {
@@ -166,6 +176,7 @@ export default function TestPanel() {
               status: testResultsHaveUnexpectedErrors(response)
                 ? Status.Fail
                 : Status.Pass,
+              badgeCount: testResultsErrorCount(response),
               details: [
                 "Request",
                 {

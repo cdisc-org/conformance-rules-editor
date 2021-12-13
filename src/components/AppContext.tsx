@@ -18,6 +18,7 @@ export enum Status {
 
 export interface IResults {
   status: Status;
+  badgeCount?: number;
   details: any[];
 }
 

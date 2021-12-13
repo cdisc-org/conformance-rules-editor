@@ -9,6 +9,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import AccessTimeFilledIcon from "@mui/icons-material/AccessTimeFilled";
 import AppContext, { Status, IResults, Steps } from "../AppContext";
 import JsonViewer from "../JsonViewer/JsonViewer";
+import { Badge } from "@mui/material";
 
 const iconWidth = 30;
 
@@ -43,9 +44,18 @@ export default function TestStep(props: Props) {
     >
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Typography sx={{ width: `${iconWidth}px`, flexShrink: 0 }}>
-          {statusIcons.get(results.status)}
+          {"badgeCount" in results ? (
+            <Badge badgeContent={results.badgeCount} color="error">
+              {statusIcons.get(results.status)}
+            </Badge>
+          ) : (
+            statusIcons.get(results.status)
+          )}
         </Typography>
-        <Typography>{title}</Typography>
+        <Typography>
+          &nbsp;&nbsp;&nbsp;
+          {title}
+        </Typography>
       </AccordionSummary>
       <AccordionDetails>
         {children}

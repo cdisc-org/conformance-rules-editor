@@ -11,7 +11,6 @@ import SyntaxTestStep from "../TestStep/SyntaxTestStep";
 import SchemaTestStep from "../TestStep/SchemaTestStep";
 import JsonTestStep from "../TestStep/JsonTestStep";
 import LoadTestStep from "../TestStep/LoadTestStep";
-import ResultsTestStep from "../TestStep/ResultsTestStep";
 
 function getWindowDimensions() {
   const { innerWidth: width, innerHeight: height } = window;
@@ -79,7 +78,8 @@ export default function Layout() {
                     <SchemaTestStep />
                     <JsonTestStep />
                     <LoadTestStep />
-                    <ResultsTestStep />
+                    {/* Temporarily removed until we can connect to the core rules engine in prod */
+                    /* <ResultsTestStep /> */}
                   </>
                 ),
                 scrollBars: true,

@@ -54,8 +54,16 @@ export interface IAppContext {
   setOrderBy: (orderBy: string) => void;
   searchText: { [key: string]: string };
   setSearchText: (searchText: { [key: string]: string }) => void;
+  syntaxCheck: IResults;
+  setSyntaxCheck: (syntaxCheck: IResults) => void;
+  schemaCheck: IResults;
+  setSchemaCheck: (schemaCheck: IResults) => void;
+  jsonCheck: IResults;
+  setJsonCheck: (jsonCheck: IResults) => void;
   loadCheck: IResults;
   setLoadCheck: (loadCheck: IResults) => void;
+  testCheck: IResults;
+  setTestCheck: (testCheck: IResults) => void;
   testStepExpanded: Steps | false;
   setTestStepExpanded: (testStepExpanded: Steps | false) => void;
   creator: string;
@@ -113,6 +121,34 @@ export const defaultAppContext: IAppContext = {
     details: [],
   },
   setLoadCheck: () => {
+    /* Placeholder */
+  },
+  syntaxCheck: {
+    status: Status.Pending,
+    details: [],
+  },
+  setSyntaxCheck: () => {
+    /* Placeholder */
+  },
+  schemaCheck: {
+    status: Status.Pending,
+    details: [],
+  },
+  setSchemaCheck: () => {
+    /* Placeholder */
+  },
+  jsonCheck: {
+    status: Status.Pending,
+    details: [],
+  },
+  setJsonCheck: () => {
+    /* Placeholder */
+  },
+  testCheck: {
+    status: Status.Pending,
+    details: [],
+  },
+  setTestCheck: () => {
     /* Placeholder */
   },
   testStepExpanded: false,

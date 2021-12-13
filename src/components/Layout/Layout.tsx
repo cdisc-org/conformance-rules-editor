@@ -6,8 +6,12 @@ import SplitPane from "react-split-pane";
 import "./Resizer.css";
 import GeneralAlert from "../GeneralAlert/GeneralAlert";
 import { useEffect, useState } from "react";
-import TestPanel from "../TestPanel/TestPanel";
 import TabGroup from "../TabGroup/TabGroup";
+import SyntaxTestStep from "../TestStep/SyntaxTestStep";
+import SchemaTestStep from "../TestStep/SchemaTestStep";
+import JsonTestStep from "../TestStep/JsonTestStep";
+import LoadTestStep from "../TestStep/LoadTestStep";
+import ResultsTestStep from "../TestStep/ResultsTestStep";
 
 function getWindowDimensions() {
   const { innerWidth: width, innerHeight: height } = window;
@@ -67,7 +71,19 @@ export default function Layout() {
             parentHeight={height}
             tabPanels={[
               { label: "Edit", children: <YamlEditor /> },
-              { label: "Test", children: <TestPanel />, scrollBars: true },
+              {
+                label: "Test",
+                children: (
+                  <>
+                    <SyntaxTestStep />
+                    <SchemaTestStep />
+                    <JsonTestStep />
+                    <LoadTestStep />
+                    <ResultsTestStep />
+                  </>
+                ),
+                scrollBars: true,
+              },
             ]}
           />
         </Stack>

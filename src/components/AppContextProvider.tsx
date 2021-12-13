@@ -27,9 +27,27 @@ const AppContextProvider: React.FC = ({
   const [order, setOrder] = useState<Order>("desc");
   const [orderBy, setOrderBy] = useState<string>("changed");
   const [searchText, setSearchText] = useState<{ [key: string]: string }>({});
+  const [syntaxCheck, setSyntaxCheck] = useState<IResults>({
+    status: Status.Pending,
+    details: [],
+  });
+  const [schemaCheck, setSchemaCheck] = useState<IResults>({
+    status: Status.Pending,
+    details: [],
+  });
+  const [jsonCheck, setJsonCheck] = useState<IResults>({
+    status: Status.Pending,
+    details: [],
+  });
   const [loadCheck, setLoadCheck] = useState<IResults>({
     status: Status.Pending,
     details: [],
+  });
+  const [testCheck, setTestCheck] = useState<IResults>({
+    status: Status.Pending,
+    details: [
+      "Waiting for a valid JSON executable rule and/or loaded test data.",
+    ],
   });
   const [testStepExpanded, setTestStepExpanded] = useState<Steps | false>(
     false
@@ -86,8 +104,16 @@ const AppContextProvider: React.FC = ({
     setOrderBy,
     searchText,
     setSearchText,
+    syntaxCheck,
+    setSyntaxCheck,
+    schemaCheck,
+    setSchemaCheck,
+    jsonCheck,
+    setJsonCheck,
     loadCheck,
     setLoadCheck,
+    testCheck,
+    setTestCheck,
     testStepExpanded,
     setTestStepExpanded,
     creator,

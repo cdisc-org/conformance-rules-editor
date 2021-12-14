@@ -10,6 +10,26 @@ export interface IAppError {
 
 export type Order = "asc" | "desc";
 
+export enum Status {
+  Pending,
+  Pass,
+  Fail,
+}
+
+export interface IResults {
+  status: Status;
+  badgeCount?: number;
+  details: any[];
+}
+
+export enum Steps {
+  Syntax,
+  Schema,
+  JSON,
+  Load,
+  Test,
+}
+
 export interface IAppContext {
   appError: IAppError;
   setError: (title: string, message: string) => void;
@@ -19,15 +39,11 @@ export interface IAppContext {
   isRuleSelected: () => boolean;
   unmodifiedRule: string;
   setUnmodifiedRule: (unmodifiedRule: string) => void;
-  autoModifiedRule: string;
-  setAutoModifiedRule: (autoModifiedRule: string) => void;
-  userModifiedRule: string;
-  setUserModifiedRule: (userModifiedRule: string) => void;
+  modifiedRule: string;
+  setModifiedRule: (modifiedRule: string) => void;
   dirtyExplorerList: boolean;
   setDirtyExplorerList: (dirtyExplorerList: boolean) => void;
   isRuleDirty: () => boolean;
-  isNewRuleSelected: boolean;
-  setIsNewRuleSelected: (isNewRuleSelected: boolean) => void;
   alertState: AlertState;
   setAlertState: (alertState: AlertState) => void;
   username: string;
@@ -38,6 +54,18 @@ export interface IAppContext {
   setOrderBy: (orderBy: string) => void;
   searchText: { [key: string]: string };
   setSearchText: (searchText: { [key: string]: string }) => void;
+  syntaxCheck: IResults;
+  setSyntaxCheck: (syntaxCheck: IResults) => void;
+  schemaCheck: IResults;
+  setSchemaCheck: (schemaCheck: IResults) => void;
+  jsonCheck: IResults;
+  setJsonCheck: (jsonCheck: IResults) => void;
+  loadCheck: IResults;
+  setLoadCheck: (loadCheck: IResults) => void;
+  testCheck: IResults;
+  setTestCheck: (testCheck: IResults) => void;
+  testStepExpanded: Steps | false;
+  setTestStepExpanded: (testStepExpanded: Steps | false) => void;
   creator: string;
   setCreator: (creator: string) => void;
   isMyRule: () => boolean;
@@ -45,38 +73,94 @@ export interface IAppContext {
 
 export const defaultAppContext: IAppContext = {
   appError: null,
-  setError: () => { /* Placeholder */ },
+  setError: () => {
+    /* Placeholder */
+  },
   dataService: null,
   selectedRule: null,
-  setSelectedRule: () => { /* Placeholder */ },
+  setSelectedRule: () => {
+    /* Placeholder */
+  },
   isRuleSelected: () => false,
   unmodifiedRule: null,
-  setUnmodifiedRule: () => { /* Placeholder */ },
-  autoModifiedRule: null,
-  setAutoModifiedRule: () => { /* Placeholder */ },
-  userModifiedRule: null,
-  setUserModifiedRule: () => { /* Placeholder */ },
+  setUnmodifiedRule: () => {
+    /* Placeholder */
+  },
+  modifiedRule: null,
+  setModifiedRule: () => {
+    /* Placeholder */
+  },
   /* False, because it will be set to true by the initial filter and sort values */
   dirtyExplorerList: false,
-  setDirtyExplorerList: () => { /* Placeholder */ },
+  setDirtyExplorerList: () => {
+    /* Placeholder */
+  },
   isRuleDirty: () => false,
-  isNewRuleSelected: true,
-  setIsNewRuleSelected: () => { /* Placeholder */ },
   alertState: null,
-  setAlertState: () => { /* Placeholder */ },
+  setAlertState: () => {
+    /* Placeholder */
+  },
   username: null,
-  setUsername: () => { /* Placeholder */ },
-  order: 'desc',
-  setOrder: () => { /* Placeholder */ },
-  orderBy: 'changed',
-  setOrderBy: () => { /* Placeholder */ },
+  setUsername: () => {
+    /* Placeholder */
+  },
+  order: "desc",
+  setOrder: () => {
+    /* Placeholder */
+  },
+  orderBy: "changed",
+  setOrderBy: () => {
+    /* Placeholder */
+  },
   searchText: {},
-  setSearchText: () => { /* Placeholder */ },
+  setSearchText: () => {
+    /* Placeholder */
+  },
+  loadCheck: {
+    status: Status.Pending,
+    details: [],
+  },
+  setLoadCheck: () => {
+    /* Placeholder */
+  },
+  syntaxCheck: {
+    status: Status.Pending,
+    details: [],
+  },
+  setSyntaxCheck: () => {
+    /* Placeholder */
+  },
+  schemaCheck: {
+    status: Status.Pending,
+    details: [],
+  },
+  setSchemaCheck: () => {
+    /* Placeholder */
+  },
+  jsonCheck: {
+    status: Status.Pending,
+    details: [],
+  },
+  setJsonCheck: () => {
+    /* Placeholder */
+  },
+  testCheck: {
+    status: Status.Pending,
+    details: [],
+  },
+  setTestCheck: () => {
+    /* Placeholder */
+  },
+  testStepExpanded: false,
+  setTestStepExpanded: () => {
+    /* Placeholder */
+  },
   creator: null,
-  setCreator: () => { /* Placeholder */ },
+  setCreator: () => {
+    /* Placeholder */
+  },
   isMyRule: () => false,
 };
-
 
 const AppContext = React.createContext<IAppContext>(defaultAppContext);
 

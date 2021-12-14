@@ -21,7 +21,9 @@ npm install -g azure-functions-core-tools@3
       "API_GRANT_TYPE": "<API_GRANT_TYPE>",
       "API_SCOPE": "<API_SCOPE>",
       "API_CLIENT_ID": "<API_CLIENT_ID>",
-      "API_CLIENT_SECRET": "<API_CLIENT_SECRET>"
+      "API_CLIENT_SECRET": "<API_CLIENT_SECRET>",
+      "GENERATE_RULE_URL": "<RULE_GENERATOR_URL (with code param)>",
+      "EXECUTE_RULE_URL": "<RULE_EXECUTOR_URL (with code param)>"
     }
 }
 ```

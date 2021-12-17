@@ -18,7 +18,7 @@ export default function ResultsTestStep() {
         (currentDomainResult &&
           currentDomainResult.reduce(
             (aggregateRecordResult: boolean, currentRecordResult: {}) =>
-              aggregateRecordResult || !("rule_id" in currentRecordResult),
+              aggregateRecordResult || !("domain" in currentRecordResult),
             false
           )),
       false

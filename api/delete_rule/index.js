@@ -1,9 +1,9 @@
 const https = require('https');
-const Authenticator = require("../utils/AuthService")
+const {StorageAuthenticator} = require("../utils/AuthService")
 
 module.exports = async function (context, req) {
     const url = process.env["API_BASE_URL"]
-    const token = await Authenticator.getToken()
+    const token = await StorageAuthenticator.getToken()
     const ruleId = context.bindingData.id
 
     const options = {

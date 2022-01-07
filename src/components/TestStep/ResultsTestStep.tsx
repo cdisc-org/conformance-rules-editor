@@ -18,7 +18,10 @@ export default function ResultsTestStep() {
         (currentDomainResult &&
           currentDomainResult.reduce(
             (aggregateRecordResult: boolean, currentRecordResult: {}) =>
-              aggregateRecordResult || !("rule_id" in currentRecordResult),
+              aggregateRecordResult ||
+              (currentRecordResult &&
+                "message" in currentRecordResult &&
+                currentRecordResult["message"] === "rule execution error"),
             false
           )),
       false
@@ -28,9 +31,14 @@ export default function ResultsTestStep() {
     Object.values(json).reduce(
       (aggregateDomainResult: number, currentDomainResult: {}[]) =>
         aggregateDomainResult +
-        currentDomainResult.filter(
-          (currentRecordResult: {}) => "error" in currentRecordResult
-        ).length,
+        currentDomainResult.reduce(
+          (aggregateRecordResult: number, currentRecordResult: {}) =>
+            aggregateRecordResult +
+            ("errors" in currentRecordResult
+              ? currentRecordResult["errors"].length
+              : 0),
+          0
+        ),
       0
     );
 

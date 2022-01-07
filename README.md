@@ -17,13 +17,20 @@ npm install -g azure-functions-core-tools@3
     "IsEncrypted": false,
     "Values": {
       "FUNCTIONS_WORKER_RUNTIME":"node",
-      "API_BASE_URL": "<API_URL>",
-      "API_GRANT_TYPE": "<API_GRANT_TYPE>",
-      "API_SCOPE": "<API_SCOPE>",
-      "API_CLIENT_ID": "<API_CLIENT_ID>",
-      "API_CLIENT_SECRET": "<API_CLIENT_SECRET>",
+      "API_BASE_URL": "<STORAGE_API_URL>",
+      "API_PATH": "<STORAGE_API_PATH>",
+      "API_GRANT_TYPE": "<STORAGE_API_GRANT_TYPE>",
+      "API_SCOPE": "<STORAGE_API_SCOPE>",
+      "API_CLIENT_ID": "<STORAGE_API_CLIENT_ID>",
+      "API_CLIENT_SECRET": "<STORAGE_API_CLIENT_SECRET>",
       "GENERATE_RULE_URL": "<RULE_GENERATOR_URL (with code param)>",
-      "EXECUTE_RULE_URL": "<RULE_EXECUTOR_URL (with code param)>"
+      "EXECUTE_RULE_URL": "<RULE_EXECUTOR_URL>",
+      "ENGINE_BASE_URL": "<ENGINE_API_URL>",
+      "ENGINE_PATH": "<ENGINE_API_PATH>",
+      "ENGINE_GRANT_TYPE": "<ENGINE_API_GRANT_TYPE>",
+      "ENGINE_SCOPE": "<ENGINE_API_SCOPE>",
+      "ENGINE_CLIENT_ID": "<ENGINE_API_CLIENT_ID>",
+      "ENGINE_CLIENT_SECRET": "<ENGINE_API_CLIENT_SECRET>"
     }
 }
 ```

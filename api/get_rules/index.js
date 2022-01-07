@@ -1,5 +1,5 @@
 const https = require('https');
-const Authenticator = require("../utils/AuthService")
+const {StorageAuthenticator} = require("../utils/AuthService")
 
 const validParamNames = new Set([
     "page[offset]",
@@ -26,7 +26,7 @@ const validParamNames = new Set([
 
 module.exports = async function (context, req) {
     const url = process.env["API_BASE_URL"]
-    const token = await Authenticator.getToken()
+    const token = await StorageAuthenticator.getToken()
     const filteredParams = Object.fromEntries(
         Object.entries(context.bindingData.query).filter(
             ([name, value]) => validParamNames.has(name) && value !== undefined)

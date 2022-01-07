@@ -1,6 +1,6 @@
 const https = require("https");
 
-module.exports = async function (context, req, url) {
+module.exports = async function (context, req, url, token) {
   const postData = JSON.stringify(req.body);
 
   const options = {
@@ -9,7 +9,11 @@ module.exports = async function (context, req, url) {
     method: "POST",
     headers: {
       Accept: "application/json",
+      "Content-Type": "application/json",
       "Content-Length": postData.length,
+      ...(token && {
+        Authorization: "Bearer " + token,
+      }),
     },
   };
 

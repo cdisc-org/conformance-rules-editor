@@ -183,6 +183,12 @@
                 },
                 "value": {
                     "type": "string"
+                },
+                "value_is_literal": {
+                    "type": "boolean",
+                    "enum": [
+                        true
+                    ]
                 }
             },
             "required": [

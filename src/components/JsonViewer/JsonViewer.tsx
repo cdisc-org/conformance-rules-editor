@@ -2,14 +2,14 @@ import ReactJson from "react-json-view";
 
 interface Props {
   height?: string;
-  src: string;
+  src: object;
 }
 
 export default function JsonViewer(props: Props) {
   const { height, src } = props;
   return (
     <ReactJson
-      src={JSON.parse(src)}
+      src={src}
       name={false}
       theme="chalk"
       displayDataTypes={false}

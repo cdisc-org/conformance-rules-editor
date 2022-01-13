@@ -73,11 +73,7 @@ export default function TestStep(props: Props) {
               </p>
             </div>
           ) : (
-            <JsonViewer
-              key={index}
-              src={JSON.stringify(detail, null, "  ")}
-              height="50vh"
-            />
+            <JsonViewer key={index} src={detail} height="50vh" />
           )
         )}
       </AccordionDetails>

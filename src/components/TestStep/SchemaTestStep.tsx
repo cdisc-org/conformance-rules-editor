@@ -20,7 +20,7 @@ export default function SchemaTestStep() {
     try {
       const yamlDoc = yaml.load(modifiedRule);
       if (yamlDoc) {
-        const ajv = new Ajv({ allErrors: true });
+        const ajv = new Ajv({ allErrors: true, allowUnionTypes: true });
         dataService.get_rules_schema().then((rulesSchema) => {
           if (isSubscribed) {
             const validate = ajv.compile(rulesSchema);

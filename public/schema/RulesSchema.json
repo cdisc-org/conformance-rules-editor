@@ -37,15 +37,19 @@
                         "any"
                     ],
                     "type": "object"
-                },
-                {
-                    "$ref": "#/$defs/Operator"
                 }
             ]
         },
         "CheckList": {
             "items": {
-                "$ref": "#/$defs/CheckItem"
+                "anyOf": [
+                    {
+                        "$ref": "#/$defs/CheckItem"
+                    },
+                    {
+                        "$ref": "#/$defs/Operator"
+                    }
+                ]
             },
             "type": "array"
         },

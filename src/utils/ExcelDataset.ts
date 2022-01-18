@@ -18,6 +18,7 @@ export interface IVariable {
 }
 
 const datasetsSheetName: string = "Datasets";
+const infoSheetName: string = "Info";
 
 const readFile = async (file: File): Promise<string | ArrayBuffer> => {
   return new Promise((resolve) => {
@@ -109,7 +110,8 @@ export const excelToJsonDatasets = async (file: File): Promise<IDataset[]> => {
   const datasets: IDataset[] = getDatasets(workbook);
 
   for (const [sheetName, sheet] of Object.entries(workbook.Sheets).filter(
-    ([sheetName, sheet]: [string, WorkSheet]) => sheetName !== datasetsSheetName
+    ([sheetName, sheet]: [string, WorkSheet]) =>
+      ![datasetsSheetName, infoSheetName].includes(sheetName)
   )) {
     const dataset = getMatchingDataset(datasets, sheetName);
     setDatatypes(sheet);

@@ -280,6 +280,12 @@
         "CoreId": {
             "type": "string"
         },
+        "CoreId Version": {
+            "enum": [
+                "1"
+            ],
+            "type": "string"
+        },
         "Description": {
             "type": "string"
         },
@@ -338,17 +344,21 @@
                 "Id": {
                     "type": "string"
                 },
+                "Id Version": {
+                    "type": "string"
+                },
                 "Origin": {
                     "type": "string"
                 },
-                "Version": {
+                "Reference Version": {
                     "type": "string"
                 }
             },
             "required": [
+                "Id",
+                "Id Version",
                 "Origin",
-                "Version",
-                "Id"
+                "Reference Version"
             ],
             "type": "object"
         },
@@ -674,13 +684,13 @@
                             "Name": {
                                 "type": "string"
                             },
-                            "Version": {
+                            "Standards Version": {
                                 "type": "string"
                             }
                         },
                         "required": [
                             "Name",
-                            "Version"
+                            "Standards Version"
                         ],
                         "type": "object"
                     },
@@ -716,26 +726,20 @@
                 "warning"
             ],
             "type": "string"
-        },
-        "Version": {
-            "enum": [
-                "1"
-            ],
-            "type": "string"
         }
     },
     "required": [
         "Authority",
         "Citations",
         "CoreId",
+        "CoreId Version",
         "Description",
         "Outcome",
         "Reference",
         "Rule Type",
         "Scopes",
         "Sensitivity",
-        "Severity",
-        "Version"
+        "Severity"
     ],
     "type": "object"
 }

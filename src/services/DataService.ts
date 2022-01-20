@@ -2,9 +2,10 @@ import yaml from "js-yaml";
 import { IDataset } from "../utils/ExcelDataset";
 
 function getCoreId(rule: any) {
-  return isValidYaml(rule) && "CoreId" in rule
-    ? rule["CoreId"]
-    : `<Missing 'CoreId'>`;
+  const errorMessage = `<Missing 'Core.Id'>`;
+  return isValidYaml(rule)
+    ? rule?.["Core"]?.["Id"] ?? errorMessage
+    : errorMessage;
 }
 
 function getRuleType(rule: any) {

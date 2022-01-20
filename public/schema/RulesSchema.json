@@ -122,8 +122,7 @@
                             "type": "string"
                         },
                         {
-                            "pattern": "^(--[A-Z]{1,6}|[A-Z]{1,8})$",
-                            "type": "string"
+                            "$ref": "#/$defs/VariableName"
                         }
                     ]
                 },
@@ -230,6 +229,10 @@
                 "operator"
             ],
             "type": "object"
+        },
+        "VariableName": {
+            "pattern": "^--[A-Z]{1,6}|[A-Z]{1,8}$",
+            "type": "string"
         }
     },
     "$id": "https://cdisc.org/rules/1-0",
@@ -277,14 +280,25 @@
             },
             "type": "array"
         },
-        "CoreId": {
-            "type": "string"
-        },
-        "CoreId Version": {
-            "enum": [
-                "1"
+        "Core": {
+            "additionalProperties": false,
+            "properties": {
+                "Id": {
+                    "pattern": "^.+$",
+                    "type": "string"
+                },
+                "Version": {
+                    "enum": [
+                        "1"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "Id",
+                "Version"
             ],
-            "type": "string"
+            "type": "object"
         },
         "Description": {
             "type": "string"
@@ -331,6 +345,12 @@
             "properties": {
                 "Message": {
                     "type": "string"
+                },
+                "Output Variable": {
+                    "items": {
+                        "$ref": "#/$defs/VariableName"
+                    },
+                    "type": "array"
                 }
             },
             "required": [
@@ -341,24 +361,33 @@
         "Reference": {
             "additionalProperties": false,
             "properties": {
-                "Id": {
-                    "type": "string"
-                },
-                "Id Version": {
-                    "type": "string"
-                },
                 "Origin": {
                     "type": "string"
                 },
-                "Reference Version": {
+                "Rule Identifier": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "Id": {
+                            "type": "string"
+                        },
+                        "Version": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "Id",
+                        "Version"
+                    ],
+                    "type": "object"
+                },
+                "Version": {
                     "type": "string"
                 }
             },
             "required": [
-                "Id",
-                "Id Version",
                 "Origin",
-                "Reference Version"
+                "Rule Identifier",
+                "Version"
             ],
             "type": "object"
         },
@@ -684,13 +713,13 @@
                             "Name": {
                                 "type": "string"
                             },
-                            "Standards Version": {
+                            "Version": {
                                 "type": "string"
                             }
                         },
                         "required": [
                             "Name",
-                            "Standards Version"
+                            "Version"
                         ],
                         "type": "object"
                     },
@@ -720,10 +749,10 @@
         },
         "Severity": {
             "enum": [
-                "error",
-                "notice",
-                "reject",
-                "warning"
+                "Error",
+                "Notice",
+                "Reject",
+                "Warning"
             ],
             "type": "string"
         }
@@ -731,8 +760,7 @@
     "required": [
         "Authority",
         "Citations",
-        "CoreId",
-        "CoreId Version",
+        "Core",
         "Description",
         "Outcome",
         "Reference",

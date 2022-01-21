@@ -25,13 +25,12 @@ module.exports = async function (context, req, url, token) {
       });
 
       resp.on("end", () => {
-        if (resp.statusCode === 200) {
+        if (resp.statusCode !== 200) {
+          context.res["status"] = resp.statusCode;
+          context.res["body"] = resp.statusMessage;
+        }
+        if (resp_body) {
           context.res.json(JSON.parse(resp_body));
-        } else {
-          context.res = {
-            status: resp.statusCode,
-            body: resp.statusMessage,
-          };
         }
         context.done();
       });

@@ -22,6 +22,11 @@ function isValidYaml(rule: any) {
   return rule !== undefined && rule !== null && typeof rule === "object";
 }
 
+function DataServiceError(response: Response) {
+  this.message = `Results - Fail: ${response.status} - ${response.statusText}`;
+  this.json = response.json();
+}
+
 export class DataService {
   getAttributes = (body: string) => {
     const rule = (() => {
@@ -138,11 +143,11 @@ export class DataService {
       body: JSON.stringify({
         definition: rule,
       }),
-    }).then(function (response) {
+    }).then(async function (response: Response) {
       if (response.status === 200) {
         return response.json();
       } else {
-        throw response.statusText;
+        throw new DataServiceError(response);
       }
     });
   };
@@ -157,11 +162,11 @@ export class DataService {
         rule: rule,
         datasets: datasets,
       }),
-    }).then(function (response) {
+    }).then(async function (response: Response) {
       if (response.status === 200) {
         return response.json();
       } else {
-        throw response.statusText;
+        throw new DataServiceError(response);
       }
     });
   };

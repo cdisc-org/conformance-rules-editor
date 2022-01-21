@@ -68,7 +68,7 @@ export default function ResultsTestStep() {
             });
           }
         })
-        .catch((exception) => {
+        .catch(async (exception) => {
           if (isSubscribed) {
             setTestCheck({
               status: Status.Fail,
@@ -78,7 +78,8 @@ export default function ResultsTestStep() {
                   rule: jsonCheck.details[0],
                   datasets: loadCheck.details[1],
                 },
-                `Results - Fail: ${exception}`,
+                exception.message,
+                await exception.json,
               ],
             });
           }

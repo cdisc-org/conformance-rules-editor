@@ -4,7 +4,9 @@ import { IDataset } from "../utils/ExcelDataset";
 function getCoreId(rule: any) {
   const errorMessage = `<Missing 'Core.Id'>`;
   return isValidYaml(rule)
-    ? rule?.["Core"]?.["Id"] ?? errorMessage
+    ? rule?.["Core"]?.["Id"] ??
+        /* For back compatibility: */ rule?.["CoreId"] ??
+        errorMessage
     : errorMessage;
 }
 

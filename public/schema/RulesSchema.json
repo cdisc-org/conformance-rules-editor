@@ -359,37 +359,40 @@
             "type": "object"
         },
         "Reference": {
-            "additionalProperties": false,
-            "properties": {
-                "Origin": {
-                    "type": "string"
-                },
-                "Rule Identifier": {
-                    "additionalProperties": false,
-                    "properties": {
-                        "Id": {
-                            "type": "string"
-                        },
-                        "Version": {
-                            "type": "string"
-                        }
+            "items": {
+                "additionalProperties": false,
+                "properties": {
+                    "Origin": {
+                        "type": "string"
                     },
-                    "required": [
-                        "Id",
-                        "Version"
-                    ],
-                    "type": "object"
+                    "Rule Identifier": {
+                        "additionalProperties": false,
+                        "properties": {
+                            "Id": {
+                                "type": "string"
+                            },
+                            "Version": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "Id",
+                            "Version"
+                        ],
+                        "type": "object"
+                    },
+                    "Version": {
+                        "type": "string"
+                    }
                 },
-                "Version": {
-                    "type": "string"
-                }
+                "required": [
+                    "Origin",
+                    "Rule Identifier",
+                    "Version"
+                ],
+                "type": "object"
             },
-            "required": [
-                "Origin",
-                "Rule Identifier",
-                "Version"
-            ],
-            "type": "object"
+            "type": "array"
         },
         "Rule Type": {
             "oneOf": [

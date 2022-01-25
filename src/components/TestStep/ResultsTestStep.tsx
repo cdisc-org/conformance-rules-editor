@@ -21,7 +21,8 @@ export default function ResultsTestStep() {
             aggregateRecordResult ||
             (currentRecordResult &&
               "message" in currentRecordResult &&
-              currentRecordResult["message"] === "rule execution error"),
+              (currentRecordResult["message"] === null ||
+                currentRecordResult["message"] === "rule execution error")),
           false
         ),
       false

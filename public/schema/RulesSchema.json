@@ -284,7 +284,7 @@
             "additionalProperties": false,
             "properties": {
                 "Id": {
-                    "pattern": "^CDISC\\.SDTMIG\\.\\d{4}$",
+                    "pattern": "^.+$",
                     "type": "string"
                 },
                 "Version": {

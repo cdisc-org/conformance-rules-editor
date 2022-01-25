@@ -36,7 +36,7 @@ export default function JsonTestStep() {
         if (isSubscribed) {
           setJsonCheck({
             status: Status.Fail,
-            details: [exception.message, await exception.json],
+            details: [exception.message, await exception.details],
           });
         }
       });

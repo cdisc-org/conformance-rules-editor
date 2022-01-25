@@ -80,7 +80,7 @@ export default function ResultsTestStep() {
                   datasets: loadCheck.details[1],
                 },
                 exception.message,
-                await exception.json,
+                await exception.details,
               ],
             });
           }

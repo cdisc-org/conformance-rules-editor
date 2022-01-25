@@ -24,9 +24,14 @@ function isValidYaml(rule: any) {
   return rule !== undefined && rule !== null && typeof rule === "object";
 }
 
+function responseHasJson(response: Response) {
+  const contentType = response.headers.get("content-type");
+  return contentType && contentType.includes("application/json");
+}
+
 function DataServiceError(response: Response) {
   this.message = `Results - Fail: ${response.status} - ${response.statusText}`;
-  this.json = response.json();
+  this.details = responseHasJson(response) ? response.json() : response.text();
 }
 
 export class DataService {

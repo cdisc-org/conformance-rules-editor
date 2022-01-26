@@ -346,7 +346,7 @@
                 "Message": {
                     "type": "string"
                 },
-                "Output Variable": {
+                "Output Variables": {
                     "items": {
                         "$ref": "#/$defs/VariableName"
                     },

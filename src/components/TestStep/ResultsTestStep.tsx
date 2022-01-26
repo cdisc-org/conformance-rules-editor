@@ -15,15 +15,16 @@ export default function ResultsTestStep() {
     Object.values(json).reduce(
       (aggregateDomainResult: boolean, currentDomainResult: {}[]) =>
         aggregateDomainResult ||
-        (currentDomainResult &&
-          currentDomainResult.reduce(
-            (aggregateRecordResult: boolean, currentRecordResult: {}) =>
-              aggregateRecordResult ||
-              (currentRecordResult &&
-                "message" in currentRecordResult &&
-                currentRecordResult["message"] === "rule execution error"),
-            false
-          )),
+        currentDomainResult === null ||
+        currentDomainResult.reduce(
+          (aggregateRecordResult: boolean, currentRecordResult: {}) =>
+            aggregateRecordResult ||
+            (currentRecordResult &&
+              "message" in currentRecordResult &&
+              (currentRecordResult["message"] === null ||
+                currentRecordResult["message"] === "rule execution error")),
+          false
+        ),
       false
     );
 
@@ -31,14 +32,16 @@ export default function ResultsTestStep() {
     Object.values(json).reduce(
       (aggregateDomainResult: number, currentDomainResult: {}[]) =>
         aggregateDomainResult +
-        currentDomainResult.reduce(
-          (aggregateRecordResult: number, currentRecordResult: {}) =>
-            aggregateRecordResult +
-            ("errors" in currentRecordResult
-              ? currentRecordResult["errors"].length
-              : 0),
-          0
-        ),
+        (currentDomainResult === null
+          ? 1
+          : currentDomainResult.reduce(
+              (aggregateRecordResult: number, currentRecordResult: {}) =>
+                aggregateRecordResult +
+                ("errors" in currentRecordResult
+                  ? currentRecordResult["errors"].length
+                  : 0),
+              0
+            )),
       0
     );
 
@@ -66,7 +69,7 @@ export default function ResultsTestStep() {
             });
           }
         })
-        .catch((exception) => {
+        .catch(async (exception) => {
           if (isSubscribed) {
             setTestCheck({
               status: Status.Fail,
@@ -76,7 +79,8 @@ export default function ResultsTestStep() {
                   rule: jsonCheck.details[0],
                   datasets: loadCheck.details[1],
                 },
-                `Results - Fail: ${exception}`,
+                exception.message,
+                await exception.details,
               ],
             });
           }

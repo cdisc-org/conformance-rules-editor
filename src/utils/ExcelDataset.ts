@@ -1,4 +1,4 @@
-import XLSX from "xlsx";
+import { read, utils, WorkBook, WorkSheet } from "xlsx";
 
 export interface IDataset {
   filename: string;
@@ -28,8 +28,8 @@ const readFile = async (file: File): Promise<string | ArrayBuffer> => {
   });
 };
 
-const getDatasets = (workbook: XLSX.WorkBook): IDataset[] => {
-  const datasetsRows: {}[] = XLSX.utils.sheet_to_json<{}>(
+const getDatasets = (workbook: WorkBook): IDataset[] => {
+  const datasetsRows: {}[] = utils.sheet_to_json<{}>(
     workbook.Sheets[datasetsSheetName]
   );
   return datasetsRows.map<IDataset>((row: {}) => ({
@@ -63,6 +63,31 @@ const getVariables = (cols: string[], rows: {}[]): IVariable[] => {
   );
 };
 
+/* 
+Take a worksheet and for each cell in the worksheet, 
+convert the datatype to the datatype indicated by the type value in the column's header
+ */
+const setDatatypes = (sheet: WorkSheet) => {
+  const range = utils.decode_range(sheet["!ref"]);
+  for (var C = range.s.c; C <= range.e.c; ++C) {
+    const typeCell = sheet[utils.encode_cell({ c: C, r: 2 })];
+    const type = typeCell ? typeCell["v"] : null;
+    for (var R = range.s.r + 4; R <= range.e.r; ++R) {
+      const cell = sheet[utils.encode_cell({ c: C, r: R })];
+      if (cell) {
+        if (type === "Char") {
+          cell["t"] = "s";
+          cell["v"] = cell["v"].toString();
+        }
+        if (type === "Num") {
+          cell["t"] = "n";
+          cell["v"] = Number(cell["v"]);
+        }
+      }
+    }
+  }
+};
+
 const getRecords = (cols: string[], rows: {}[]): {} => {
   return Object.fromEntries(
     cols
@@ -77,24 +102,26 @@ const getRecords = (cols: string[], rows: {}[]): {} => {
 };
 
 export const excelToJsonDatasets = async (file: File): Promise<IDataset[]> => {
-  const workbook: XLSX.WorkBook = XLSX.read(await readFile(file), {
+  const workbook: WorkBook = read(await readFile(file), {
     type: "binary",
   });
 
   const datasets: IDataset[] = getDatasets(workbook);
 
-  for (const [sheetName, sheet] of Object.entries(workbook.Sheets).filter(
-    ([sheetName, sheet]: [string, XLSX.WorkSheet]) =>
-      sheetName !== datasetsSheetName
+  for (const [sheetName, sheet] of Object.entries(
+    workbook.Sheets
+  ).filter(([sheetName, sheet]: [string, WorkSheet]) =>
+    sheetName.toLowerCase().endsWith(".xpt")
   )) {
     const dataset = getMatchingDataset(datasets, sheetName);
-    const rows: {}[] = XLSX.utils.sheet_to_json<{}>(sheet);
+    setDatatypes(sheet);
+    const rows: {}[] = utils.sheet_to_json<{}>(sheet);
 
     if (rows.length > 3 && rows[3]["DOMAIN"]) {
       dataset.domain = rows[3]["DOMAIN"];
     }
 
-    const sheetJson: string[][] = XLSX.utils.sheet_to_json<string[]>(sheet, {
+    const sheetJson: string[][] = utils.sheet_to_json<string[]>(sheet, {
       header: 1,
     });
     const cols: string[] = sheetJson.length ? sheetJson[0] : [];

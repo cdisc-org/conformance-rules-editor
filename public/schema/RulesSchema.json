@@ -37,15 +37,19 @@
                         "any"
                     ],
                     "type": "object"
-                },
-                {
-                    "$ref": "#/$defs/Operator"
                 }
             ]
         },
         "CheckList": {
             "items": {
-                "$ref": "#/$defs/CheckItem"
+                "anyOf": [
+                    {
+                        "$ref": "#/$defs/CheckItem"
+                    },
+                    {
+                        "$ref": "#/$defs/Operator"
+                    }
+                ]
             },
             "type": "array"
         },
@@ -102,10 +106,30 @@
                     "type": "string"
                 },
                 "name": {
-                    "type": "string"
+                    "anyOf": [
+                        {
+                            "enum": [
+                                "dataset_label",
+                                "dataset_location",
+                                "dataset_name",
+                                "dataset_size",
+                                "variable_data_type",
+                                "variable_label",
+                                "variable_name",
+                                "variable_role",
+                                "variable_size"
+                            ],
+                            "type": "string"
+                        },
+                        {
+                            "$ref": "#/$defs/VariableName"
+                        }
+                    ]
                 },
                 "operator": {
                     "enum": [
+                        "comformant_value_data_type",
+                        "comformant_value_length",
                         "contains",
                         "contains_all",
                         "contains_case_insensitive",
@@ -117,6 +141,7 @@
                         "date_not_equal_to",
                         "does_not_contain",
                         "does_not_contain_case_insensitive",
+                        "does_not_have_next_corresponding_record",
                         "empty",
                         "empty_within_except_last_row",
                         "ends_with",
@@ -126,6 +151,7 @@
                         "greater_than",
                         "greater_than_or_equal_to",
                         "has_equal_length",
+                        "has_next_corresponding_record",
                         "has_not_equal_length",
                         "invalid_date",
                         "is_complete_date",
@@ -151,6 +177,8 @@
                         "longer_than",
                         "longer_than_or_equal_to",
                         "matches_regex",
+                        "non_comformant_value_data_type",
+                        "non_comformant_value_length",
                         "non_empty",
                         "non_empty_within_except_last_row",
                         "not_contains_all",
@@ -159,10 +187,12 @@
                         "not_exists",
                         "not_matches_regex",
                         "not_prefix_matches_regex",
+                        "not_present_on_multiple_rows_within",
                         "not_suffix_matches_regex",
                         "num_equal_to",
                         "num_not_equal_to",
                         "prefix_matches_regex",
+                        "present_on_multiple_rows_within",
                         "shares_at_least_one_element_with",
                         "shares_exactly_one_element_with",
                         "shares_no_elements_with",
@@ -182,7 +212,10 @@
                     "type": "integer"
                 },
                 "value": {
-                    "type": "string"
+                    "type": [
+                        "number",
+                        "string"
+                    ]
                 },
                 "value_is_literal": {
                     "type": "boolean",
@@ -196,6 +229,10 @@
                 "operator"
             ],
             "type": "object"
+        },
+        "VariableName": {
+            "pattern": "^--[A-Z]{1,6}|[A-Z]{1,8}$",
+            "type": "string"
         }
     },
     "$id": "https://cdisc.org/rules/1-0",
@@ -243,8 +280,25 @@
             },
             "type": "array"
         },
-        "CoreId": {
-            "type": "string"
+        "Core": {
+            "additionalProperties": false,
+            "properties": {
+                "Id": {
+                    "pattern": "^.+$",
+                    "type": "string"
+                },
+                "Version": {
+                    "enum": [
+                        "1"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "Id",
+                "Version"
+            ],
+            "type": "object"
         },
         "Description": {
             "type": "string"
@@ -291,6 +345,12 @@
             "properties": {
                 "Message": {
                     "type": "string"
+                },
+                "Output Variables": {
+                    "items": {
+                        "$ref": "#/$defs/VariableName"
+                    },
+                    "type": "array"
                 }
             },
             "required": [
@@ -298,25 +358,41 @@
             ],
             "type": "object"
         },
-        "Reference": {
-            "additionalProperties": false,
-            "properties": {
-                "Id": {
-                    "type": "string"
+        "References": {
+            "items": {
+                "additionalProperties": false,
+                "properties": {
+                    "Origin": {
+                        "type": "string"
+                    },
+                    "Rule Identifier": {
+                        "additionalProperties": false,
+                        "properties": {
+                            "Id": {
+                                "type": "string"
+                            },
+                            "Version": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "Id",
+                            "Version"
+                        ],
+                        "type": "object"
+                    },
+                    "Version": {
+                        "type": "string"
+                    }
                 },
-                "Origin": {
-                    "type": "string"
-                },
-                "Version": {
-                    "type": "string"
-                }
+                "required": [
+                    "Origin",
+                    "Rule Identifier",
+                    "Version"
+                ],
+                "type": "object"
             },
-            "required": [
-                "Origin",
-                "Version",
-                "Id"
-            ],
-            "type": "object"
+            "type": "array"
         },
         "Rule Type": {
             "oneOf": [
@@ -407,12 +483,12 @@
                 {
                     "additionalProperties": false,
                     "properties": {
-                        "Domain Presence Check": {
+                        "Domain Existence Check": {
                             "$ref": "#/$defs/Check"
                         }
                     },
                     "required": [
-                        "Domain Presence Check"
+                        "Domain Existence Check"
                     ],
                     "type": "object"
                 },
@@ -485,6 +561,18 @@
                     },
                     "required": [
                         "Uniqueness"
+                    ],
+                    "type": "object"
+                },
+                {
+                    "additionalProperties": false,
+                    "properties": {
+                        "Value Level Metadata Check against Define XML": {
+                            "$ref": "#/$defs/Check"
+                        }
+                    },
+                    "required": [
+                        "Value Level Metadata Check against Define XML"
                     ],
                     "type": "object"
                 },
@@ -662,9 +750,12 @@
             ],
             "type": "string"
         },
-        "Version": {
+        "Severity": {
             "enum": [
-                "1"
+                "Error",
+                "Notice",
+                "Reject",
+                "Warning"
             ],
             "type": "string"
         }
@@ -672,14 +763,14 @@
     "required": [
         "Authority",
         "Citations",
-        "CoreId",
+        "Core",
         "Description",
         "Outcome",
-        "Reference",
+        "References",
         "Rule Type",
         "Scopes",
         "Sensitivity",
-        "Version"
+        "Severity"
     ],
     "type": "object"
 }

@@ -32,11 +32,11 @@ export default function JsonTestStep() {
           );
         }
       })
-      .catch((exception) => {
+      .catch(async (exception) => {
         if (isSubscribed) {
           setJsonCheck({
             status: Status.Fail,
-            details: [`Fail: ${exception}`],
+            details: [exception.message, await exception.details],
           });
         }
       });

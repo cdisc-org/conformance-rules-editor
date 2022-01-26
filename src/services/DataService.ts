@@ -2,9 +2,12 @@ import yaml from "js-yaml";
 import { IDataset } from "../utils/ExcelDataset";
 
 function getCoreId(rule: any) {
-  return isValidYaml(rule) && "CoreId" in rule
-    ? rule["CoreId"]
-    : `<Missing 'CoreId'>`;
+  const errorMessage = `<Missing 'Core.Id'>`;
+  return isValidYaml(rule)
+    ? rule?.["Core"]?.["Id"] ??
+        /* For back compatibility: */ rule?.["CoreId"] ??
+        errorMessage
+    : errorMessage;
 }
 
 function getRuleType(rule: any) {
@@ -19,6 +22,16 @@ function getRuleType(rule: any) {
 
 function isValidYaml(rule: any) {
   return rule !== undefined && rule !== null && typeof rule === "object";
+}
+
+function responseHasJson(response: Response) {
+  const contentType = response.headers.get("content-type");
+  return contentType && contentType.includes("application/json");
+}
+
+function DataServiceError(response: Response) {
+  this.message = `Results - Fail: ${response.status} - ${response.statusText}`;
+  this.details = responseHasJson(response) ? response.json() : response.text();
 }
 
 export class DataService {
@@ -137,11 +150,11 @@ export class DataService {
       body: JSON.stringify({
         definition: rule,
       }),
-    }).then(function (response) {
+    }).then(async function (response: Response) {
       if (response.status === 200) {
         return response.json();
       } else {
-        throw response.statusText;
+        throw new DataServiceError(response);
       }
     });
   };
@@ -156,11 +169,11 @@ export class DataService {
         rule: rule,
         datasets: datasets,
       }),
-    }).then(function (response) {
+    }).then(async function (response: Response) {
       if (response.status === 200) {
         return response.json();
       } else {
-        throw response.statusText;
+        throw new DataServiceError(response);
       }
     });
   };

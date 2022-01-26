@@ -358,7 +358,7 @@
             ],
             "type": "object"
         },
-        "Reference": {
+        "References": {
             "items": {
                 "additionalProperties": false,
                 "properties": {
@@ -766,7 +766,7 @@
         "Core",
         "Description",
         "Outcome",
-        "Reference",
+        "References",
         "Rule Type",
         "Scopes",
         "Sensitivity",

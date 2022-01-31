@@ -14,7 +14,7 @@ export interface IVariable {
   name: string;
   label?: string;
   type?: string;
-  length?: string;
+  length?: number;
 }
 
 const datasetsSheetName: string = "Datasets";
@@ -58,7 +58,7 @@ const getVariables = (cols: string[], rows: {}[]): IVariable[] => {
       name: col,
       ...(rows.length > 0 ? { label: rows[0][col] } : {}),
       ...(rows.length > 1 ? { type: rows[1][col] } : {}),
-      ...(rows.length > 2 ? { length: rows[2][col] } : {}),
+      ...(rows.length > 2 ? { length: parseInt(rows[2][col]) } : {}),
     })
   );
 };

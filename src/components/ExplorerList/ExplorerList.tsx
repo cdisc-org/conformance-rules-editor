@@ -33,6 +33,7 @@ export default function ExplorerList() {
     setModifiedRule,
     setUnmodifiedRule,
     setCreator,
+    setPublished
   } = useContext(AppContext);
   const [rulesList, setRulesList] = useState<typeof ExplorerItem[]>([]);
   const [wantsMoreRules, setWantsMoreRules] = useState<boolean>(false);
@@ -148,6 +149,7 @@ export default function ExplorerList() {
         .then(function (responseJson) {
           const attributes = JSON.parse(responseJson.body).data.attributes;
           setCreator(attributes.field_conformance_rule_creator);
+          setPublished(attributes.status);
           const content = attributes.body.value;
           setUnmodifiedRule(content);
           setModifiedRule(content);
@@ -160,6 +162,7 @@ export default function ExplorerList() {
     setModifiedRule,
     setUnmodifiedRule,
     setCreator,
+    setPublished
   ]);
 
   useEffect(() => {

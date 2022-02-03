@@ -218,10 +218,7 @@
                     ]
                 },
                 "value_is_literal": {
-                    "type": "boolean",
-                    "enum": [
-                        true
-                    ]
+                    "const": true
                 }
             },
             "required": [
@@ -243,10 +240,7 @@
             "additionalProperties": false,
             "properties": {
                 "Organization": {
-                    "enum": [
-                        "CDISC"
-                    ],
-                    "type": "string"
+                    "const": "CDISC"
                 }
             },
             "required": [
@@ -284,14 +278,11 @@
             "additionalProperties": false,
             "properties": {
                 "Id": {
-                    "pattern": "^.+$",
+                    "pattern": "^CDISC\\.SDTMIG\\.CG\\d{4}$",
                     "type": "string"
                 },
                 "Version": {
-                    "enum": [
-                        "1"
-                    ],
-                    "type": "string"
+                    "const": "1"
                 }
             },
             "required": [
@@ -363,7 +354,7 @@
                 "additionalProperties": false,
                 "properties": {
                     "Origin": {
-                        "type": "string"
+                        "const": "SDTM and SDTMIG Conformance Rules"
                     },
                     "Rule Identifier": {
                         "additionalProperties": false,
@@ -382,7 +373,7 @@
                         "type": "object"
                     },
                     "Version": {
-                        "type": "string"
+                        "const": "2.0"
                     }
                 },
                 "required": [
@@ -392,6 +383,8 @@
                 ],
                 "type": "object"
             },
+            "minItems": 1,
+            "maxItems": 1,
             "type": "array"
         },
         "Rule Type": {

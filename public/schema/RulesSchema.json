@@ -402,7 +402,7 @@
                     "const": "Define-XML"
                 },
                 {
-                    "const": "Domain Existence Check"
+                    "const": "Domain Presence Check"
                 },
                 {
                     "const": "External Dictionaries"

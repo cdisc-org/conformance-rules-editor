@@ -59,8 +59,12 @@
             },
             "type": "array"
         },
+        "Dataset": {
+            "pattern": "^(RELREC|RELSPEC|RELSUB|[A-Z]{2}|[A-Z]{4}|SUPP[A-Z]{2}|SUPP[A-Z]{4}|SQAP[A-Z]{4}|SUPP--)$",
+            "type": "string"
+        },
         "Domain": {
-            "pattern": "^(All|RELREC|RELSUB|SUPP|[A-Z]{2})$",
+            "pattern": "^(All|RELREC|RELSPEC|RELSUB|SUPP|[A-Z]{2})$",
             "type": "string"
         },
         "Domains": {
@@ -216,7 +220,7 @@
             "type": "object"
         },
         "VariableName": {
-            "pattern": "^--[A-Z]{1,6}|[A-Z]{1,8}$",
+            "pattern": "^(--[A-Z]{1,6}|[A-Z]{1,8})$",
             "type": "string"
         }
     },
@@ -284,6 +288,31 @@
         },
         "Description": {
             "type": "string"
+        },
+        "Match Datasets": {
+            "items": {
+                "additionalProperties": false,
+                "properties": {
+                    "Name": {
+                        "$ref": "#/$defs/Dataset"
+                    },
+                    "Is Relationship": {
+                        "const": true
+                    },
+                    "Keys": {
+                        "items": {
+                            "$ref": "#/$defs/VariableName"
+                        },
+                        "type": "array"
+                    }
+                },
+                "required": [
+                    "Name",
+                    "Keys"
+                ],
+                "type": "object"
+            },
+            "type": "array"
         },
         "Operations": {
             "items": {

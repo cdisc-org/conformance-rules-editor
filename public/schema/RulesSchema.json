@@ -120,6 +120,7 @@
                 },
                 "operator": {
                     "enum": [
+                        "additional_columns_empty",
                         "comformant_value_data_type",
                         "comformant_value_length",
                         "contains",

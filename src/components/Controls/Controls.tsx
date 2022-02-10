@@ -71,6 +71,7 @@ export default function Controls() {
       })
       .then(function (responseJson) {
         setPublished(JSON.parse(responseJson.body).data.attributes.status);
+        setDirtyExplorerList(true);
       });
   };
 

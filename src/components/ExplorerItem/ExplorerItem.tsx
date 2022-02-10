@@ -8,6 +8,7 @@ interface Props {
     coreId,
     ruleType,
     creator,
+    published,
     created,
     changed,
     revisionTimestamp?,
@@ -16,7 +17,7 @@ interface Props {
 export default function ExplorerItem(props: Props) {
 
     const { selectedRule, setSelectedRule, isRuleDirty } = useContext(AppContext);
-    const { storageId, coreId, ruleType, creator, created, changed } = props;
+    const { storageId, coreId, ruleType, creator, published, created, changed } = props;
 
     const handleListItemClick = (event) => {
         if (!isRuleDirty()) {
@@ -30,6 +31,7 @@ export default function ExplorerItem(props: Props) {
             <TableCell>{ruleType}</TableCell>
             <TableCell>{creator}</TableCell>
             <TableCell>{storageId}</TableCell>
+            <TableCell>{published.toString()}</TableCell>
             <TableCell>{(new Date(created)).toLocaleString('en-US')}</TableCell>
             <TableCell>{(new Date(changed)).toLocaleString('en-US')}</TableCell>
         </TableRow>

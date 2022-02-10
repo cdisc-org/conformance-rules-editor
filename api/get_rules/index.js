@@ -14,6 +14,8 @@ const validParamNames = new Set([
     "filter[field_conformance_rule_creator][value]",
     "filter[id][operator]",
     "filter[id][value]",
+    "filter[status][operator]",
+    "filter[status][value]",
     "filter[created][operator]",
     "filter[created][value]",
     "filter[changed][operator]",

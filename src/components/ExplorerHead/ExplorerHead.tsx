@@ -36,6 +36,11 @@ export const headCells: readonly HeadCell[] = [
     getter: (ruleItem) => ruleItem.id,
   },
   {
+    queryParam: "status",
+    label: "Published",
+    getter: (ruleItem) => ruleItem.attributes.status,
+  },
+  {
     queryParam: "created",
     label: "Created Timestamp",
     getter: (ruleItem) => ruleItem.attributes.created,

@@ -1,13 +1,12 @@
 import { useContext, useState } from "react";
 import AppContext from "../AppContext";
 import PromptDialog from "../PromptDialog/PromptDialog";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
+import { IconButton, ToggleButton, Toolbar, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import SaveIcon from "@mui/icons-material/Save";
 import RestoreIcon from "@mui/icons-material/Restore";
 import DeleteIcon from "@mui/icons-material/Delete";
+import PublishIcon from "@mui/icons-material/Publish";
 import QuickSearchToolbar from "../QuickSearchToolbar/QuickSearchToolbar";
 
 export default function Controls() {
@@ -26,6 +25,8 @@ export default function Controls() {
     isRuleDirty,
     setAlertState,
     isMyRule,
+    published,
+    setPublished,
   } = useContext(AppContext);
 
   const newRule = () => {
@@ -60,6 +61,18 @@ export default function Controls() {
     setUnmodifiedRule(modifiedRule);
     setDirtyExplorerList(true);
     setAlertState({ message: "Saved successfully", severity: "success" });
+  };
+
+  const toggleRulePublished = () => {
+    dataService
+      .set_rule_published(selectedRule, !published)
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (responseJson) {
+        setPublished(JSON.parse(responseJson.body).data.attributes.status);
+        setDirtyExplorerList(true);
+      });
   };
 
   const discardChanges = () => {
@@ -101,6 +114,7 @@ export default function Controls() {
             <IconButton
               disabled={isRuleDirty() || !isRuleSelected()}
               onClick={newRule}
+              color="primary"
             >
               <AddIcon />
             </IconButton>
@@ -109,7 +123,11 @@ export default function Controls() {
 
         <Tooltip title="Save Rule">
           <span>
-            <IconButton disabled={!isRuleDirty()} onClick={saveRule}>
+            <IconButton
+              disabled={!isRuleDirty()}
+              onClick={saveRule}
+              color="primary"
+            >
               <SaveIcon />
             </IconButton>
           </span>
@@ -120,6 +138,7 @@ export default function Controls() {
             <IconButton
               disabled={!isRuleDirty()}
               onClick={() => setDiscardDialog(true)}
+              color="primary"
             >
               <RestoreIcon />
             </IconButton>
@@ -131,9 +150,24 @@ export default function Controls() {
             <IconButton
               disabled={!isRuleSelected() || !isMyRule()}
               onClick={() => setDeleteDialog(true)}
+              color="primary"
             >
               <DeleteIcon />
             </IconButton>
+          </span>
+        </Tooltip>
+
+        <Tooltip title={published ? "Unpublish Rule" : "Publish Rule"}>
+          <span>
+            <ToggleButton
+              disabled={isRuleDirty() || !isRuleSelected()}
+              selected={published && !isRuleDirty() && isRuleSelected()}
+              onChange={toggleRulePublished}
+              value="published"
+              color="primary"
+            >
+              <PublishIcon />
+            </ToggleButton>
           </span>
         </Tooltip>
 

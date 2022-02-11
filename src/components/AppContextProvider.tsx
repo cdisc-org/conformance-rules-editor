@@ -53,6 +53,7 @@ const AppContextProvider: React.FC = ({
     false
   );
   const [creator, setCreator] = useState<string>(null);
+  const [published, setPublished] = useState<boolean>(null);
 
   const clearError = () => (appError ? setAppError(null) : undefined);
 
@@ -118,6 +119,8 @@ const AppContextProvider: React.FC = ({
     setTestStepExpanded,
     creator,
     setCreator,
+    published,
+    setPublished,
     isMyRule,
   };
 

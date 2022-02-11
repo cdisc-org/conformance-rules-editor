@@ -1,17 +1,5 @@
 {
     "$defs": {
-        "Check": {
-            "additionalProperties": false,
-            "properties": {
-                "Check": {
-                    "$ref": "#/$defs/CheckItem"
-                }
-            },
-            "required": [
-                "Check"
-            ],
-            "type": "object"
-        },
         "CheckItem": {
             "oneOf": [
                 {
@@ -71,8 +59,12 @@
             },
             "type": "array"
         },
+        "Dataset": {
+            "pattern": "^(RELREC|RELSPEC|RELSUB|[A-Z]{2}|[A-Z]{4}|SUPP[A-Z]{2}|SUPP[A-Z]{4}|SQAP[A-Z]{4}|SUPP--)$",
+            "type": "string"
+        },
         "Domain": {
-            "pattern": "^(All|RELREC|RELSUB|SUPP|[A-Z]{2})$",
+            "pattern": "^(All|RELREC|RELSPEC|RELSUB|SUPP|[A-Z]{2})$",
             "type": "string"
         },
         "Domains": {
@@ -128,6 +120,7 @@
                 },
                 "operator": {
                     "enum": [
+                        "additional_columns_empty",
                         "comformant_value_data_type",
                         "comformant_value_length",
                         "contains",
@@ -218,10 +211,7 @@
                     ]
                 },
                 "value_is_literal": {
-                    "type": "boolean",
-                    "enum": [
-                        true
-                    ]
+                    "const": true
                 }
             },
             "required": [
@@ -231,7 +221,7 @@
             "type": "object"
         },
         "VariableName": {
-            "pattern": "^--[A-Z]{1,6}|[A-Z]{1,8}$",
+            "pattern": "^(--[A-Z]{1,6}|[A-Z]{1,8})$",
             "type": "string"
         }
     },
@@ -243,16 +233,16 @@
             "additionalProperties": false,
             "properties": {
                 "Organization": {
-                    "enum": [
-                        "CDISC"
-                    ],
-                    "type": "string"
+                    "const": "CDISC"
                 }
             },
             "required": [
                 "Organization"
             ],
             "type": "object"
+        },
+        "Check": {
+            "$ref": "#/$defs/CheckItem"
         },
         "Citations": {
             "items": {
@@ -284,14 +274,11 @@
             "additionalProperties": false,
             "properties": {
                 "Id": {
-                    "pattern": "^.+$",
+                    "pattern": "^CDISC\\.SDTMIG\\.CG\\d{4}$",
                     "type": "string"
                 },
                 "Version": {
-                    "enum": [
-                        "1"
-                    ],
-                    "type": "string"
+                    "const": "1"
                 }
             },
             "required": [
@@ -302,6 +289,31 @@
         },
         "Description": {
             "type": "string"
+        },
+        "Match Datasets": {
+            "items": {
+                "additionalProperties": false,
+                "properties": {
+                    "Name": {
+                        "$ref": "#/$defs/Dataset"
+                    },
+                    "Is Relationship": {
+                        "const": true
+                    },
+                    "Keys": {
+                        "items": {
+                            "$ref": "#/$defs/VariableName"
+                        },
+                        "type": "array"
+                    }
+                },
+                "required": [
+                    "Name",
+                    "Keys"
+                ],
+                "type": "object"
+            },
+            "type": "array"
         },
         "Operations": {
             "items": {
@@ -363,7 +375,7 @@
                 "additionalProperties": false,
                 "properties": {
                     "Origin": {
-                        "type": "string"
+                        "const": "SDTM and SDTMIG Conformance Rules"
                     },
                     "Rule Identifier": {
                         "additionalProperties": false,
@@ -382,7 +394,7 @@
                         "type": "object"
                     },
                     "Version": {
-                        "type": "string"
+                        "const": "2.0"
                     }
                 },
                 "required": [
@@ -392,261 +404,74 @@
                 ],
                 "type": "object"
             },
+            "minItems": 1,
+            "maxItems": 1,
             "type": "array"
         },
         "Rule Type": {
             "oneOf": [
                 {
-                    "additionalProperties": false,
-                    "properties": {
-                        "Consistency": {
-                            "$ref": "#/$defs/Check"
-                        }
-                    },
-                    "required": [
-                        "Consistency"
-                    ],
-                    "type": "object"
+                    "const": "Consistency"
                 },
                 {
-                    "additionalProperties": false,
-                    "properties": {
-                        "Data Domain aggregation": {
-                            "$ref": "#/$defs/Check"
-                        }
-                    },
-                    "required": [
-                        "Data Domain aggregation"
-                    ],
-                    "type": "object"
+                    "const": "Data Domain aggregation"
                 },
                 {
-                    "additionalProperties": false,
-                    "properties": {
-                        "Data Pattern and Format": {
-                            "$ref": "#/$defs/Check"
-                        }
-                    },
-                    "required": [
-                        "Data Pattern and Format"
-                    ],
-                    "type": "object"
+                    "const": "Data Pattern and Format"
                 },
                 {
-                    "additionalProperties": false,
-                    "properties": {
-                        "Dataset Metadata Check": {
-                            "$ref": "#/$defs/Check"
-                        }
-                    },
-                    "required": [
-                        "Dataset Metadata Check"
-                    ],
-                    "type": "object"
+                    "const": "Dataset Metadata Check"
                 },
                 {
-                    "additionalProperties": false,
-                    "properties": {
-                        "Dataset Metadata Check against Define XML": {
-                            "$ref": "#/$defs/Check"
-                        }
-                    },
-                    "required": [
-                        "Dataset Metadata Check against Define XML"
-                    ],
-                    "type": "object"
+                    "const": "Dataset Metadata Check against Define XML"
                 },
                 {
-                    "additionalProperties": false,
-                    "properties": {
-                        "Date Arithmetic": {
-                            "$ref": "#/$defs/Check"
-                        }
-                    },
-                    "required": [
-                        "Date Arithmetic"
-                    ],
-                    "type": "object"
+                    "const": "Date Arithmetic"
                 },
                 {
-                    "additionalProperties": false,
-                    "properties": {
-                        "Define-XML": {
-                            "$ref": "#/$defs/Check"
-                        }
-                    },
-                    "required": [
-                        "Define-XML"
-                    ],
-                    "type": "object"
+                    "const": "Define-XML"
                 },
                 {
-                    "additionalProperties": false,
-                    "properties": {
-                        "Domain Existence Check": {
-                            "$ref": "#/$defs/Check"
-                        }
-                    },
-                    "required": [
-                        "Domain Existence Check"
-                    ],
-                    "type": "object"
+                    "const": "Domain Presence Check"
                 },
                 {
-                    "additionalProperties": false,
-                    "properties": {
-                        "External Dictionaries": {
-                            "$ref": "#/$defs/Check"
-                        }
-                    },
-                    "required": [
-                        "External Dictionaries"
-                    ],
-                    "type": "object"
+                    "const": "External Dictionaries"
                 },
                 {
-                    "additionalProperties": false,
-                    "properties": {
-                        "Functional Dependency": {
-                            "$ref": "#/$defs/Check"
-                        }
-                    },
-                    "required": [
-                        "Functional Dependency"
-                    ],
-                    "type": "object"
+                    "const": "Functional Dependency"
                 },
                 {
-                    "additionalProperties": false,
-                    "properties": {
-                        "Populated Values": {
-                            "$ref": "#/$defs/Check"
-                        }
-                    },
-                    "required": [
-                        "Populated Values"
-                    ],
-                    "type": "object"
+                    "const": "Populated Values"
                 },
                 {
-                    "additionalProperties": false,
-                    "properties": {
-                        "Range & Limit": {
-                            "$ref": "#/$defs/Check"
-                        }
-                    },
-                    "required": [
-                        "Range & Limit"
-                    ],
-                    "type": "object"
+                    "const": "Range & Limit"
                 },
                 {
-                    "additionalProperties": false,
-                    "properties": {
-                        "Relationship Integrity Check": {
-                            "$ref": "#/$defs/Check"
-                        }
-                    },
-                    "required": [
-                        "Relationship Integrity Check"
-                    ],
-                    "type": "object"
+                    "const": "Relationship Integrity Check"
                 },
                 {
-                    "additionalProperties": false,
-                    "properties": {
-                        "Uniqueness": {
-                            "$ref": "#/$defs/Check"
-                        }
-                    },
-                    "required": [
-                        "Uniqueness"
-                    ],
-                    "type": "object"
+                    "const": "Uniqueness"
                 },
                 {
-                    "additionalProperties": false,
-                    "properties": {
-                        "Value Level Metadata Check against Define XML": {
-                            "$ref": "#/$defs/Check"
-                        }
-                    },
-                    "required": [
-                        "Value Level Metadata Check against Define XML"
-                    ],
-                    "type": "object"
+                    "const": "Value Level Metadata Check against Define XML"
                 },
                 {
-                    "additionalProperties": false,
-                    "properties": {
-                        "Value Presence": {
-                            "$ref": "#/$defs/Check"
-                        }
-                    },
-                    "required": [
-                        "Value Presence"
-                    ],
-                    "type": "object"
+                    "const": "Value Presence"
                 },
                 {
-                    "additionalProperties": false,
-                    "properties": {
-                        "Variable Length": {
-                            "$ref": "#/$defs/Check"
-                        }
-                    },
-                    "required": [
-                        "Variable Length"
-                    ],
-                    "type": "object"
+                    "const": "Variable Length"
                 },
                 {
-                    "additionalProperties": false,
-                    "properties": {
-                        "Variable Metadata Check": {
-                            "$ref": "#/$defs/Check"
-                        }
-                    },
-                    "required": [
-                        "Variable Metadata Check"
-                    ],
-                    "type": "object"
+                    "const": "Variable Metadata Check"
                 },
                 {
-                    "additionalProperties": false,
-                    "properties": {
-                        "Variable Metadata Check against Define XML": {
-                            "$ref": "#/$defs/Check"
-                        }
-                    },
-                    "required": [
-                        "Variable Metadata Check against Define XML"
-                    ],
-                    "type": "object"
+                    "const": "Variable Metadata Check against Define XML"
                 },
                 {
-                    "additionalProperties": false,
-                    "properties": {
-                        "Variable Order": {
-                            "$ref": "#/$defs/Check"
-                        }
-                    },
-                    "required": [
-                        "Variable Order"
-                    ],
-                    "type": "object"
+                    "const": "Variable Order"
                 },
                 {
-                    "additionalProperties": false,
-                    "properties": {
-                        "Variable Presence": {
-                            "$ref": "#/$defs/Check"
-                        }
-                    },
-                    "required": [
-                        "Variable Presence"
-                    ],
-                    "type": "object"
+                    "const": "Variable Presence"
                 }
             ]
         },
@@ -762,6 +587,7 @@
     },
     "required": [
         "Authority",
+        "Check",
         "Citations",
         "Core",
         "Description",

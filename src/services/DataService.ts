@@ -103,6 +103,24 @@ export class DataService {
     });
   };
 
+  public set_rule_published = async (ruleId: string, published: boolean) => {
+    return await fetch(`/api/rules/${ruleId}`, {
+      method: "PATCH",
+      headers: {
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        data: {
+          id: ruleId,
+          type: "node--conformance_rule",
+          attributes: {
+            status: published,
+          },
+        },
+      }),
+    });
+  };
+
   public post_rule = async (body: string) => {
     return await fetch(`/api/rules`, {
       method: "POST",

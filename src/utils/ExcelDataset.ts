@@ -14,7 +14,7 @@ export interface IVariable {
   name: string;
   label?: string;
   type?: string;
-  length?: string;
+  length?: number;
 }
 
 const datasetsSheetName: string = "Datasets";
@@ -58,7 +58,7 @@ const getVariables = (cols: string[], rows: {}[]): IVariable[] => {
       name: col,
       ...(rows.length > 0 ? { label: rows[0][col] } : {}),
       ...(rows.length > 1 ? { type: rows[1][col] } : {}),
-      ...(rows.length > 2 ? { length: rows[2][col] } : {}),
+      ...(rows.length > 2 ? { length: parseInt(rows[2][col]) } : {}),
     })
   );
 };
@@ -101,6 +101,14 @@ const getRecords = (cols: string[], rows: {}[]): {} => {
   );
 };
 
+const getDomainName = (rows: {}[], sheetName: string): string => {
+  return rows.length > 3 && rows[3]["DOMAIN"]
+    ? rows[3]["DOMAIN"]
+    : /* This is technically not the domain name, 
+    but it is what the CORE engine currently expects */
+      sheetName.toUpperCase().replace(".XPT", "");
+};
+
 export const excelToJsonDatasets = async (file: File): Promise<IDataset[]> => {
   const workbook: WorkBook = read(await readFile(file), {
     type: "binary",
@@ -117,9 +125,7 @@ export const excelToJsonDatasets = async (file: File): Promise<IDataset[]> => {
     setDatatypes(sheet);
     const rows: {}[] = utils.sheet_to_json<{}>(sheet);
 
-    if (rows.length > 3 && rows[3]["DOMAIN"]) {
-      dataset.domain = rows[3]["DOMAIN"];
-    }
+    dataset.domain = getDomainName(rows, sheetName);
 
     const sheetJson: string[][] = utils.sheet_to_json<string[]>(sheet, {
       header: 1,

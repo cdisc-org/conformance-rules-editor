@@ -11,13 +11,9 @@ function getCoreId(rule: any) {
 }
 
 function getRuleType(rule: any) {
-  if (isValidYaml(rule) && "Rule Type" in rule) {
-    const ruleType = Object.keys(rule["Rule Type"]);
-    if (ruleType.length === 1) {
-      return ruleType[0];
-    }
-  }
-  return `<Missing 'Rule Type'>`;
+  return isValidYaml(rule) && typeof rule["Rule Type"] === "string"
+    ? rule["Rule Type"]
+    : `<Missing 'Rule Type'>`;
 }
 
 function isValidYaml(rule: any) {

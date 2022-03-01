@@ -60,11 +60,11 @@
             "type": "array"
         },
         "Dataset": {
-            "pattern": "^(RELREC|RELSPEC|RELSUB|[A-Z]{2}|[A-Z]{4}|SUPP[A-Z]{2}|SUPP[A-Z]{4}|SQAP[A-Z]{4}|SUPP--)$",
+            "pattern": "^(AP--|RELREC|RELSPEC|RELSUB|[A-Z]{2}|[A-Z]{4}|SUPP[A-Z]{2}|SUPP[A-Z]{4}|SQAP[A-Z]{4}|SUPP--)$",
             "type": "string"
         },
         "Domain": {
-            "pattern": "^(All|RELREC|RELSPEC|RELSUB|SUPP|[A-Z]{2})$",
+            "pattern": "^(All|AP--|RELREC|RELSPEC|RELSUB|SUPP--|[A-Z]{2})$",
             "type": "string"
         },
         "Domains": {
@@ -321,6 +321,12 @@
                 "properties": {
                     "domain": {
                         "$ref": "#/$defs/Domain"
+                    },
+                    "group": {
+                        "items": {
+                            "$ref": "#/$defs/VariableName"
+                        },
+                        "type": "array"
                     },
                     "id": {
                         "pattern": "^\\$.+$",

@@ -129,6 +129,7 @@ export class DataService {
           attributes: {
             ...this.getAttributes(body),
             field_conformance_rule_creator: await this.get_username(),
+            status: false,
           },
         },
       }),

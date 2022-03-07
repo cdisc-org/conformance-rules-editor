@@ -60,16 +60,12 @@
             "type": "array"
         },
         "Dataset": {
-            "pattern": "^(RELREC|RELSPEC|RELSUB|[A-Z]{2}|[A-Z]{4}|SUPP[A-Z]{2}|SUPP[A-Z]{4}|SQAP[A-Z]{4}|SUPP--)$",
-            "type": "string"
-        },
-        "Domain": {
-            "pattern": "^(All|RELREC|RELSPEC|RELSUB|SUPP|[A-Z]{2})$",
+            "pattern": "^(AP--|RELREC|RELSPEC|RELSUB|[A-Z]{2}|[A-Z]{4}|SUPP[A-Z]{2}|SUPP[A-Z]{4}|SQAP[A-Z]{4}|SUPP--)$",
             "type": "string"
         },
         "Domains": {
             "items": {
-                "$ref": "#/$defs/Domain"
+                "$ref": "#/$defs/Dataset"
             },
             "type": "array"
         },
@@ -105,10 +101,19 @@
                                 "dataset_location",
                                 "dataset_name",
                                 "dataset_size",
+                                "define_variable_allowed_terms",
+                                "define_variable_ccode",
+                                "define_variable_data_type",
+                                "define_variable_format",
+                                "define_variable_label",
+                                "define_variable_name",
+                                "define_variable_origin_type",
+                                "define_variable_role",
+                                "define_variable_size",
                                 "variable_data_type",
                                 "variable_label",
                                 "variable_name",
-                                "variable_role",
+                                "variable_order",
                                 "variable_size"
                             ],
                             "type": "string"
@@ -121,6 +126,7 @@
                 "operator": {
                     "enum": [
                         "additional_columns_empty",
+                        "additional_columns_not_empty",
                         "comformant_value_data_type",
                         "comformant_value_length",
                         "contains",
@@ -135,6 +141,8 @@
                         "does_not_contain",
                         "does_not_contain_case_insensitive",
                         "does_not_have_next_corresponding_record",
+                        "does_not_reference_correct_codelist",
+                        "does_not_use_valid_codelist_terms",
                         "empty",
                         "empty_within_except_last_row",
                         "ends_with",
@@ -143,9 +151,11 @@
                         "exists",
                         "greater_than",
                         "greater_than_or_equal_to",
+                        "has_different_values",
                         "has_equal_length",
                         "has_next_corresponding_record",
                         "has_not_equal_length",
+                        "has_same_values",
                         "invalid_date",
                         "is_complete_date",
                         "is_contained_by",
@@ -186,6 +196,7 @@
                         "num_not_equal_to",
                         "prefix_matches_regex",
                         "present_on_multiple_rows_within",
+                        "references_correct_codelist",
                         "shares_at_least_one_element_with",
                         "shares_exactly_one_element_with",
                         "shares_no_elements_with",
@@ -194,7 +205,8 @@
                         "starts_with",
                         "str_equal_to",
                         "str_not_equal_to",
-                        "suffix_matches_regex"
+                        "suffix_matches_regex",
+                        "uses_valid_codelist_terms"
                     ],
                     "type": "string"
                 },
@@ -320,7 +332,13 @@
                 "additionalProperties": false,
                 "properties": {
                     "domain": {
-                        "$ref": "#/$defs/Domain"
+                        "$ref": "#/$defs/Dataset"
+                    },
+                    "group": {
+                        "items": {
+                            "$ref": "#/$defs/VariableName"
+                        },
+                        "type": "array"
                     },
                     "id": {
                         "pattern": "^\\$.+$",

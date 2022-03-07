@@ -30,7 +30,14 @@ module.exports = async function (context, req, url, token) {
           context.res["body"] = resp.statusMessage;
         }
         if (resp_body) {
-          context.res.json(JSON.parse(resp_body));
+          try {
+            context.res.json(JSON.parse(resp_body));
+          } catch (jsonParseException) {
+            context.res = {
+              status: 500,
+              body: `Core Engine returned invalid JSON: ${resp_body}`,
+            };
+          }
         }
         context.done();
       });

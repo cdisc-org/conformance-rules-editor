@@ -11,35 +11,79 @@ export default function ResultsTestStep() {
     setTestCheck,
   } = useContext(AppContext);
 
-  const testResultsHaveUnexpectedErrors = (json: object): boolean =>
-    Object.values(json).reduce(
+  const testResultsHaveErrors = (json: object): boolean =>
+    Object.values(json).reduce<boolean>(
       (aggregateDomainResult: boolean, currentDomainResult: {}[]) =>
         aggregateDomainResult ||
         currentDomainResult === null ||
-        currentDomainResult.reduce(
+        currentDomainResult.reduce<boolean>(
           (aggregateRecordResult: boolean, currentRecordResult: {}) =>
             aggregateRecordResult ||
-            (currentRecordResult &&
-              "message" in currentRecordResult &&
-              (currentRecordResult["message"] === null ||
-                currentRecordResult["message"] === "rule execution error")),
+            !currentRecordResult["executionStatus"] ||
+            currentRecordResult["executionStatus"] === "execution_error",
           false
         ),
       false
     );
 
   const testResultsErrorCount = (json: object): number =>
-    Object.values(json).reduce(
+    Object.values(json).reduce<number>(
       (aggregateDomainResult: number, currentDomainResult: {}[]) =>
         aggregateDomainResult +
         (currentDomainResult === null
           ? 1
-          : currentDomainResult.reduce(
+          : currentDomainResult.reduce<number>(
               (aggregateRecordResult: number, currentRecordResult: {}) =>
                 aggregateRecordResult +
-                ("errors" in currentRecordResult
+                (!currentRecordResult["executionStatus"] ||
+                currentRecordResult["executionStatus"] === "execution_error"
+                  ? "errors" in currentRecordResult
+                    ? currentRecordResult["errors"].length
+                    : 1
+                  : 0),
+              0
+            )),
+      0
+    );
+
+  const testResultsNegativeCount = (json: object): number =>
+    Object.values(json).reduce<number>(
+      (aggregateDomainResult: number, currentDomainResult: {}[]) =>
+        aggregateDomainResult +
+        (Array.isArray(currentDomainResult)
+          ? currentDomainResult.reduce<number>(
+              (aggregateRecordResult: number, currentRecordResult: {}) =>
+                aggregateRecordResult +
+                (currentRecordResult["executionStatus"] === "success" &&
+                "errors" in currentRecordResult
                   ? currentRecordResult["errors"].length
                   : 0),
+              0
+            )
+          : 0),
+      0
+    );
+
+  const testResultsPositiveCount = (json: object): number =>
+    Object.values(json).reduce<number>(
+      (aggregateDomainResult: number, currentDomainResult: {}[]) =>
+        aggregateDomainResult +
+        (Array.isArray(currentDomainResult) && currentDomainResult.length === 0
+          ? 1
+          : 0),
+      0
+    );
+
+  const testResultsSkipCount = (json: object): number =>
+    Object.values(json).reduce<number>(
+      (aggregateDomainResult: number, currentDomainResult: {}[]) =>
+        aggregateDomainResult +
+        (currentDomainResult === null
+          ? 0
+          : currentDomainResult.reduce<number>(
+              (aggregateRecordResult: number, currentRecordResult: {}) =>
+                aggregateRecordResult +
+                (currentRecordResult["executionStatus"] === "skipped" ? 1 : 0),
               0
             )),
       0
@@ -53,10 +97,13 @@ export default function ResultsTestStep() {
         .then((response) => {
           if (isSubscribed) {
             setTestCheck({
-              status: testResultsHaveUnexpectedErrors(response)
+              status: testResultsHaveErrors(response)
                 ? Status.Fail
                 : Status.Pass,
-              badgeCount: testResultsErrorCount(response),
+              errorCount: testResultsErrorCount(response),
+              negativeCount: testResultsNegativeCount(response),
+              positiveCount: testResultsPositiveCount(response),
+              skipCount: testResultsSkipCount(response),
               details: [
                 "Request",
                 {
@@ -73,6 +120,7 @@ export default function ResultsTestStep() {
           if (isSubscribed) {
             setTestCheck({
               status: Status.Fail,
+              errorCount: 1,
               details: [
                 "Request",
                 {
@@ -98,7 +146,5 @@ export default function ResultsTestStep() {
     };
   }, [jsonCheck, loadCheck, dataService, setTestCheck]);
 
-  return (
-    <TestStep title="Test Results" step={Steps.Test} results={testCheck} />
-  );
+  return <TestStep title={"Results"} step={Steps.Test} results={testCheck} />;
 }

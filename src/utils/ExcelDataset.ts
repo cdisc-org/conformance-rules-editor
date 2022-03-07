@@ -88,15 +88,17 @@ const setDatatypes = (sheet: WorkSheet) => {
   }
 };
 
-const getRecords = (cols: string[], rows: {}[]): {} => {
+const getRecords = (cols: IVariable[], rows: {}[]): {} => {
   return Object.fromEntries(
     cols
       .filter((col) => col)
       .map((col) => [
-        col,
+        col.name,
         rows
           .slice(3)
-          .map<string>((row: {}): string => (row[col] ? row[col] : "")),
+          .map<string>((row: {}): string =>
+            col.name in row ? row[col.name] : col.type === "Char" ? "" : null
+          ),
       ])
   );
 };
@@ -132,7 +134,7 @@ export const excelToJsonDatasets = async (file: File): Promise<IDataset[]> => {
     });
     const cols: string[] = sheetJson.length ? sheetJson[0] : [];
     dataset.variables = getVariables(cols, rows);
-    dataset.records = getRecords(cols, rows);
+    dataset.records = getRecords(dataset.variables, rows);
   }
   return datasets;
 };

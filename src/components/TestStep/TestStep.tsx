@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { ReactElement, useContext } from "react";
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -9,7 +9,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import AccessTimeFilledIcon from "@mui/icons-material/AccessTimeFilled";
 import AppContext, { Status, IResults, Steps } from "../AppContext";
 import JsonViewer from "../JsonViewer/JsonViewer";
-import { Badge } from "@mui/material";
+import ResultCount from "./ResultCount";
 
 const iconWidth = 30;
 
@@ -20,7 +20,7 @@ interface Props {
   children?;
 }
 
-const statusIcons = new Map<Status, object>([
+const statusIcons = new Map<Status, ReactElement>([
   [Status.Pending, <AccessTimeFilledIcon color="info" />],
   [Status.Pass, <CheckCircleIcon color="success" />],
   [Status.Fail, <CancelIcon color="error" />],
@@ -44,18 +44,28 @@ export default function TestStep(props: Props) {
     >
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Typography sx={{ width: `${iconWidth}px`, flexShrink: 0 }}>
-          {"badgeCount" in results ? (
-            <Badge badgeContent={results.badgeCount} color="error">
-              {statusIcons.get(results.status)}
-            </Badge>
-          ) : (
-            statusIcons.get(results.status)
-          )}
+          {statusIcons.get(results.status)}
         </Typography>
-        <Typography>
+        <>
           &nbsp;&nbsp;&nbsp;
           {title}
-        </Typography>
+          <ResultCount
+            label="Errors"
+            color="error"
+            count={results.errorCount}
+          />
+          <ResultCount
+            label="Positives"
+            color="success"
+            count={results.positiveCount}
+          />
+          <ResultCount
+            label="Negatives"
+            color="warning"
+            count={results.negativeCount}
+          />
+          <ResultCount label="Skips" color="info" count={results.skipCount} />
+        </>
       </AccordionSummary>
       <AccordionDetails>
         {children}

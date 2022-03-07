@@ -63,13 +63,9 @@
             "pattern": "^(AP--|RELREC|RELSPEC|RELSUB|[A-Z]{2}|[A-Z]{4}|SUPP[A-Z]{2}|SUPP[A-Z]{4}|SQAP[A-Z]{4}|SUPP--)$",
             "type": "string"
         },
-        "Domain": {
-            "pattern": "^(All|AP--|RELREC|RELSPEC|RELSUB|SUPP--|[A-Z]{2})$",
-            "type": "string"
-        },
         "Domains": {
             "items": {
-                "$ref": "#/$defs/Domain"
+                "$ref": "#/$defs/Dataset"
             },
             "type": "array"
         },
@@ -327,7 +323,7 @@
                 "additionalProperties": false,
                 "properties": {
                     "domain": {
-                        "$ref": "#/$defs/Domain"
+                        "$ref": "#/$defs/Dataset"
                     },
                     "group": {
                         "items": {

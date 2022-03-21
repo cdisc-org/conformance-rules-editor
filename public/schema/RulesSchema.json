@@ -48,7 +48,6 @@
                     "Events",
                     "Findings",
                     "Findings About",
-                    "General Observations",
                     "Interventions",
                     "Relationship",
                     "Special-Purpose",
@@ -74,6 +73,10 @@
                 "$ref": "#/$defs/Operator"
             },
             "type": "array"
+        },
+        "OperationId": {
+            "pattern": "^\\$.+$",
+            "type": "string"
         },
         "Operator": {
             "additionalProperties": false,
@@ -217,9 +220,29 @@
                     "type": "integer"
                 },
                 "value": {
-                    "type": [
-                        "number",
-                        "string"
+                    "oneOf": [
+                        {
+                            "type": [
+                                "number",
+                                "string"
+                            ]
+                        },
+                        {
+                            "items": {
+                                "type": [
+                                    "number"
+                                ]
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "items": {
+                                "type": [
+                                    "string"
+                                ]
+                            },
+                            "type": "array"
+                        }
                     ]
                 },
                 "value_is_literal": {
@@ -341,8 +364,7 @@
                         "type": "array"
                     },
                     "id": {
-                        "pattern": "^\\$.+$",
-                        "type": "string"
+                        "$ref": "#/$defs/OperationId"
                     },
                     "name": {
                         "type": "string"
@@ -378,7 +400,14 @@
                 },
                 "Output Variables": {
                     "items": {
-                        "$ref": "#/$defs/VariableName"
+                        "oneOf": [
+                            {
+                                "$ref": "#/$defs/OperationId"
+                            },
+                            {
+                                "$ref": "#/$defs/VariableName"
+                            }
+                        ]
                     },
                     "type": "array"
                 }
@@ -423,7 +452,6 @@
                 "type": "object"
             },
             "minItems": 1,
-            "maxItems": 1,
             "type": "array"
         },
         "Rule Type": {

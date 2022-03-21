@@ -10,7 +10,7 @@ module.exports = async function (context, req, url, token) {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
-      "Content-Length": postData.length,
+      "Content-Length": Buffer.byteLength(postData),
       ...(token && {
         Authorization: "Bearer " + token,
       }),

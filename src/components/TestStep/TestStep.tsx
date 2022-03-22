@@ -64,7 +64,16 @@ export default function TestStep(props: Props) {
             color="warning"
             count={results.negativeCount}
           />
-          <ResultCount label="Skips" color="info" count={results.skipCount} />
+          <ResultCount
+            label="Scope Skips"
+            color="info"
+            count={results.scopeSkipCount}
+          />
+          <ResultCount
+            label="Absent-Variable Skips"
+            color="info"
+            count={results.varSkipCount}
+          />
         </>
       </AccordionSummary>
       <AccordionDetails>

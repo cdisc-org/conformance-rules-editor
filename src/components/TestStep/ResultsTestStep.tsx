@@ -11,85 +11,112 @@ export default function ResultsTestStep() {
     setTestCheck,
   } = useContext(AppContext);
 
-  const testResultsHaveErrors = (json: object): boolean =>
-    Object.values(json).reduce<boolean>(
-      (aggregateDomainResult: boolean, currentDomainResult: {}[]) =>
-        aggregateDomainResult ||
-        currentDomainResult === null ||
-        currentDomainResult.reduce<boolean>(
-          (aggregateRecordResult: boolean, currentRecordResult: {}) =>
-            aggregateRecordResult ||
-            !currentRecordResult["executionStatus"] ||
-            currentRecordResult["executionStatus"] === "execution_error",
-          false
-        ),
-      false
-    );
-
-  const testResultsErrorCount = (json: object): number =>
-    Object.values(json).reduce<number>(
-      (aggregateDomainResult: number, currentDomainResult: {}[]) =>
-        aggregateDomainResult +
-        (currentDomainResult === null
-          ? 1
-          : currentDomainResult.reduce<number>(
-              (aggregateRecordResult: number, currentRecordResult: {}) =>
-                aggregateRecordResult +
-                (!currentRecordResult["executionStatus"] ||
-                currentRecordResult["executionStatus"] === "execution_error"
-                  ? "errors" in currentRecordResult
-                    ? currentRecordResult["errors"].length
-                    : 1
-                  : 0),
-              0
-            )),
-      0
-    );
-
-  const testResultsNegativeCount = (json: object): number =>
-    Object.values(json).reduce<number>(
-      (aggregateDomainResult: number, currentDomainResult: {}[]) =>
-        aggregateDomainResult +
-        (Array.isArray(currentDomainResult)
-          ? currentDomainResult.reduce<number>(
-              (aggregateRecordResult: number, currentRecordResult: {}) =>
-                aggregateRecordResult +
-                (currentRecordResult["executionStatus"] === "success" &&
-                "errors" in currentRecordResult
-                  ? currentRecordResult["errors"].length
-                  : 0),
-              0
-            )
-          : 0),
-      0
-    );
-
-  const testResultsPositiveCount = (json: object): number =>
-    Object.values(json).reduce<number>(
-      (aggregateDomainResult: number, currentDomainResult: {}[]) =>
-        aggregateDomainResult +
-        (Array.isArray(currentDomainResult) && currentDomainResult.length === 0
-          ? 1
-          : 0),
-      0
-    );
-
-  const testResultsSkipCount = (json: object): number =>
-    Object.values(json).reduce<number>(
-      (aggregateDomainResult: number, currentDomainResult: {}[]) =>
-        aggregateDomainResult +
-        (currentDomainResult === null
-          ? 0
-          : currentDomainResult.reduce<number>(
-              (aggregateRecordResult: number, currentRecordResult: {}) =>
-                aggregateRecordResult +
-                (currentRecordResult["executionStatus"] === "skipped" ? 1 : 0),
-              0
-            )),
-      0
-    );
-
   useEffect(() => {
+    const varSkipCount = (currentRecordResult: object): number =>
+      (currentRecordResult["errors"] ?? []).filter(
+        (currentError) => currentError["error"] === "Column not found in data"
+      ).length;
+
+    const testResultHasErrors = (currentRecordResult: object): boolean =>
+      (currentRecordResult["executionStatus"] ?? "execution_error") ===
+        "execution_error" &&
+      ((currentRecordResult["errors"] ?? []).length === 0 ||
+        currentRecordResult["errors"].length -
+          varSkipCount(currentRecordResult) >
+          0);
+
+    const testResultsHaveErrors = (json: object): boolean =>
+      Object.values(json).reduce<boolean>(
+        (aggregateDomainResult: boolean, currentDomainResult: {}[]) =>
+          aggregateDomainResult ||
+          currentDomainResult === null ||
+          currentDomainResult.reduce<boolean>(
+            (aggregateRecordResult: boolean, currentRecordResult: {}) =>
+              aggregateRecordResult || testResultHasErrors(currentRecordResult),
+            false
+          ),
+        false
+      );
+
+    const testResultsErrorCount = (json: object): number =>
+      Object.values(json).reduce<number>(
+        (aggregateDomainResult: number, currentDomainResult: {}[]) =>
+          aggregateDomainResult +
+          (currentDomainResult === null
+            ? 1
+            : currentDomainResult.reduce<number>(
+                (aggregateRecordResult: number, currentRecordResult: {}) =>
+                  aggregateRecordResult +
+                  (testResultHasErrors(currentRecordResult)
+                    ? "errors" in currentRecordResult
+                      ? currentRecordResult["errors"].length
+                      : 1
+                    : 0),
+                0
+              )),
+        0
+      );
+
+    const testResultsNegativeCount = (json: object): number =>
+      Object.values(json).reduce<number>(
+        (aggregateDomainResult: number, currentDomainResult: {}[]) =>
+          aggregateDomainResult +
+          (Array.isArray(currentDomainResult)
+            ? currentDomainResult.reduce<number>(
+                (aggregateRecordResult: number, currentRecordResult: {}) =>
+                  aggregateRecordResult +
+                  (currentRecordResult["executionStatus"] === "success" &&
+                  "errors" in currentRecordResult
+                    ? currentRecordResult["errors"].length
+                    : 0),
+                0
+              )
+            : 0),
+        0
+      );
+
+    const testResultsPositiveCount = (json: object): number =>
+      Object.values(json).reduce<number>(
+        (aggregateDomainResult: number, currentDomainResult: {}[]) =>
+          aggregateDomainResult +
+          (Array.isArray(currentDomainResult) &&
+          currentDomainResult.length === 0
+            ? 1
+            : 0),
+        0
+      );
+
+    const testResultsScopeSkipCount = (json: object): number =>
+      Object.values(json).reduce<number>(
+        (aggregateDomainResult: number, currentDomainResult: {}[]) =>
+          aggregateDomainResult +
+          (currentDomainResult === null
+            ? 0
+            : currentDomainResult.reduce<number>(
+                (aggregateRecordResult: number, currentRecordResult: {}) =>
+                  aggregateRecordResult +
+                  (currentRecordResult["executionStatus"] === "skipped"
+                    ? 1
+                    : 0),
+                0
+              )),
+        0
+      );
+
+    const testResultsVarSkipCount = (json: object): number =>
+      Object.values(json).reduce<number>(
+        (aggregateDomainResult: number, currentDomainResult: {}[]) =>
+          aggregateDomainResult +
+          (currentDomainResult === null
+            ? 0
+            : currentDomainResult.reduce<number>(
+                (aggregateRecordResult: number, currentRecordResult: {}) =>
+                  aggregateRecordResult + varSkipCount(currentRecordResult),
+                0
+              )),
+        0
+      );
+
     let isSubscribed = true;
     if (jsonCheck.status === Status.Pass && loadCheck.status === Status.Pass) {
       dataService
@@ -103,7 +130,8 @@ export default function ResultsTestStep() {
               errorCount: testResultsErrorCount(response),
               negativeCount: testResultsNegativeCount(response),
               positiveCount: testResultsPositiveCount(response),
-              skipCount: testResultsSkipCount(response),
+              scopeSkipCount: testResultsScopeSkipCount(response),
+              varSkipCount: testResultsVarSkipCount(response),
               details: [
                 "Request",
                 {

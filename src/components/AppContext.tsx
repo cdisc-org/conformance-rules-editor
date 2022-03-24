@@ -21,7 +21,8 @@ export interface IResults {
   errorCount?: number;
   negativeCount?: number;
   positiveCount?: number;
-  skipCount?: number;
+  scopeSkipCount?: number;
+  varSkipCount?: number;
   details: any[];
 }
 

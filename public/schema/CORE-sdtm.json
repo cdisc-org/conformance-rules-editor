@@ -36,6 +36,7 @@
         }
     },
     "$id": "https://cdisc.org/CORE-sdtm.json",
+    "$schema": "http://json-schema.org/draft-07/schema#",
     "additionalProperties": false,
     "description": "Validation schema CDISC Rules 1.0",
     "properties": {

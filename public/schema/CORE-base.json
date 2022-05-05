@@ -41,32 +41,8 @@
             },
             "type": "array"
         },
-        "Classes": {
-            "items": {
-                "enum": [
-                    "All",
-                    "Events",
-                    "Findings",
-                    "Findings About",
-                    "Interventions",
-                    "Relationship",
-                    "Special-Purpose",
-                    "Study Reference",
-                    "Trial Design"
-                ],
-                "type": "string"
-            },
-            "type": "array"
-        },
         "Dataset": {
-            "pattern": "^(All|AP--|RELREC|RELSPEC|RELSUB|[A-Z]{2}|[A-Z]{4}|SUPP[A-Z]{2}|SUPP[A-Z]{4}|SQAP[A-Z]{4}|SUPP--)$",
             "type": "string"
-        },
-        "Domains": {
-            "items": {
-                "$ref": "#/$defs/Dataset"
-            },
-            "type": "array"
         },
         "Operation": {
             "items": {
@@ -260,7 +236,7 @@
             "type": "string"
         }
     },
-    "$id": "https://cdisc.org/rules/1-0",
+    "$id": "https://cdisc.org/CORE-base.json",
     "additionalProperties": false,
     "description": "Validation schema CDISC Rules 1.0",
     "properties": {
@@ -309,7 +285,6 @@
             "additionalProperties": false,
             "properties": {
                 "Id": {
-                    "pattern": "^CDISC\\.SDTMIG\\.CG\\d{4}$",
                     "type": "string"
                 },
                 "Version": {
@@ -422,7 +397,7 @@
                 "additionalProperties": false,
                 "properties": {
                     "Origin": {
-                        "const": "SDTM and SDTMIG Conformance Rules"
+                        "type": "string"
                     },
                     "Rule Identifier": {
                         "additionalProperties": false,
@@ -441,7 +416,7 @@
                         "type": "object"
                     },
                     "Version": {
-                        "const": "2.0"
+                        "type": "string"
                     }
                 },
                 "required": [
@@ -524,62 +499,6 @@
         "Scopes": {
             "additionalProperties": false,
             "properties": {
-                "Classes": {
-                    "oneOf": [
-                        {
-                            "additionalProperties": false,
-                            "properties": {
-                                "Include": {
-                                    "$ref": "#/$defs/Classes"
-                                }
-                            },
-                            "required": [
-                                "Include"
-                            ],
-                            "type": "object"
-                        },
-                        {
-                            "additionalProperties": false,
-                            "properties": {
-                                "Exclude": {
-                                    "$ref": "#/$defs/Classes"
-                                }
-                            },
-                            "required": [
-                                "Exclude"
-                            ],
-                            "type": "object"
-                        }
-                    ]
-                },
-                "Domains": {
-                    "oneOf": [
-                        {
-                            "additionalProperties": false,
-                            "properties": {
-                                "Include": {
-                                    "$ref": "#/$defs/Domains"
-                                }
-                            },
-                            "required": [
-                                "Include"
-                            ],
-                            "type": "object"
-                        },
-                        {
-                            "additionalProperties": false,
-                            "properties": {
-                                "Exclude": {
-                                    "$ref": "#/$defs/Domains"
-                                }
-                            },
-                            "required": [
-                                "Exclude"
-                            ],
-                            "type": "object"
-                        }
-                    ]
-                },
                 "Standards": {
                     "items": {
                         "additionalProperties": false,
@@ -601,17 +520,13 @@
                 }
             },
             "required": [
-                "Standards",
-                "Classes",
-                "Domains"
+                "Standards"
             ],
             "type": "object"
         },
         "Sensitivity": {
             "enum": [
                 "Study",
-                "Class",
-                "Domain",
                 "Dataset",
                 "Variable",
                 "Code_list",

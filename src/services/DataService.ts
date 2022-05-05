@@ -1,6 +1,14 @@
 import yaml from "js-yaml";
 import { IDataset } from "../utils/ExcelDataset";
 
+export interface ISchema {
+  standard: string;
+  id: string;
+  uri: string;
+  url: string;
+  json?: {};
+}
+
 function getCoreId(rule: any) {
   const errorMessage = `<Missing 'Core.Id'>`;
   return isValidYaml(rule)
@@ -145,15 +153,41 @@ export class DataService {
     });
   };
 
-  public get_rules_schema = async () => {
-    return await fetch("schema/RulesSchema.json", {
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
+  public get_rules_schema = async (): Promise<ISchema[]> => {
+    const schemas: ISchema[] = [
+      {
+        standard: "base",
+        id: "https://cdisc.org/CORE-base.json",
+        uri: "file:///CORE-base.json",
+        url: "schema/CORE-base.json",
       },
-    }).then(function (response) {
-      return response.json();
-    });
+      {
+        standard: "sdtm",
+        id: "https://cdisc.org/CORE-sdtm.json",
+        uri: "file:///CORE-sdtm.json",
+        url: "schema/CORE-sdtm.json",
+      },
+    ];
+    const responses: Response[] = await Promise.all(
+      schemas.map(
+        (schema: ISchema): Promise<Response> =>
+          fetch(schema.url, {
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+          })
+      )
+    );
+    const json: {}[] = await Promise.all(
+      responses.map((response: Response) => response.json())
+    );
+    return schemas.map(
+      (schema: ISchema, schemaIndex: number): ISchema => ({
+        ...schema,
+        json: json[schemaIndex],
+      })
+    );
   };
 
   public generate_rule_json = async (rule: string) => {

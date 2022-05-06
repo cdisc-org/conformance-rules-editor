@@ -1,32 +1,15 @@
 {
     "$defs": {
         "CheckItem": {
-            "oneOf": [
-                {
-                    "additionalProperties": false,
-                    "properties": {
-                        "all": {
-                            "$ref": "#/$defs/CheckList"
-                        }
-                    },
-                    "required": [
-                        "all"
-                    ],
-                    "type": "object"
-                },
-                {
-                    "additionalProperties": false,
-                    "properties": {
-                        "any": {
-                            "$ref": "#/$defs/CheckList"
-                        }
-                    },
-                    "required": [
-                        "any"
-                    ],
-                    "type": "object"
+            "additionalProperties": false,
+            "minProperties": 1,
+            "maxProperties": 1,
+            "patternProperties": {
+                "^all|any|not$": {
+                    "$ref": "#/$defs/CheckList"
                 }
-            ]
+            },
+            "type": "object"
         },
         "CheckList": {
             "items": {

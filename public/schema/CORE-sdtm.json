@@ -204,32 +204,19 @@
                     ]
                 },
                 "Domains": {
-                    "oneOf": [
-                        {
-                            "additionalProperties": false,
-                            "properties": {
-                                "Include": {
-                                    "$ref": "#/$defs/Domains"
-                                }
-                            },
-                            "required": [
-                                "Include"
-                            ],
-                            "type": "object"
+                    "additionalProperties": false,
+                    "properties": {
+                        "Exclude": {
+                            "$ref": "#/$defs/Domains"
                         },
-                        {
-                            "additionalProperties": false,
-                            "properties": {
-                                "Exclude": {
-                                    "$ref": "#/$defs/Domains"
-                                }
-                            },
-                            "required": [
-                                "Exclude"
-                            ],
-                            "type": "object"
+                        "Include": {
+                            "$ref": "#/$defs/Domains"
+                        },
+                        "include_split_datasets": {
+                            "type": "boolean"
                         }
-                    ]
+                    },
+                    "type": "object"
                 },
                 "Standards": {
                     "$ref": "CORE-base.json#/properties/Scopes/properties/Standards"

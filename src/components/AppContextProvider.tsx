@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { DataService } from "../services/DataService";
+import { DataService, ISchema } from "../services/DataService";
 import AppContext, {
   IAppError,
   Order,
@@ -8,7 +8,7 @@ import AppContext, {
   Steps,
 } from "./AppContext";
 import { AlertState } from "./GeneralAlert/GeneralAlert";
-import { setDiagnosticsOptions } from "monaco-yaml/lib/esm/monaco.contribution";
+import { SchemasSettings, setDiagnosticsOptions } from "monaco-yaml";
 
 const AppContextProvider: React.FC = ({
   children,
@@ -141,20 +141,20 @@ const AppContextProvider: React.FC = ({
 
   /* Load yaml schema for editor validation */
   useEffect(() => {
-    dataService.get_rules_schema().then(function (rulesSchema) {
+    dataService.get_rules_schema().then(function (schemas: ISchema[]) {
       setDiagnosticsOptions({
         validate: true,
         enableSchemaRequest: true,
         format: true,
         hover: true,
         completion: true,
-        schemas: [
-          {
-            uri: "https://cdisc.org/rules/1-0",
-            fileMatch: ["*"],
-            schema: rulesSchema,
-          },
-        ],
+        schemas: schemas.map(
+          (schema: ISchema): SchemasSettings => ({
+            uri: schema.uri,
+            schema: schema.json,
+            fileMatch: schema.standard === "sdtm" ? ["*"] : [],
+          })
+        ),
       });
     });
   }, [dataService]);

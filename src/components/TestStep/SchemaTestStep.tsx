@@ -3,6 +3,7 @@ import AppContext, { Status, Steps } from "../AppContext";
 import yaml from "js-yaml";
 import Ajv from "ajv";
 import TestStep from "./TestStep";
+import { ISchema } from "../../services/DataService";
 
 export default function SchemaTestStep() {
   const { modifiedRule, dataService, schemaCheck, setSchemaCheck } = useContext(
@@ -20,10 +21,18 @@ export default function SchemaTestStep() {
     try {
       const yamlDoc = yaml.load(modifiedRule);
       if (yamlDoc) {
-        const ajv = new Ajv({ allErrors: true, allowUnionTypes: true });
-        dataService.get_rules_schema().then((rulesSchema) => {
+        dataService.get_rules_schema().then((schemas: ISchema[]) => {
           if (isSubscribed) {
-            const validate = ajv.compile(rulesSchema);
+            const ajv = new Ajv({
+              allErrors: true,
+              allowUnionTypes: true,
+              schemas: schemas.map((schema: ISchema): {} => schema.json),
+            });
+            const validate = ajv.getSchema(
+              schemas.filter(
+                (schema: ISchema): boolean => schema.standard === "sdtm"
+              )[0].id
+            );
             const valid = validate(yamlDoc);
             setSchemaCheck(
               valid

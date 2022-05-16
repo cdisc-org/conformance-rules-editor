@@ -70,6 +70,7 @@ export default function ExplorerHead() {
               pl: { sm: 2 },
               pr: { xs: 1, sm: 1 },
               bgcolor: "#DDEEFF",
+              minWidth: 150,
             }}
             key={headCell.queryParam}
             sortDirection={orderBy === headCell.queryParam ? order : false}

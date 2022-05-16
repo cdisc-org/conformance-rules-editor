@@ -9,6 +9,7 @@ import ExplorerHead, {
   headCells,
   HeadCell,
 } from "../ExplorerHead/ExplorerHead";
+import { debounce } from "lodash";
 
 export interface PaginationLink {
   href: string;
@@ -18,6 +19,16 @@ export interface PaginationLinks {
   prev?: PaginationLink;
   self: PaginationLink;
   next?: PaginationLink;
+}
+
+enum FetchType {
+  FilterSort,
+  Pagination,
+}
+
+interface Fetch {
+  params: string;
+  type: FetchType;
 }
 
 export default function ExplorerList() {
@@ -39,7 +50,7 @@ export default function ExplorerList() {
   const [wantsMoreRules, setWantsMoreRules] = useState<boolean>(false);
   const [paginationLinks, setPaginationLinks] = useState<PaginationLinks>(null);
   const [rulesLoaded, setRulesLoaded] = useState<boolean>(false);
-  const [fetchParams, setFetchParams] = useState<string>(null);
+  const [fetchParams, setFetchParams] = useState<Fetch>(null);
   const rulesListRef = useRef<any>();
 
   /* More rules exist than the ones already loaded in the scroll pane */
@@ -54,37 +65,69 @@ export default function ExplorerList() {
     [rulesListRef]
   );
 
+  const populateRulesList = useCallback(
+    (responseJson) => {
+      setPaginationLinks(responseJson.links);
+      setRulesList([
+        ...rulesList,
+        ...responseJson.data.map((ruleItem, ruleIndex) => (
+          <ExplorerItem
+            key={ruleItem.id}
+            storageId={ruleItem.id}
+            coreId={ruleItem.attributes.title}
+            ruleType={ruleItem.attributes.field_conformance_rule_type}
+            creator={ruleItem.attributes.field_conformance_rule_creator}
+            published={ruleItem.attributes.status}
+            created={ruleItem.attributes.created}
+            changed={ruleItem.attributes.changed}
+          />
+        )),
+      ]);
+      setRulesLoaded(true);
+    },
+    [rulesList]
+  );
+
+  const getRulesPagination = useCallback(
+    async (params) =>
+      dataService
+        .get_rules_pagination(params)
+        .then(populateRulesList)
+        .catch((error) => {
+          if (error.name === "AbortError") return;
+          console.log(`Error ${error}`);
+        }),
+    [dataService, populateRulesList]
+  );
+
+  const getRulesFilterSort = useRef(
+    debounce(
+      async (params) =>
+        dataService
+          .get_rules_filter_sort(params)
+          .then(populateRulesList)
+          .catch((error) => {
+            if (error.name === "AbortError") return;
+            console.log(`Error ${error}`);
+          }),
+      500
+    )
+  ).current;
+
   /* Fetch from api data service */
   useEffect(() => {
     if (dataService && fetchParams !== null) {
-      dataService
-        .get_rules(fetchParams)
-        .then(function (response) {
-          return response.json();
-        })
-        .then(function (responseJson) {
-          const parsed = JSON.parse(responseJson.body);
-          setPaginationLinks(parsed.links);
-          setRulesList([
-            ...rulesList,
-            ...parsed.data.map((ruleItem, ruleIndex) => (
-              <ExplorerItem
-                key={ruleItem.id}
-                storageId={ruleItem.id}
-                coreId={ruleItem.attributes.title}
-                ruleType={ruleItem.attributes.field_conformance_rule_type}
-                creator={ruleItem.attributes.field_conformance_rule_creator}
-                published={ruleItem.attributes.status}
-                created={ruleItem.attributes.created}
-                changed={ruleItem.attributes.changed}
-              />
-            )),
-          ]);
-          setRulesLoaded(true);
-        });
+      switch (fetchParams.type) {
+        case FetchType.FilterSort:
+          getRulesFilterSort(fetchParams.params);
+          break;
+        case FetchType.Pagination:
+          getRulesPagination(fetchParams.params);
+          break;
+      }
       setFetchParams(null);
     }
-  }, [fetchParams, dataService, rulesList]);
+  }, [fetchParams, dataService, getRulesFilterSort, getRulesPagination]);
 
   /* Load fresh list of rules */
   useEffect(() => {
@@ -109,11 +152,12 @@ export default function ExplorerList() {
       const includeParams =
         "fields[node--conformance_rule]=" +
         headCells.map((headCell: HeadCell) => headCell.queryParam).join(",");
-      setFetchParams(
-        [includeParams, sortParams, filterParams]
+      setFetchParams({
+        params: [includeParams, sortParams, filterParams]
           .filter((value: string) => value)
-          .join("&")
-      );
+          .join("&"),
+        type: FetchType.FilterSort,
+      });
       setDirtyExplorerList(false);
       setRulesLoaded(false);
     }
@@ -126,7 +170,10 @@ export default function ExplorerList() {
       hasMoreRules() &&
       (wantsMoreRules || scrollbarsMissing())
     ) {
-      setFetchParams(paginationLinks.next.href.split("?")[1]);
+      setFetchParams({
+        params: paginationLinks.next.href.split("?")[1],
+        type: FetchType.Pagination,
+      });
       setWantsMoreRules(false);
       setRulesLoaded(false);
     }
@@ -189,20 +236,10 @@ export default function ExplorerList() {
         loader={<h4>More rules available...</h4>}
         endMessage={
           <p style={{ textAlign: "center" }}>
-            <b>All rules loaded.</b>
+            <b>All {rulesList.length} rules loaded.</b>
           </p>
         }
         scrollableTarget="rulesList"
-        /*below props only if you need pull down functionality*/
-        refreshFunction={() => setDirtyExplorerList(true)}
-        pullDownToRefresh
-        pullDownToRefreshThreshold={50}
-        pullDownToRefreshContent={
-          <h3 style={{ textAlign: "center" }}>&#8595; Pull down to refresh</h3>
-        }
-        releaseToRefreshContent={
-          <h3 style={{ textAlign: "center" }}>&#8593; Release to refresh</h3>
-        }
         children=""
       ></InfiniteScroll>
     </>

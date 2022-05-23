@@ -73,13 +73,40 @@ export class DataService {
       });
   };
 
-  public get_rules = async (fetchParams: string) => {
-    return await fetch(`/api/rules?${fetchParams}`, {
+  rulesAbortController = new AbortController();
+
+  public get_rules_filter_sort = async (fetchParams: string) => {
+    /* If multiple requests are fired in succession, 
+      avoid race conditions by aborting all but the most recent request's response */
+    this.rulesAbortController.abort();
+    this.rulesAbortController = new AbortController();
+    return fetch(`/api/rules?${fetchParams}`, {
       method: "GET",
       headers: {
         Accept: "application/json",
       },
-    });
+      signal: this.rulesAbortController.signal,
+    })
+      .then((response: Response) => response.json())
+      .then((responseJson) => {
+        return JSON.parse(responseJson.body);
+      });
+  };
+
+  public get_rules_pagination = async (fetchParams: string) => {
+    return fetch(`/api/rules?${fetchParams}`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+      /* Allows us to abort the pagination request if a pagination request is started
+       and then a filter/sort request starts before we receive the pagination response */
+      signal: this.rulesAbortController.signal,
+    })
+      .then((response: Response) => response.json())
+      .then((responseJson) => {
+        return JSON.parse(responseJson.body);
+      });
   };
 
   public get_rule = async (ruleId: string) => {

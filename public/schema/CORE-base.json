@@ -1,37 +1,50 @@
 {
     "$defs": {
-        "CheckItem": {
-            "additionalProperties": false,
-            "minProperties": 1,
-            "maxProperties": 1,
-            "patternProperties": {
-                "^all|any|not$": {
-                    "$ref": "#/$defs/CheckList"
+        "Boolean": {
+            "oneOf": [
+                {
+                    "additionalProperties": false,
+                    "minProperties": 1,
+                    "maxProperties": 1,
+                    "patternProperties": {
+                        "^all|any$": {
+                            "$ref": "#/$defs/CheckList"
+                        }
+                    },
+                    "type": "object"
+                },
+                {
+                    "additionalProperties": false,
+                    "properties": {
+                        "not": {
+                            "$ref": "#/$defs/CheckItem"
+                        }
+                    },
+                    "required": [
+                        "not"
+                    ],
+                    "type": "object"
                 }
-            },
-            "type": "object"
+            ]
+        },
+        "CheckItem": {
+            "anyOf": [
+                {
+                    "$ref": "#/$defs/Boolean"
+                },
+                {
+                    "$ref": "#/$defs/Operator"
+                }
+            ]
         },
         "CheckList": {
             "items": {
-                "anyOf": [
-                    {
-                        "$ref": "#/$defs/CheckItem"
-                    },
-                    {
-                        "$ref": "#/$defs/Operator"
-                    }
-                ]
+                "$ref": "#/$defs/CheckItem"
             },
             "type": "array"
         },
         "Dataset": {
             "type": "string"
-        },
-        "Operation": {
-            "items": {
-                "$ref": "#/$defs/Operator"
-            },
-            "type": "array"
         },
         "OperationId": {
             "pattern": "^\\$.+$",
@@ -259,7 +272,7 @@
             "type": "object"
         },
         "Check": {
-            "$ref": "#/$defs/CheckItem"
+            "$ref": "#/$defs/Boolean"
         },
         "Citations": {
             "items": {
@@ -358,7 +371,8 @@
                             "max_date",
                             "mean",
                             "min",
-                            "min_date"
+                            "min_date",
+                            "variable_exists"
                         ],
                         "type": "string"
                     }

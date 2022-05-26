@@ -1,6 +1,14 @@
 import yaml from "js-yaml";
 import { IDataset } from "../utils/ExcelDataset";
 
+export interface ISchema {
+  standard: string;
+  id: string;
+  uri: string;
+  url: string;
+  json?: {};
+}
+
 function getCoreId(rule: any) {
   const errorMessage = `<Missing 'Core.Id'>`;
   return isValidYaml(rule)
@@ -65,13 +73,40 @@ export class DataService {
       });
   };
 
-  public get_rules = async (fetchParams: string) => {
-    return await fetch(`/api/rules?${fetchParams}`, {
+  rulesAbortController = new AbortController();
+
+  public get_rules_filter_sort = async (fetchParams: string) => {
+    /* If multiple requests are fired in succession, 
+      avoid race conditions by aborting all but the most recent request's response */
+    this.rulesAbortController.abort();
+    this.rulesAbortController = new AbortController();
+    return fetch(`/api/rules?${fetchParams}`, {
       method: "GET",
       headers: {
         Accept: "application/json",
       },
-    });
+      signal: this.rulesAbortController.signal,
+    })
+      .then((response: Response) => response.json())
+      .then((responseJson) => {
+        return JSON.parse(responseJson.body);
+      });
+  };
+
+  public get_rules_pagination = async (fetchParams: string) => {
+    return fetch(`/api/rules?${fetchParams}`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+      /* Allows us to abort the pagination request if a pagination request is started
+       and then a filter/sort request starts before we receive the pagination response */
+      signal: this.rulesAbortController.signal,
+    })
+      .then((response: Response) => response.json())
+      .then((responseJson) => {
+        return JSON.parse(responseJson.body);
+      });
   };
 
   public get_rule = async (ruleId: string) => {
@@ -145,15 +180,41 @@ export class DataService {
     });
   };
 
-  public get_rules_schema = async () => {
-    return await fetch("schema/RulesSchema.json", {
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
+  public get_rules_schema = async (): Promise<ISchema[]> => {
+    const schemas: ISchema[] = [
+      {
+        standard: "base",
+        id: "https://cdisc.org/CORE-base.json",
+        uri: "file:///CORE-base.json",
+        url: "schema/CORE-base.json",
       },
-    }).then(function (response) {
-      return response.json();
-    });
+      {
+        standard: "sdtm",
+        id: "https://cdisc.org/CORE-sdtm.json",
+        uri: "file:///CORE-sdtm.json",
+        url: "schema/CORE-sdtm.json",
+      },
+    ];
+    const responses: Response[] = await Promise.all(
+      schemas.map(
+        (schema: ISchema): Promise<Response> =>
+          fetch(schema.url, {
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+          })
+      )
+    );
+    const json: {}[] = await Promise.all(
+      responses.map((response: Response) => response.json())
+    );
+    return schemas.map(
+      (schema: ISchema, schemaIndex: number): ISchema => ({
+        ...schema,
+        json: json[schemaIndex],
+      })
+    );
   };
 
   public generate_rule_json = async (rule: string) => {

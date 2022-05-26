@@ -1,0 +1,264 @@
+{
+    "$defs": {
+        "Classes": {
+            "items": {
+                "enum": [
+                    "All",
+                    "Events",
+                    "Findings",
+                    "Findings About",
+                    "Interventions",
+                    "Relationship",
+                    "Special-Purpose",
+                    "Study Reference",
+                    "Trial Design"
+                ],
+                "type": "string"
+            },
+            "type": "array"
+        },
+        "Dataset": {
+            "allOf": [
+                {
+                    "$ref": "CORE-base.json#/$defs/Dataset"
+                },
+                {
+                    "pattern": "^(All|AP--|APRELSUB|RELREC|RELSPEC|RELSUB|[A-Z]{2}|[A-Z]{4}|SUPP[A-Z]{2}|SUPP[A-Z]{4}|SQAP[A-Z]{4}|SUPP--)$",
+                    "type": "string"
+                }
+            ]
+        },
+        "Domains": {
+            "items": {
+                "$ref": "#/$defs/Dataset"
+            },
+            "type": "array"
+        }
+    },
+    "$id": "https://cdisc.org/CORE-sdtm.json",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "additionalProperties": false,
+    "description": "Validation schema CDISC Rules 1.0",
+    "properties": {
+        "Authority": {
+            "$ref": "CORE-base.json#/properties/Authority"
+        },
+        "Check": {
+            "$ref": "CORE-base.json#/properties/Check"
+        },
+        "Citations": {
+            "$ref": "CORE-base.json#/properties/Citations"
+        },
+        "Core": {
+            "additionalProperties": false,
+            "properties": {
+                "Id": {
+                    "allOf": [
+                        {
+                            "$ref": "CORE-base.json#/properties/Core/properties/Id"
+                        },
+                        {
+                            "pattern": "^CDISC\\.SDTMIG\\.CG\\d{4}$",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "Version": {
+                    "$ref": "CORE-base.json#/properties/Core/properties/Version"
+                }
+            },
+            "required": [
+                "Id",
+                "Version"
+            ],
+            "type": "object"
+        },
+        "Description": {
+            "$ref": "CORE-base.json#/properties/Description"
+        },
+        "Match Datasets": {
+            "items": {
+                "additionalProperties": false,
+                "properties": {
+                    "Name": {
+                        "$ref": "#/$defs/Dataset"
+                    },
+                    "Is Relationship": {
+                        "$ref": "CORE-base.json#/properties/Match Datasets/items/properties/Is Relationship"
+                    },
+                    "Keys": {
+                        "$ref": "CORE-base.json#/properties/Match Datasets/items/properties/Keys"
+                    }
+                },
+                "required": [
+                    "Name",
+                    "Keys"
+                ],
+                "type": "object"
+            },
+            "type": "array"
+        },
+        "Operations": {
+            "items": {
+                "additionalProperties": false,
+                "properties": {
+                    "domain": {
+                        "$ref": "#/$defs/Dataset"
+                    },
+                    "group": {
+                        "$ref": "CORE-base.json#/properties/Operations/items/properties/group"
+                    },
+                    "id": {
+                        "$ref": "CORE-base.json#/properties/Operations/items/properties/id"
+                    },
+                    "name": {
+                        "$ref": "CORE-base.json#/properties/Operations/items/properties/name"
+                    },
+                    "operator": {
+                        "$ref": "CORE-base.json#/properties/Operations/items/properties/operator"
+                    }
+                },
+                "required": [
+                    "domain",
+                    "id",
+                    "name",
+                    "operator"
+                ],
+                "type": "object"
+            },
+            "type": "array"
+        },
+        "Outcome": {
+            "$ref": "CORE-base.json#/properties/Outcome"
+        },
+        "References": {
+            "items": {
+                "additionalProperties": false,
+                "properties": {
+                    "Origin": {
+                        "allOf": [
+                            {
+                                "$ref": "CORE-base.json#/properties/References/items/properties/Origin"
+                            },
+                            {
+                                "const": "SDTM and SDTMIG Conformance Rules"
+                            }
+                        ]
+                    },
+                    "Rule Identifier": {
+                        "$ref": "CORE-base.json#/properties/References/items/properties/Rule Identifier"
+                    },
+                    "Version": {
+                        "allOf": [
+                            {
+                                "$ref": "CORE-base.json#/properties/References/items/properties/Version"
+                            },
+                            {
+                                "const": "2.0"
+                            }
+                        ]
+                    }
+                },
+                "required": [
+                    "Origin",
+                    "Rule Identifier",
+                    "Version"
+                ],
+                "type": "object"
+            },
+            "minItems": 1,
+            "type": "array"
+        },
+        "Rule Type": {
+            "$ref": "CORE-base.json#/properties/Rule Type"
+        },
+        "Scopes": {
+            "additionalProperties": false,
+            "properties": {
+                "Classes": {
+                    "oneOf": [
+                        {
+                            "additionalProperties": false,
+                            "properties": {
+                                "Include": {
+                                    "$ref": "#/$defs/Classes"
+                                }
+                            },
+                            "required": [
+                                "Include"
+                            ],
+                            "type": "object"
+                        },
+                        {
+                            "additionalProperties": false,
+                            "properties": {
+                                "Exclude": {
+                                    "$ref": "#/$defs/Classes"
+                                }
+                            },
+                            "required": [
+                                "Exclude"
+                            ],
+                            "type": "object"
+                        }
+                    ]
+                },
+                "Domains": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "Exclude": {
+                            "$ref": "#/$defs/Domains"
+                        },
+                        "Include": {
+                            "$ref": "#/$defs/Domains"
+                        },
+                        "include_split_datasets": {
+                            "type": "boolean"
+                        }
+                    },
+                    "type": "object"
+                },
+                "Standards": {
+                    "$ref": "CORE-base.json#/properties/Scopes/properties/Standards"
+                }
+            },
+            "required": [
+                "Standards",
+                "Classes",
+                "Domains"
+            ],
+            "type": "object"
+        },
+        "Sensitivity": {
+            "oneOf": [
+                {
+                    "$ref": "CORE-base.json#/properties/Sensitivity"
+                },
+                {
+                    "enum": [
+                        "Class",
+                        "Domain"
+                    ],
+                    "type": "string"
+                }
+            ]
+        },
+        "Severity": {
+            "$ref": "CORE-base.json#/properties/Severity"
+        }
+    },
+    "required": [
+        "Authority",
+        "Check",
+        "Citations",
+        "Core",
+        "Description",
+        "Outcome",
+        "References",
+        "Rule Type",
+        "Scopes",
+        "Sensitivity",
+        "Severity"
+    ],
+    "type": "object"
+}

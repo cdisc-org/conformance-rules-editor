@@ -51,7 +51,9 @@ export class DataService {
     this.rulesAbortController.abort();
     this.rulesAbortController = new AbortController();
     return fetch(
-      `/api/rules?query=${encodeURIComponent(JSON.stringify(fetchParams))}`,
+      `/api/rules?${new URLSearchParams({
+        query: JSON.stringify(fetchParams),
+      })}`,
       {
         method: "GET",
         headers: {
@@ -66,7 +68,9 @@ export class DataService {
     fetchParams: IQuery
   ): Promise<IRules> => {
     return fetch(
-      `/api/rules?query=${encodeURIComponent(JSON.stringify(fetchParams))}`,
+      `/api/rules?${new URLSearchParams({
+        query: JSON.stringify(fetchParams),
+      })}`,
       {
         method: "GET",
         headers: {

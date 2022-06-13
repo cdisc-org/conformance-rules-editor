@@ -3,6 +3,6 @@ const handle_response = require("../utils/handle_response");
 
 module.exports = async function (context, req) {
   await handle_response(context, async () => ({
-    body: await STORAGE_PROVIDER.getRules(req.body),
+    body: await STORAGE_PROVIDER.getRules(JSON.parse(req.query.query)),
   }));
 };

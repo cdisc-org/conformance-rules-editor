@@ -50,29 +50,33 @@ export class DataService {
       avoid race conditions by aborting all but the most recent request's response */
     this.rulesAbortController.abort();
     this.rulesAbortController = new AbortController();
-    return fetch(`/api/rules`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-      },
-      body: JSON.stringify(fetchParams),
-      signal: this.rulesAbortController.signal,
-    }).then((response: Response) => response.json());
+    return fetch(
+      `/api/rules?query=${encodeURIComponent(JSON.stringify(fetchParams))}`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+        signal: this.rulesAbortController.signal,
+      }
+    ).then((response: Response) => response.json());
   };
 
   public get_rules_pagination = async (
     fetchParams: IQuery
   ): Promise<IRules> => {
-    return fetch(`/api/rules`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-      },
-      body: JSON.stringify(fetchParams),
-      /* Allows us to abort the pagination request if a pagination request is started
+    return fetch(
+      `/api/rules?query=${encodeURIComponent(JSON.stringify(fetchParams))}`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+        /* Allows us to abort the pagination request if a pagination request is started
        and then a filter/sort request starts before we receive the pagination response */
-      signal: this.rulesAbortController.signal,
-    }).then((response: Response) => response.json());
+        signal: this.rulesAbortController.signal,
+      }
+    ).then((response: Response) => response.json());
   };
 
   public get_rule = async (ruleId: string): Promise<IRule> => {

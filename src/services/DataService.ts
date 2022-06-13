@@ -1,4 +1,6 @@
-import yaml from "js-yaml";
+import { IQuery } from "../types/IQuery";
+import { IRule } from "../types/IRule";
+import { IRules } from "../types/IRules";
 import { IDataset } from "../utils/ExcelDataset";
 
 export interface ISchema {
@@ -7,25 +9,6 @@ export interface ISchema {
   uri: string;
   url: string;
   json?: {};
-}
-
-function getCoreId(rule: any) {
-  const errorMessage = `<Missing 'Core.Id'>`;
-  return isValidYaml(rule)
-    ? rule?.["Core"]?.["Id"] ??
-        /* For back compatibility: */ rule?.["CoreId"] ??
-        errorMessage
-    : errorMessage;
-}
-
-function getRuleType(rule: any) {
-  return isValidYaml(rule) && typeof rule["Rule Type"] === "string"
-    ? rule["Rule Type"]
-    : `<Missing 'Rule Type'>`;
-}
-
-function isValidYaml(rule: any) {
-  return rule !== undefined && rule !== null && typeof rule === "object";
 }
 
 function responseHasJson(response: Response) {
@@ -39,21 +22,6 @@ function DataServiceError(response: Response) {
 }
 
 export class DataService {
-  getAttributes = (body: string) => {
-    const rule = (() => {
-      try {
-        return yaml.load(body);
-      } catch (yamlException) {
-        return undefined;
-      }
-    })();
-    return {
-      title: getCoreId(rule),
-      field_conformance_rule_type: getRuleType(rule),
-      body: { value: body },
-    };
-  };
-
   public get_me = async () => {
     return await fetch(`/.auth/me`, {
       method: "GET",
@@ -75,104 +43,100 @@ export class DataService {
 
   rulesAbortController = new AbortController();
 
-  public get_rules_filter_sort = async (fetchParams: string) => {
+  public get_rules_filter_sort = async (
+    fetchParams: IQuery
+  ): Promise<IRules> => {
     /* If multiple requests are fired in succession, 
       avoid race conditions by aborting all but the most recent request's response */
     this.rulesAbortController.abort();
     this.rulesAbortController = new AbortController();
-    return fetch(`/api/rules?${fetchParams}`, {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-      },
-      signal: this.rulesAbortController.signal,
-    })
-      .then((response: Response) => response.json())
-      .then((responseJson) => {
-        return JSON.parse(responseJson.body);
-      });
+    return fetch(
+      `/api/rules?${new URLSearchParams({
+        query: JSON.stringify(fetchParams),
+      })}`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+        signal: this.rulesAbortController.signal,
+      }
+    ).then((response: Response) => response.json());
   };
 
-  public get_rules_pagination = async (fetchParams: string) => {
-    return fetch(`/api/rules?${fetchParams}`, {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-      },
-      /* Allows us to abort the pagination request if a pagination request is started
+  public get_rules_pagination = async (
+    fetchParams: IQuery
+  ): Promise<IRules> => {
+    return fetch(
+      `/api/rules?${new URLSearchParams({
+        query: JSON.stringify(fetchParams),
+      })}`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+        /* Allows us to abort the pagination request if a pagination request is started
        and then a filter/sort request starts before we receive the pagination response */
-      signal: this.rulesAbortController.signal,
-    })
-      .then((response: Response) => response.json())
-      .then((responseJson) => {
-        return JSON.parse(responseJson.body);
-      });
+        signal: this.rulesAbortController.signal,
+      }
+    ).then((response: Response) => response.json());
   };
 
-  public get_rule = async (ruleId: string) => {
-    return await fetch(`/api/rules/${ruleId}`, {
+  public get_rule = async (ruleId: string): Promise<IRule> => {
+    return fetch(`/api/rules/${ruleId}`, {
       method: "GET",
       headers: {
         Accept: "application/json",
       },
-    });
+    }).then((response) => response.json());
   };
 
-  public patch_rule = async (ruleId: string, body: string) => {
-    return await fetch(`/api/rules/${ruleId}`, {
+  public patch_rule = async (
+    ruleId: string,
+    content: string
+  ): Promise<IRule> => {
+    return fetch(`/api/rules/${ruleId}`, {
       method: "PATCH",
       headers: {
         Accept: "application/json",
       },
-      body: JSON.stringify({
-        data: {
-          id: ruleId,
-          type: "node--conformance_rule",
-          attributes: this.getAttributes(body),
-        },
-      }),
-    });
+      body: JSON.stringify({ content: content }),
+    }).then((response) => response.json());
   };
 
-  public set_rule_published = async (ruleId: string, published: boolean) => {
-    return await fetch(`/api/rules/${ruleId}`, {
+  public set_rule_published = async (
+    ruleId: string,
+    isPublished: boolean
+  ): Promise<boolean> => {
+    return fetch(`/api/rules/${ruleId}`, {
       method: "PATCH",
       headers: {
         Accept: "application/json",
       },
-      body: JSON.stringify({
-        data: {
-          id: ruleId,
-          type: "node--conformance_rule",
-          attributes: {
-            status: published,
-          },
-        },
-      }),
-    });
+      body: JSON.stringify({ isPublished: isPublished }),
+    })
+      .then((response) => response.json())
+      .then((responseJson: IRule) => responseJson.isPublished);
   };
 
-  public post_rule = async (body: string) => {
-    return await fetch(`/api/rules`, {
+  public post_rule = async (body: string): Promise<string> => {
+    return fetch(`/api/rules`, {
       method: "POST",
       headers: {
         Accept: "application/json",
       },
       body: JSON.stringify({
-        data: {
-          type: "node--conformance_rule",
-          attributes: {
-            ...this.getAttributes(body),
-            field_conformance_rule_creator: await this.get_username(),
-            status: false,
-          },
-        },
+        content: body,
+        creator: await this.get_username(),
       }),
-    });
+    })
+      .then((response) => response.json())
+      .then((responseJson) => responseJson.id);
   };
 
-  public delete_rule = async (ruleId: string) => {
-    return await fetch(`/api/rules/${ruleId}`, {
+  public delete_rule = async (ruleId: string): Promise<Response> => {
+    return fetch(`/api/rules/${ruleId}`, {
       method: "DELETE",
       headers: {
         Accept: "application/json",

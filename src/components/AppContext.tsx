@@ -1,14 +1,13 @@
 import React from "react";
 import { DataService } from "../services/DataService";
 import { AlertState } from "./GeneralAlert/GeneralAlert";
+import { TOrder } from "../types/TOrder";
 
 export interface IAppError {
   title: string;
   message: string;
   isUncaught: boolean;
 }
-
-export type Order = "asc" | "desc";
 
 export enum Status {
   Pending,
@@ -52,8 +51,8 @@ export interface IAppContext {
   setAlertState: (alertState: AlertState) => void;
   username: string;
   setUsername: (username: string) => void;
-  order: Order;
-  setOrder: (order: Order) => void;
+  order: TOrder;
+  setOrder: (order: TOrder) => void;
   orderBy: string;
   setOrderBy: (orderBy: string) => void;
   searchText: { [key: string]: string };

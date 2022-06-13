@@ -38,24 +38,10 @@ export default function Controls() {
   const saveRule = async () => {
     if (isRuleSelected()) {
       //Patchrule
-      await dataService
-        .patch_rule(selectedRule, modifiedRule)
-        .then(function (response) {
-          return response.json();
-        })
-        .then(function (responseJson) {
-          return JSON.parse(responseJson.body);
-        });
+      await dataService.patch_rule(selectedRule, modifiedRule);
     } else {
       //Postrule
-      const newSelectedRule = await dataService
-        .post_rule(modifiedRule)
-        .then(function (response) {
-          return response.json();
-        })
-        .then(function (responseJson) {
-          return JSON.parse(responseJson.body).data.id;
-        });
+      const newSelectedRule = await dataService.post_rule(modifiedRule);
       setSelectedRule(newSelectedRule);
     }
     setUnmodifiedRule(modifiedRule);
@@ -66,11 +52,8 @@ export default function Controls() {
   const toggleRulePublished = () => {
     dataService
       .set_rule_published(selectedRule, !published)
-      .then(function (response) {
-        return response.json();
-      })
-      .then(function (responseJson) {
-        setPublished(JSON.parse(responseJson.body).data.attributes.status);
+      .then((isPublished: boolean) => {
+        setPublished(isPublished);
         setDirtyExplorerList(true);
       });
   };
@@ -80,15 +63,8 @@ export default function Controls() {
   };
 
   const deleteRule = async () => {
-    const statusCode = await dataService
-      .delete_rule(selectedRule)
-      .then(function (response) {
-        return response.json();
-      })
-      .then(function (responseJson) {
-        return JSON.parse(responseJson.body);
-      });
-    if (statusCode === 204) {
+    const res: Response = await dataService.delete_rule(selectedRule);
+    if (res.status === 204) {
       newRule();
       setDirtyExplorerList(true);
       setAlertState({
@@ -171,7 +147,7 @@ export default function Controls() {
           </span>
         </Tooltip>
 
-        <QuickSearchToolbar label="Search YAML..." queryParam={"body.value"} />
+        <QuickSearchToolbar label="Search YAML..." queryParam={"content"} />
       </Toolbar>
 
       <PromptDialog

@@ -15,11 +15,11 @@ export interface HeadCell {
 
 export const headCells: readonly HeadCell[] = [
   {
-    queryParam: "content.Core.Id",
+    queryParam: "json.Core.Id",
     label: "Core ID",
   },
   {
-    queryParam: "content.Rule Type",
+    queryParam: "json.Rule Type",
     label: "Rule Type",
   },
   {

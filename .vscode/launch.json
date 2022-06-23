@@ -32,7 +32,6 @@
             "port": 9229,
             "preLaunchTask": "func: host start",
             "presentation": {
-                "hidden": true,
                 "group": "",
                 "order": 1
             }

@@ -12,7 +12,7 @@ import ExplorerHead, {
 import { debounce } from "lodash";
 import { IRule } from "../../types/IRule";
 import { IRules } from "../../types/IRules";
-import { resolvePath, yamlToJSON } from "../../utils/json_yaml";
+import { resolvePath } from "../../utils/json_yaml";
 import { IQuery } from "../../types/IQuery";
 import { IFilter } from "../../types/IFilter";
 
@@ -66,7 +66,7 @@ export default function ExplorerList() {
       setRulesList([
         ...rulesList,
         ...responseJson.rules.map((ruleItem: IRule, ruleIndex) => {
-          const rule = yamlToJSON(ruleItem.content);
+          const rule = ruleItem.json;
           return (
             <ExplorerItem
               key={ruleItem.id}

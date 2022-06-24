@@ -6,7 +6,7 @@ const {
   jsonToYAML,
   resolvePath,
   buildJSON,
-} = require("../utils/json_yaml");
+} = require("../../src/utils/json_yaml");
 
 const StorageAuthenticator = new Authenticator(
   process.env["DRUPAL_BASE_URL"],

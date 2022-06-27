@@ -84,10 +84,13 @@
                         },
                         {
                             "enum": [
+                                "dataset_class",
+                                "dataset_is_non_standard",
                                 "dataset_label",
                                 "dataset_location",
                                 "dataset_name",
                                 "dataset_size",
+                                "dataset_structure",
                                 "define_variable_allowed_terms",
                                 "define_variable_ccode",
                                 "define_variable_data_type",
@@ -166,8 +169,8 @@
                         "longer_than",
                         "longer_than_or_equal_to",
                         "matches_regex",
-                        "non_comformant_value_data_type",
-                        "non_comformant_value_length",
+                        "non_conformant_value_data_type",
+                        "non_conformant_value_length",
                         "non_empty",
                         "non_empty_within_except_last_row",
                         "not_contains_all",
@@ -178,7 +181,9 @@
                         "not_prefix_matches_regex",
                         "not_present_on_multiple_rows_within",
                         "not_suffix_matches_regex",
+                        "prefix_equal_to",
                         "prefix_matches_regex",
+                        "prefix_not_equal_to",
                         "present_on_multiple_rows_within",
                         "references_correct_codelist",
                         "shares_at_least_one_element_with",
@@ -187,8 +192,14 @@
                         "shorter_than",
                         "shorter_than_or_equal_to",
                         "starts_with",
+                        "suffix_equal_to",
                         "suffix_matches_regex",
-                        "uses_valid_codelist_terms"
+                        "suffix_not_equal_to",
+                        "target_is_not_sorted_by",
+                        "target_is_sorted_by",
+                        "uses_valid_codelist_terms",
+                        "value_does_not_have_multiple_references",
+                        "value_has_multiple_references"
                     ],
                     "type": "string"
                 },
@@ -250,7 +261,7 @@
             "type": "object"
         },
         "VariableName": {
-            "pattern": "^(--[A-Z]{1,6}|[A-Z]{1,8})$",
+            "pattern": "^(--[A-Z0-9]{1,6}|[A-Z][A-Z0-9]{0,7})$",
             "type": "string"
         }
     },
@@ -367,18 +378,20 @@
                         "enum": [
                             "distinct",
                             "dy",
+                            "extract_metadata",
                             "max",
                             "max_date",
                             "mean",
                             "min",
                             "min_date",
-                            "variable_exists"
+                            "variable_exists",
+                            "variable_names",
+                            "variable_value_count"
                         ],
                         "type": "string"
                     }
                 },
                 "required": [
-                    "domain",
                     "id",
                     "name",
                     "operator"

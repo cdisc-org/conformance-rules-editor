@@ -23,7 +23,6 @@ npm install -g azure-functions-core-tools@3
       "API_SCOPE": "<STORAGE_API_SCOPE>",
       "API_CLIENT_ID": "<STORAGE_API_CLIENT_ID>",
       "API_CLIENT_SECRET": "<STORAGE_API_CLIENT_SECRET>",
-      "GENERATE_RULE_URL": "<RULE_GENERATOR_URL (with code param)>",
       "EXECUTE_RULE_URL": "<RULE_EXECUTOR_URL>",
       "ENGINE_BASE_URL": "<ENGINE_API_URL>",
       "ENGINE_PATH": "<ENGINE_API_PATH>",

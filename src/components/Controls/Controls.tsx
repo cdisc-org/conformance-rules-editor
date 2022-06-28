@@ -38,13 +38,14 @@ export default function Controls() {
   const saveRule = async () => {
     if (isRuleSelected()) {
       //Patchrule
-      await dataService.patch_rule(selectedRule, modifiedRule);
+      const rule = await dataService.patch_rule(selectedRule, modifiedRule);
+      setModifiedRule(rule.content);
+      setUnmodifiedRule(rule.content);
     } else {
       //Postrule
       const newSelectedRule = await dataService.post_rule(modifiedRule);
       setSelectedRule(newSelectedRule);
     }
-    setUnmodifiedRule(modifiedRule);
     setDirtyExplorerList(true);
     setAlertState({ message: "Saved successfully", severity: "success" });
   };

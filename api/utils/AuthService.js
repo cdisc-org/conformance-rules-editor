@@ -1,6 +1,6 @@
 const https = require("https");
 
-class Authenticator {
+module.exports = class Authenticator {
   constructor(baseUrl, path, grantType, scope, clientId, clientSecret) {
     this.token = "";
     this.expires = Date.now();
@@ -59,22 +59,4 @@ class Authenticator {
     }
     return this.token;
   }
-}
-
-exports.StorageAuthenticator = new Authenticator(
-  process.env["API_BASE_URL"],
-  process.env["API_PATH"],
-  process.env["API_GRANT_TYPE"],
-  process.env["API_SCOPE"],
-  process.env["API_CLIENT_ID"],
-  process.env["API_CLIENT_SECRET"]
-);
-
-exports.EngineAuthenticator = new Authenticator(
-  process.env["ENGINE_BASE_URL"],
-  process.env["ENGINE_PATH"],
-  process.env["ENGINE_GRANT_TYPE"],
-  process.env["ENGINE_SCOPE"],
-  process.env["ENGINE_CLIENT_ID"],
-  process.env["ENGINE_CLIENT_SECRET"]
-);
+};

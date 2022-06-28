@@ -5,4 +5,5 @@ export interface IRule {
   creator?: string;
   id?: string;
   isPublished?: boolean;
+  json?: object;
 }

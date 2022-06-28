@@ -1,12 +1,21 @@
 const fetch = require("node-fetch");
-const { StorageAuthenticator } = require("../utils/AuthService");
-const url = `https://${process.env["API_BASE_URL"]}`;
+const Authenticator = require("../utils/AuthService");
+const url = `https://${process.env["DRUPAL_BASE_URL"]}`;
 const {
   yamlToJSON,
   jsonToYAML,
   resolvePath,
   buildJSON,
-} = require("../utils/json_yaml");
+} = require("../../src/utils/json_yaml");
+
+const StorageAuthenticator = new Authenticator(
+  process.env["DRUPAL_BASE_URL"],
+  process.env["DRUPAL_PATH"],
+  process.env["DRUPAL_GRANT_TYPE"],
+  process.env["DRUPAL_SCOPE"],
+  process.env["DRUPAL_CLIENT_ID"],
+  process.env["DRUPAL_CLIENT_SECRET"]
+);
 
 exports.deleteRule = async (id) => {
   const token = await StorageAuthenticator.getToken();
@@ -123,8 +132,8 @@ exports.postRule = async (content, creator) => {
 };
 
 const genericToDrupal = {
-  "content.Core.Id": "title",
-  "content.Rule Type": "field_conformance_rule_type",
+  "json.Core.Id": "title",
+  "json.Rule Type": "field_conformance_rule_type",
   creator: "field_conformance_rule_creator",
   id: "id",
   isPublished: "status",
@@ -134,8 +143,8 @@ const genericToDrupal = {
 };
 
 const drupalToGeneric = {
-  "attributes.title": "content.Core.Id",
-  "attributes.field_conformance_rule_type": "content.Rule Type",
+  "attributes.title": "json.Core.Id",
+  "attributes.field_conformance_rule_type": "json.Rule Type",
   "attributes.field_conformance_rule_creator": "creator",
   id: "id",
   "attributes.status": "isPublished",
@@ -146,14 +155,14 @@ const drupalToGeneric = {
 
 function yamlToDrupal(content) {
   const rule = yamlToJSON(content);
-  let attributes = {};
+  const attributes = {};
   for (const [drupal, generic] of Object.entries(
     drupalToGeneric
-  ).filter(([, generic]) => generic.startsWith("content."))) {
+  ).filter(([, generic]) => generic.startsWith("json."))) {
     buildJSON(
       attributes,
       drupal.replace("attributes.", ""),
-      resolvePath(rule, generic.replace("content.", ""))
+      resolvePath(rule, generic.replace("json.", ""))
     );
   }
   attributes.body = { value: content };
@@ -162,26 +171,27 @@ function yamlToDrupal(content) {
 
 function drupalToRule(rule) {
   let content = null;
+  let json = {};
   if ("body" in rule.attributes) {
     content = rule.attributes.body.value;
+    json = yamlToJSON(content);
   } else {
-    content = {};
     for (const [drupal, generic] of Object.entries(
       drupalToGeneric
-    ).filter(([, generic]) => generic.startsWith("content."))) {
-      buildJSON(
-        content,
-        generic.replace("content.", ""),
-        resolvePath(rule, drupal)
-      );
+    ).filter(([, generic]) => generic.startsWith("json."))) {
+      buildJSON(json, generic.replace("json.", ""), resolvePath(rule, drupal));
     }
     content = jsonToYAML(content);
   }
   const resp = {
-    content: content,
+    content,
+    json,
     ...Object.fromEntries(
       Object.entries(drupalToGeneric)
-        .filter(([, generic]) => !generic.startsWith("content"))
+        .filter(
+          ([, generic]) =>
+            !generic.startsWith("content") && !generic.startsWith("json.")
+        )
         .map(([drupal, generic]) => {
           return [generic, resolvePath(rule, drupal)];
         })

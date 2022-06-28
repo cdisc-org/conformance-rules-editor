@@ -226,6 +226,7 @@
                     "oneOf": [
                         {
                             "type": [
+                                "boolean",
                                 "number",
                                 "string"
                             ]

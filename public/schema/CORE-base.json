@@ -469,13 +469,16 @@
                     "const": "Consistency"
                 },
                 {
-                    "const": "Data Domain aggregation"
+                    "const": "Data Domain Aggregation"
                 },
                 {
                     "const": "Data Pattern and Format"
                 },
                 {
                     "const": "Dataset Contents Check against Define XML and Library Metadata"
+                },
+                {
+                    "const": "Dataset Contents Check against Library Metadata"
                 },
                 {
                     "const": "Dataset Metadata Check"

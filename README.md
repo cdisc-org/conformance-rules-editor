@@ -22,8 +22,7 @@
           "ENGINE_PATH": "<ENGINE_API_PATH>",
           "ENGINE_SCOPE": "<ENGINE_API_SCOPE>",
           "EXECUTE_RULE_URL": "<RULE_EXECUTOR_URL>",
-          "FUNCTIONS_WORKER_RUNTIME":"node",
-          "GENERATE_RULE_URL": "<RULE_GENERATOR_URL (with code param)>",
+          "FUNCTIONS_WORKER_RUNTIME":"node"
         }
     }
     ```

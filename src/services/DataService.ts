@@ -181,24 +181,6 @@ export class DataService {
     );
   };
 
-  public generate_rule_json = async (rule: string) => {
-    return await fetch(`/api/rules/generate`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-      },
-      body: JSON.stringify({
-        definition: rule,
-      }),
-    }).then(async function (response: Response) {
-      if (response.status === 200) {
-        return response.json();
-      } else {
-        throw new DataServiceError(response);
-      }
-    });
-  };
-
   public execute_rule = async (rule: object, datasets: IDataset[]) => {
     return await fetch(`/api/rules/execute`, {
       method: "POST",

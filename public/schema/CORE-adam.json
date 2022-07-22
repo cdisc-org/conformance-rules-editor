@@ -1,41 +1,39 @@
 {
     "$defs": {
-        "Classes": {
-            "items": {
-                "enum": [
-                    "All",
-                    "Events",
-                    "Findings",
-                    "Findings About",
-                    "Interventions",
-                    "Relationship",
-                    "Special-Purpose",
-                    "Study Reference",
-                    "Trial Design"
-                ],
-                "type": "string"
-            },
-            "type": "array"
+        "Data Structure": {
+            "enum": [
+                "ADDL",
+                "ADSL",
+                "ALL",
+                "BDS",
+                "BDS(NON-COMPARTMENTAL ANALYSIS)",
+                "BDS(TIME-TO-EVENT)",
+                "MDBDS",
+                "MDBDS(MEDICAL DEVICE TIME-TO-EVENT)",
+                "MDOCCDS",
+                "OCCDS",
+                "OCCDS(ADVERSE EVENT)",
+                "SDTM"
+            ],
+            "type": "string"
         },
-        "Dataset": {
-            "allOf": [
-                {
-                    "$ref": "CORE-base.json#/$defs/Dataset"
+        "Structure Group": {
+            "additionalProperties": false,
+            "properties": {
+                "Base Structure": {
+                    "ref": "#/$defs/Data Structure"
                 },
-                {
-                    "pattern": "^(All|AP--|APRELSUB|RELREC|RELSPEC|RELSUB|[A-Z]{2}|[A-Z]{4}|SUPP[A-Z]{2}|SUPP[A-Z]{4}|SQAP[A-Z]{4}|SUPP--)$",
-                    "type": "string"
+                "Compare Structure": {
+                    "ref": "#/$defs/Data Structure"
                 }
-            ]
-        },
-        "Domains": {
-            "items": {
-                "$ref": "#/$defs/Dataset"
             },
-            "type": "array"
+            "required": [
+                "Base Structure"
+            ],
+            "type": "object"
         }
     },
-    "$id": "https://cdisc.org/CORE-sdtm.json",
+    "$id": "https://cdisc.org/CORE-adam.json",
     "$schema": "http://json-schema.org/draft-07/schema#",
     "additionalProperties": false,
     "description": "Validation schema CDISC Rules 1.0",
@@ -70,7 +68,7 @@
                                                         "$ref": "CORE-base.json#/properties/Authority/items/properties/Standards/items/properties/References/items/properties/Origin"
                                                     },
                                                     {
-                                                        "const": "SDTM and SDTMIG Conformance Rules"
+                                                        "const": "ADaM Conformance Rules"
                                                     }
                                                 ]
                                             },
@@ -95,7 +93,7 @@
                                                         "$ref": "CORE-base.json#/properties/Authority/items/properties/Standards/items/properties/References/items/properties/Version"
                                                     },
                                                     {
-                                                        "const": "2.0"
+                                                        "const": "4.0"
                                                     }
                                                 ]
                                             }
@@ -148,7 +146,7 @@
                             "$ref": "CORE-base.json#/properties/Core/properties/Id"
                         },
                         {
-                            "pattern": "^CDISC\\.SDTMIG\\.CG\\d{4}$",
+                            "pattern": "^CDISC\\.ADaM\\.\\d{3}$",
                             "type": "string"
                         }
                     ]
@@ -175,7 +173,7 @@
                 "additionalProperties": false,
                 "properties": {
                     "Name": {
-                        "$ref": "#/$defs/Dataset"
+                        "$ref": "#/$defs/Data Structure"
                     },
                     "Is Relationship": {
                         "$ref": "CORE-base.json#/properties/Match Datasets/items/properties/Is Relationship"
@@ -197,7 +195,7 @@
                 "additionalProperties": false,
                 "properties": {
                     "domain": {
-                        "$ref": "#/$defs/Dataset"
+                        "$ref": "#/$defs/Data Structure"
                     },
                     "group": {
                         "$ref": "CORE-base.json#/properties/Operations/items/properties/group"
@@ -233,53 +231,21 @@
         "Scope": {
             "additionalProperties": false,
             "properties": {
-                "Classes": {
-                    "oneOf": [
-                        {
-                            "additionalProperties": false,
-                            "properties": {
-                                "Include": {
-                                    "$ref": "#/$defs/Classes"
-                                }
-                            },
-                            "required": [
-                                "Include"
-                            ],
-                            "type": "object"
-                        },
-                        {
-                            "additionalProperties": false,
-                            "properties": {
-                                "Exclude": {
-                                    "$ref": "#/$defs/Classes"
-                                }
-                            },
-                            "required": [
-                                "Exclude"
-                            ],
-                            "type": "object"
-                        }
-                    ]
-                },
-                "Domains": {
+                "Structure Groups": {
                     "additionalProperties": false,
                     "properties": {
                         "Exclude": {
-                            "$ref": "#/$defs/Domains"
+                            "$ref": "#/$defs/Structure Group"
                         },
                         "Include": {
-                            "$ref": "#/$defs/Domains"
-                        },
-                        "include_split_datasets": {
-                            "type": "boolean"
+                            "$ref": "#/$defs/Structure Group"
                         }
                     },
                     "type": "object"
                 }
             },
             "required": [
-                "Classes",
-                "Domains"
+                "Structure Groups"
             ],
             "type": "object"
         },

@@ -272,58 +272,208 @@
     "description": "Validation schema CDISC Rules 1.0",
     "properties": {
         "Authority": {
-            "additionalProperties": false,
-            "properties": {
-                "Organization": {
-                    "const": "CDISC"
-                }
-            },
-            "required": [
-                "Organization"
-            ],
-            "type": "object"
-        },
-        "Check": {
-            "$ref": "#/$defs/Boolean"
-        },
-        "Citations": {
             "items": {
                 "additionalProperties": false,
                 "properties": {
-                    "Cited Guidance": {
-                        "type": "string"
+                    "Organization": {
+                        "const": "CDISC"
                     },
-                    "Document": {
-                        "type": "string"
-                    },
-                    "Item": {
-                        "type": "string"
-                    },
-                    "Section": {
-                        "type": "string"
+                    "Standards": {
+                        "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                                "Name": {
+                                    "type": "string"
+                                },
+                                "References": {
+                                    "items": {
+                                        "additionalProperties": false,
+                                        "properties": {
+                                            "Citations": {
+                                                "items": {
+                                                    "additionalProperties": false,
+                                                    "properties": {
+                                                        "Cited Guidance": {
+                                                            "type": "string"
+                                                        },
+                                                        "Document": {
+                                                            "type": "string"
+                                                        },
+                                                        "Item": {
+                                                            "type": "string"
+                                                        },
+                                                        "Section": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "Document",
+                                                        "Section",
+                                                        "Cited Guidance"
+                                                    ],
+                                                    "type": "object"
+                                                },
+                                                "type": "array"
+                                            },
+                                            "Criteria": {
+                                                "additionalProperties": false,
+                                                "anyOf": [
+                                                    {
+                                                        "required": [
+                                                            "Logical Expression"
+                                                        ]
+                                                    },
+                                                    {
+                                                        "required": [
+                                                            "Plain Language Expression"
+                                                        ]
+                                                    }
+                                                ],
+                                                "properties": {
+                                                    "Logical Expression": {
+                                                        "additionalProperties": false,
+                                                        "properties": {
+                                                            "Condition": {
+                                                                "type": "string"
+                                                            },
+                                                            "Rule": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "Rule"
+                                                        ],
+                                                        "type": "object"
+                                                    },
+                                                    "Plain Language Expression": {
+                                                        "type": "string"
+                                                    },
+                                                    "Type": {
+                                                        "enum": [
+                                                            "Failure",
+                                                            "Success"
+                                                        ],
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "Type"
+                                                ],
+                                                "type": "object"
+                                            },
+                                            "Origin": {
+                                                "type": "string"
+                                            },
+                                            "Related Rules": {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "Id": {
+                                                        "type": "string"
+                                                    },
+                                                    "Relationship": {
+                                                        "enum": [
+                                                            "Predecessor",
+                                                            "Related",
+                                                            "Successor"
+                                                        ],
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "Id",
+                                                    "Relationship"
+                                                ],
+                                                "type": "object"
+                                            },
+                                            "Release Notes": {
+                                                "type": "string"
+                                            },
+                                            "Rule Identifier": {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "Id": {
+                                                        "type": "string"
+                                                    },
+                                                    "Version": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "Id",
+                                                    "Version"
+                                                ],
+                                                "type": "object"
+                                            },
+                                            "Severity": {
+                                                "type": "string"
+                                            },
+                                            "Validator Rule Message": {
+                                                "type": "string"
+                                            },
+                                            "Version": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "required": [
+                                            "Citations",
+                                            "Origin",
+                                            "Rule Identifier",
+                                            "Version"
+                                        ],
+                                        "type": "object"
+                                    },
+                                    "minItems": 1,
+                                    "type": "array"
+                                },
+                                "Version": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "Name",
+                                "References",
+                                "Version"
+                            ],
+                            "type": "object"
+                        },
+                        "minItems": 1,
+                        "type": "array"
                     }
                 },
                 "required": [
-                    "Document",
-                    "Section",
-                    "Cited Guidance"
+                    "Organization",
+                    "Standards"
                 ],
                 "type": "object"
             },
+            "minItems": 1,
+            "maxItems": 1,
             "type": "array"
+        },
+        "Check": {
+            "$ref": "#/$defs/Boolean"
         },
         "Core": {
             "additionalProperties": false,
             "properties": {
                 "Id": {
+                    "pattern": "^CDISC\\..*\\..*$",
                     "type": "string"
                 },
                 "Version": {
                     "const": "1"
+                },
+                "Status": {
+                    "enum": [
+                        "Draft",
+                        "Published"
+                    ],
+                    "type": "string"
                 }
             },
             "required": [
                 "Id",
+                "Status",
                 "Version"
             ],
             "type": "object"
@@ -426,54 +576,16 @@
             ],
             "type": "object"
         },
-        "References": {
-            "items": {
-                "additionalProperties": false,
-                "properties": {
-                    "Origin": {
-                        "type": "string"
-                    },
-                    "Rule Identifier": {
-                        "additionalProperties": false,
-                        "properties": {
-                            "Id": {
-                                "type": "string"
-                            },
-                            "Version": {
-                                "type": "string"
-                            }
-                        },
-                        "required": [
-                            "Id",
-                            "Version"
-                        ],
-                        "type": "object"
-                    },
-                    "Version": {
-                        "type": "string"
-                    }
-                },
-                "required": [
-                    "Origin",
-                    "Rule Identifier",
-                    "Version"
-                ],
-                "type": "object"
-            },
-            "minItems": 1,
-            "type": "array"
+        "Reliability": {
+            "enum": [
+                "Fully Executable",
+                "Partially Executable - Possible Overreporting",
+                "Partially Executable - Possible Underreporting"
+            ],
+            "type": "string"
         },
         "Rule Type": {
             "oneOf": [
-                {
-                    "const": "Consistency"
-                },
-                {
-                    "const": "Data Domain Aggregation"
-                },
-                {
-                    "const": "Data Pattern and Format"
-                },
                 {
                     "const": "Dataset Contents Check against Define XML and Library Metadata"
                 },
@@ -487,81 +599,27 @@
                     "const": "Dataset Metadata Check against Define XML"
                 },
                 {
-                    "const": "Date Arithmetic"
-                },
-                {
                     "const": "Define-XML"
                 },
                 {
                     "const": "Domain Presence Check"
                 },
                 {
-                    "const": "External Dictionaries"
-                },
-                {
-                    "const": "Functional Dependency"
-                },
-                {
-                    "const": "Populated Values"
-                },
-                {
-                    "const": "Range & Limit"
-                },
-                {
-                    "const": "Relationship Integrity Check"
-                },
-                {
-                    "const": "Uniqueness"
+                    "const": "Record Data"
                 },
                 {
                     "const": "Value Level Metadata Check against Define XML"
-                },
-                {
-                    "const": "Value Presence"
-                },
-                {
-                    "const": "Variable Length"
                 },
                 {
                     "const": "Variable Metadata Check"
                 },
                 {
                     "const": "Variable Metadata Check against Define XML"
-                },
-                {
-                    "const": "Variable Order"
-                },
-                {
-                    "const": "Variable Presence"
                 }
             ]
         },
-        "Scopes": {
+        "Scope": {
             "additionalProperties": false,
-            "properties": {
-                "Standards": {
-                    "items": {
-                        "additionalProperties": false,
-                        "properties": {
-                            "Name": {
-                                "type": "string"
-                            },
-                            "Version": {
-                                "type": "string"
-                            }
-                        },
-                        "required": [
-                            "Name",
-                            "Version"
-                        ],
-                        "type": "object"
-                    },
-                    "type": "array"
-                }
-            },
-            "required": [
-                "Standards"
-            ],
             "type": "object"
         },
         "Sensitivity": {
@@ -575,29 +633,18 @@
                 "Value"
             ],
             "type": "string"
-        },
-        "Severity": {
-            "enum": [
-                "Error",
-                "Notice",
-                "Reject",
-                "Warning"
-            ],
-            "type": "string"
         }
     },
     "required": [
         "Authority",
         "Check",
-        "Citations",
         "Core",
         "Description",
         "Outcome",
-        "References",
+        "Reliability",
         "Rule Type",
-        "Scopes",
-        "Sensitivity",
-        "Severity"
+        "Scope",
+        "Sensitivity"
     ],
     "type": "object"
 }

@@ -6,7 +6,7 @@ const {
   jsonToQuery,
   spacesToUnderscores,
   underscoresToSpaces,
-} = require("../../src/utils/json_yaml");
+} = require("../utils/json_yaml");
 
 const dbContainer = new CosmosClient({
   endpoint: `https://${process.env["COSMOS_BASE_URL"]}`,

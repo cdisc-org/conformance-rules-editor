@@ -12,7 +12,7 @@ import ExplorerHead, {
 import { debounce } from "lodash";
 import { IRule } from "../../types/IRule";
 import { IRules } from "../../types/IRules";
-import { resolvePath } from "../../utils/json_yaml";
+import { resolvePath } from "./../../utils/json_yaml";
 import { IQuery } from "../../types/IQuery";
 import { IFilter } from "../../types/IFilter";
 

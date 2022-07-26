@@ -16,7 +16,7 @@ export default function QuickSearchToolbar(props: QuickSearchToolbarProps) {
   useEffect(() => {
     if (
       username &&
-      queryParam === "field_conformance_rule_creator" &&
+      queryParam === "creator" &&
       !(queryParam in searchText)
     ) {
       setSearchText({ ...searchText, [queryParam]: username });

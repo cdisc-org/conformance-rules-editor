@@ -1,5 +1,5 @@
 {
-  "name": "conformance-rule-editor",
+  "name": "conformance-rules-editor-app",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -29,7 +29,7 @@
     "react-monaco-editor": "^0.48.0",
     "react-scripts": "4.0.3",
     "react-split-pane": "^0.1.92",
-    "typescript": "^4.6.4",
+    "typescript": "^4.7.4",
     "web-vitals": "^1.1.2",
     "worker-loader": "^3.0.8",
     "xlsx": "^0.18.5"

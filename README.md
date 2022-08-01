@@ -3,14 +3,15 @@
 ## Environment Setup 
 
 ### Install dependencies
-1. Run the command: `npm install`
-2. Install static web app node libraries by running the following commands:
+1. Install frontend dependencies - From the root directory, run the command: `npm install`
+2. Install api dependencies - From the ./api directory, run the command: `npm install`
+3. Install static web app node libraries by running the following commands:
 ```
 npm install -g @azure/static-web-apps-cli
 npm install -g azure-functions-core-tools@3
 ```
-3. If using VSCODE, install the "Azure Functions" extension.
-4. Create a local.settings.json in the API folder to support local development of the API. It should contain the following values:
+4. Using VSCODE, install the "Azure Functions" extension.
+5. Create a local.settings.json in the API folder to support local development of the API. It should contain the following values:
 
 ```
 {
@@ -36,9 +37,8 @@ npm install -g azure-functions-core-tools@3
 ```
 
 ## Running the App
+Using VSCode, run the "Everything" compound (see launch.json).
 
-1. Run the command `npm run build`
-2. Run the app with the command: `swa start build --api api`
-3. View the app running at: http://localhost:4280/
+A browser should open that points to: http://localhost:4280/
 
-Alternatively, the app can be run with a single command: `$Env:BROWSER='none'; swa start http://localhost:3000/ --api api --run 'npm start' --devserver-timeout 120000`
+Alternatively, you can run the launch components individually.

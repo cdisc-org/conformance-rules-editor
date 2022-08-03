@@ -6,31 +6,35 @@
                 "ADSL",
                 "ALL",
                 "BDS",
-                "BDS(NON-COMPARTMENTAL ANALYSIS)",
-                "BDS(TIME-TO-EVENT)",
                 "MDBDS",
-                "MDBDS(MEDICAL DEVICE TIME-TO-EVENT)",
                 "MDOCCDS",
-                "OCCDS",
-                "OCCDS(ADVERSE EVENT)",
-                "SDTM"
+                "OCCDS"
             ],
             "type": "string"
         },
-        "Structure Group": {
-            "additionalProperties": false,
-            "properties": {
-                "Base Structure": {
-                    "ref": "#/$defs/Data Structure"
+        "Dataset": {
+            "allOf": [
+                {
+                    "$ref": "CORE-base.json#/$defs/Dataset"
                 },
-                "Compare Structure": {
-                    "ref": "#/$defs/Data Structure"
+                {
+                    "enum": [
+                        "ALL",
+                        "SDTM"
+                    ],
+                    "type": "string"
                 }
-            },
-            "required": [
-                "Base Structure"
+            ]
+        },
+        "Subclass": {
+            "enum": [
+                "ADVERSE EVENT",
+                "ALL",
+                "MEDICAL DEVICE TIME-TO-EVENT",
+                "NON-COMPARTMENTAL ANALYSIS",
+                "TIME-TO-EVENT"
             ],
-            "type": "object"
+            "type": "string"
         }
     },
     "$id": "https://cdisc.org/CORE-adam.json",
@@ -43,29 +47,29 @@
                 "additionalProperties": false,
                 "properties": {
                     "Organization": {
-                        "$ref": "CORE-base.json#/properties/Authority/items/properties/Organization"
+                        "$ref": "CORE-cdisc.json#/properties/Authority/items/properties/Organization"
                     },
                     "Standards": {
                         "items": {
                             "additionalProperties": false,
                             "properties": {
                                 "Name": {
-                                    "$ref": "CORE-base.json#/properties/Authority/items/properties/Standards/items/properties/Name"
+                                    "$ref": "CORE-cdisc.json#/properties/Authority/items/properties/Standards/items/properties/Name"
                                 },
                                 "References": {
                                     "items": {
                                         "additionalProperties": false,
                                         "properties": {
                                             "Citations": {
-                                                "$ref": "CORE-base.json#/properties/Authority/items/properties/Standards/items/properties/References/items/properties/Citations"
+                                                "$ref": "CORE-cdisc.json#/properties/Authority/items/properties/Standards/items/properties/References/items/properties/Citations"
                                             },
                                             "Criteria": {
-                                                "$ref": "CORE-base.json#/properties/Authority/items/properties/Standards/items/properties/References/items/properties/Criteria"
+                                                "$ref": "CORE-cdisc.json#/properties/Authority/items/properties/Standards/items/properties/References/items/properties/Criteria"
                                             },
                                             "Origin": {
                                                 "allOf": [
                                                     {
-                                                        "$ref": "CORE-base.json#/properties/Authority/items/properties/Standards/items/properties/References/items/properties/Origin"
+                                                        "$ref": "CORE-cdisc.json#/properties/Authority/items/properties/Standards/items/properties/References/items/properties/Origin"
                                                     },
                                                     {
                                                         "const": "ADaM Conformance Rules"
@@ -73,24 +77,24 @@
                                                 ]
                                             },
                                             "Related Rules": {
-                                                "$ref": "CORE-base.json#/properties/Authority/items/properties/Standards/items/properties/References/items/properties/Related Rules"
+                                                "$ref": "CORE-cdisc.json#/properties/Authority/items/properties/Standards/items/properties/References/items/properties/Related Rules"
                                             },
                                             "Release Notes": {
-                                                "$ref": "CORE-base.json#/properties/Authority/items/properties/Standards/items/properties/References/items/properties/Release Notes"
+                                                "$ref": "CORE-cdisc.json#/properties/Authority/items/properties/Standards/items/properties/References/items/properties/Release Notes"
                                             },
                                             "Rule Identifier": {
-                                                "$ref": "CORE-base.json#/properties/Authority/items/properties/Standards/items/properties/References/items/properties/Rule Identifier"
+                                                "$ref": "CORE-cdisc.json#/properties/Authority/items/properties/Standards/items/properties/References/items/properties/Rule Identifier"
                                             },
                                             "Severity": {
-                                                "$ref": "CORE-base.json#/properties/Authority/items/properties/Standards/items/properties/References/items/properties/Severity"
+                                                "$ref": "CORE-cdisc.json#/properties/Authority/items/properties/Standards/items/properties/References/items/properties/Severity"
                                             },
                                             "Validator Rule Message": {
-                                                "$ref": "CORE-base.json#/properties/Authority/items/properties/Standards/items/properties/References/items/properties/Validator Rule Message"
+                                                "$ref": "CORE-cdisc.json#/properties/Authority/items/properties/Standards/items/properties/References/items/properties/Validator Rule Message"
                                             },
                                             "Version": {
                                                 "allOf": [
                                                     {
-                                                        "$ref": "CORE-base.json#/properties/Authority/items/properties/Standards/items/properties/References/items/properties/Version"
+                                                        "$ref": "CORE-cdisc.json#/properties/Authority/items/properties/Standards/items/properties/References/items/properties/Version"
                                                     },
                                                     {
                                                         "const": "4.0"
@@ -110,7 +114,7 @@
                                     "type": "array"
                                 },
                                 "Version": {
-                                    "$ref": "CORE-base.json#/properties/Authority/items/properties/Standards/items/properties/Version"
+                                    "$ref": "CORE-cdisc.json#/properties/Authority/items/properties/Standards/items/properties/Version"
                                 }
                             },
                             "required": [
@@ -135,7 +139,7 @@
             "type": "array"
         },
         "Check": {
-            "$ref": "CORE-base.json#/properties/Check"
+            "$ref": "CORE-cdisc.json#/properties/Check"
         },
         "Core": {
             "additionalProperties": false,
@@ -143,7 +147,7 @@
                 "Id": {
                     "allOf": [
                         {
-                            "$ref": "CORE-base.json#/properties/Core/properties/Id"
+                            "$ref": "CORE-cdisc.json#/properties/Core/properties/Id"
                         },
                         {
                             "pattern": "^CDISC\\.ADaM\\.\\d{3}$",
@@ -152,10 +156,10 @@
                     ]
                 },
                 "Status": {
-                    "$ref": "CORE-base.json#/properties/Core/properties/Status"
+                    "$ref": "CORE-cdisc.json#/properties/Core/properties/Status"
                 },
                 "Version": {
-                    "$ref": "CORE-base.json#/properties/Core/properties/Version"
+                    "$ref": "CORE-cdisc.json#/properties/Core/properties/Version"
                 }
             },
             "required": [
@@ -166,7 +170,7 @@
             "type": "object"
         },
         "Description": {
-            "$ref": "CORE-base.json#/properties/Description"
+            "$ref": "CORE-cdisc.json#/properties/Description"
         },
         "Match Datasets": {
             "items": {
@@ -176,10 +180,10 @@
                         "$ref": "#/$defs/Data Structure"
                     },
                     "Is Relationship": {
-                        "$ref": "CORE-base.json#/properties/Match Datasets/items/properties/Is Relationship"
+                        "$ref": "CORE-cdisc.json#/properties/Match Datasets/items/properties/Is Relationship"
                     },
                     "Keys": {
-                        "$ref": "CORE-base.json#/properties/Match Datasets/items/properties/Keys"
+                        "$ref": "CORE-cdisc.json#/properties/Match Datasets/items/properties/Keys"
                     }
                 },
                 "required": [
@@ -198,16 +202,16 @@
                         "$ref": "#/$defs/Data Structure"
                     },
                     "group": {
-                        "$ref": "CORE-base.json#/properties/Operations/items/properties/group"
+                        "$ref": "CORE-cdisc.json#/properties/Operations/items/properties/group"
                     },
                     "id": {
-                        "$ref": "CORE-base.json#/properties/Operations/items/properties/id"
+                        "$ref": "CORE-cdisc.json#/properties/Operations/items/properties/id"
                     },
                     "name": {
-                        "$ref": "CORE-base.json#/properties/Operations/items/properties/name"
+                        "$ref": "CORE-cdisc.json#/properties/Operations/items/properties/name"
                     },
                     "operator": {
-                        "$ref": "CORE-base.json#/properties/Operations/items/properties/operator"
+                        "$ref": "CORE-cdisc.json#/properties/Operations/items/properties/operator"
                     }
                 },
                 "required": [
@@ -220,39 +224,63 @@
             "type": "array"
         },
         "Outcome": {
-            "$ref": "CORE-base.json#/properties/Outcome"
+            "$ref": "CORE-cdisc.json#/properties/Outcome"
         },
-        "Reliability": {
-            "$ref": "CORE-base.json#/properties/Reliability"
+        "Executability": {
+            "$ref": "CORE-cdisc.json#/properties/Executability"
         },
         "Rule Type": {
-            "$ref": "CORE-base.json#/properties/Rule Type"
+            "$ref": "CORE-cdisc.json#/properties/Rule Type"
         },
         "Scope": {
             "additionalProperties": false,
             "properties": {
-                "Structure Groups": {
+                "Data Structures": {
                     "additionalProperties": false,
                     "properties": {
                         "Exclude": {
-                            "$ref": "#/$defs/Structure Group"
+                            "$ref": "#/$defs/Data Structure"
                         },
                         "Include": {
-                            "$ref": "#/$defs/Structure Group"
+                            "$ref": "#/$defs/Data Structure"
+                        }
+                    },
+                    "type": "object"
+                },
+                "Subclasses": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "Exclude": {
+                            "$ref": "#/$defs/Subclass"
+                        },
+                        "Include": {
+                            "$ref": "#/$defs/Subclass"
+                        }
+                    },
+                    "type": "object"
+                },
+                "Datasets": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "Exclude": {
+                            "$ref": "#/$defs/Dataset"
+                        },
+                        "Include": {
+                            "$ref": "#/$defs/Dataset"
                         }
                     },
                     "type": "object"
                 }
             },
             "required": [
-                "Structure Groups"
+                "Data Structures"
             ],
             "type": "object"
         },
         "Sensitivity": {
             "oneOf": [
                 {
-                    "$ref": "CORE-base.json#/properties/Sensitivity"
+                    "$ref": "CORE-cdisc.json#/properties/Sensitivity"
                 },
                 {
                     "enum": [
@@ -270,7 +298,7 @@
         "Core",
         "Description",
         "Outcome",
-        "Reliability",
+        "Executability",
         "Rule Type",
         "Scope",
         "Sensitivity"

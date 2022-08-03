@@ -276,7 +276,7 @@
                 "additionalProperties": false,
                 "properties": {
                     "Organization": {
-                        "const": "CDISC"
+                        "type": "string"
                     },
                     "Standards": {
                         "items": {
@@ -457,7 +457,6 @@
             "additionalProperties": false,
             "properties": {
                 "Id": {
-                    "pattern": "^CDISC\\..*\\..*$",
                     "type": "string"
                 },
                 "Version": {
@@ -576,7 +575,7 @@
             ],
             "type": "object"
         },
-        "Reliability": {
+        "Executability": {
             "enum": [
                 "Fully Executable",
                 "Partially Executable - Possible Overreporting",
@@ -641,7 +640,7 @@
         "Core",
         "Description",
         "Outcome",
-        "Reliability",
+        "Executability",
         "Rule Type",
         "Scope",
         "Sensitivity"

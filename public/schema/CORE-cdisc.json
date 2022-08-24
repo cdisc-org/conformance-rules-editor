@@ -5,32 +5,7 @@
     "description": "Validation schema CDISC Rules 1.0",
     "properties": {
         "Authority": {
-            "items": {
-                "additionalProperties": false,
-                "properties": {
-                    "Organization": {
-                        "allOf": [
-                            {
-                                "$ref": "CORE-base.json#/properties/Authority/items/properties/Organization"
-                            },
-                            {
-                                "const": "CDISC"
-                            }
-                        ]
-                    },
-                    "Standards": {
-                        "$ref": "CORE-base.json#/properties/Authority/items/properties/Standards"
-                    }
-                },
-                "required": [
-                    "Organization",
-                    "Standards"
-                ],
-                "type": "object"
-            },
-            "minItems": 1,
-            "maxItems": 1,
-            "type": "array"
+            "$ref": "CORE-base.json#/properties/Authority"
         },
         "Check": {
             "$ref": "CORE-base.json#/properties/Check"

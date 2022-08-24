@@ -276,7 +276,17 @@
                 "additionalProperties": false,
                 "properties": {
                     "Organization": {
-                        "type": "string"
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "enum": [
+                                    "CDISC"
+                                ],
+                                "type": "string"
+                            }
+                        ]
                     },
                     "Standards": {
                         "items": {
@@ -447,7 +457,6 @@
                 "type": "object"
             },
             "minItems": 1,
-            "maxItems": 1,
             "type": "array"
         },
         "Check": {

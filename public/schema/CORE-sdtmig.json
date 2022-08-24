@@ -4,14 +4,14 @@
             "items": {
                 "enum": [
                     "ALL",
-                    "EVT",
-                    "FND",
-                    "Findings About",
-                    "INT",
-                    "REL",
-                    "SPC",
-                    "Study Reference",
-                    "TDM"
+                    "EVENTS",
+                    "FINDINGS",
+                    "FINDINGS ABOUT",
+                    "INTERVENTIONS",
+                    "RELATIONSHIP",
+                    "SPECIAL PURPOSE",
+                    "STUDY REFERENCE",
+                    "TRIAL DESIGN"
                 ],
                 "type": "string"
             },

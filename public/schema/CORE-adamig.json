@@ -2,13 +2,14 @@
     "$defs": {
         "Data Structure": {
             "enum": [
-                "ADDL",
-                "ADSL",
+                "ADAM OTHER",
                 "ALL",
-                "BDS",
-                "MDBDS",
-                "MDOCCDS",
-                "OCCDS"
+                "BASIC DATA STRUCTURE",
+                "DEVICE LEVEL ANALYSIS DATASET",
+                "MEDICAL DEVICE BASIC DATA STRUCTURE",
+                "MEDICAL DEVICE OCCURRENCE DATA STRUCTURE",
+                "OCCURRENCE DATA STRUCTURE",
+                "SUBJECT LEVEL ANALYSIS DATASET"
             ],
             "type": "string"
         },

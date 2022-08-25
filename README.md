@@ -37,6 +37,11 @@ npm install -g azure-functions-core-tools@3
 ```
 
 ## Running the App
+
+If using Windows, you may need to change the Powershell execution policy:
+1. Open Powershell in Administrator mode
+2. Run the command: `Set-ExecutionPolicy RemoteSigned` and input `Y` at the prompt.
+
 Using VSCode, run the "Everything" compound (see launch.json).
 
 A browser should open that points to: http://localhost:4280/

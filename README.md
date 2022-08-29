@@ -8,7 +8,6 @@
 3. Install static web app node libraries by running the following commands:
 ```
 npm install -g @azure/static-web-apps-cli
-npm install -g azure-functions-core-tools@3
 ```
 4. Using VSCODE, install the "Azure Functions" extension.
 5. Create a local.settings.json in the API folder to support local development of the API. It should contain the following values:

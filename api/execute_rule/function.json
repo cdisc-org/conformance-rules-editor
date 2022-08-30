@@ -15,5 +15,6 @@
       "direction": "out",
       "name": "res"
     }
-  ]
+  ],
+  "scriptFile": "../dist/execute_rule/index.js"
 }

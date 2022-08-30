@@ -1,5 +1,5 @@
-const post_json = require("../utils/post_json");
-const Authenticator = require("../utils/AuthService");
+import post_json from "../utils/post_json";
+import Authenticator from "../utils/AuthService";
 
 const EngineAuthenticator = new Authenticator(
   process.env["ENGINE_BASE_URL"],
@@ -10,7 +10,7 @@ const EngineAuthenticator = new Authenticator(
   process.env["ENGINE_CLIENT_SECRET"]
 );
 
-module.exports = async function (context, req) {
+export default async (context, req) => {
   await post_json(
     context,
     req,

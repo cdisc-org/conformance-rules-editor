@@ -136,12 +136,17 @@ export default function ExplorerList() {
         orderBy: orderBy,
         order: order,
         select: headCells.map((headCell: HeadCell) => headCell.queryParam),
-        filters: Object.entries(searchText).map(
-          (filterItem: [string, string]): IFilter => ({
-            name: filterItem[0],
-            value: filterItem[1],
-          })
-        ),
+        filters: Object.entries(searchText)
+          .filter(
+            ([_, filterValue]: [string, string]) =>
+              !(filterValue == null || filterValue === "")
+          )
+          .map(
+            ([filterName, filterValue]: [string, string]): IFilter => ({
+              name: filterName,
+              value: filterValue,
+            })
+          ),
       };
       setFetchParams({
         params: params,

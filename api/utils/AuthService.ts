@@ -1,6 +1,16 @@
-const https = require("https");
+import https from "https";
 
-module.exports = class Authenticator {
+export default class Authenticator {
+
+  token: string;
+  expires: number;
+  baseUrl: string;
+  path: string;
+  grantType: string;
+  scope: string;
+  clientId: string;
+  clientSecret: string;
+
   constructor(baseUrl, path, grantType, scope, clientId, clientSecret) {
     this.token = "";
     this.expires = Date.now();
@@ -12,7 +22,7 @@ module.exports = class Authenticator {
     this.clientSecret = clientSecret;
   }
 
-  async generateToken() {
+  async generateToken(): Promise<string> {
     const postData = new URLSearchParams({
       grant_type: this.grantType,
       scope: this.scope,
@@ -49,7 +59,7 @@ module.exports = class Authenticator {
     });
   }
 
-  async getToken() {
+  async getToken(): Promise<string> {
     if (this.token === "" || Date.now() > this.expires) {
       console.log("generating new token");
       const data = await this.generateToken();

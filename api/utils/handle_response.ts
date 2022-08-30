@@ -1,4 +1,4 @@
-module.exports = async function (context, getResponseContent) {
+export default async (context, getResponseContent) => {
   try {
     context.res = await getResponseContent();
   } catch (error) {
@@ -7,5 +7,4 @@ module.exports = async function (context, getResponseContent) {
       body: error,
     };
   }
-  context.done();
 };

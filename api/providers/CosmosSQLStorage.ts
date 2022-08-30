@@ -1,12 +1,12 @@
-const CosmosClient = require("@azure/cosmos").CosmosClient;
-const {
+import { CosmosClient } from "@azure/cosmos";
+import {
   yamlToJSON,
   buildJSON,
   dotsToSquares,
   jsonToQuery,
   spacesToUnderscores,
   underscoresToSpaces,
-} = require("../utils/json_yaml");
+} from "../utils/json_yaml";
 
 const dbContainer = new CosmosClient({
   endpoint: `https://${process.env["COSMOS_BASE_URL"]}`,
@@ -16,19 +16,19 @@ const dbContainer = new CosmosClient({
   .database(process.env["COSMOS_DATABASE"])
   .container(process.env["COSMOS_CONTAINER"]);
 
-exports.deleteRule = async (id) => {
+const deleteRule = async (id) => {
   const res = await dbContainer.item(id, id).delete();
   return {
     status: res.statusCode,
   };
 };
 
-exports.getRule = async (id) => {
+const getRule = async (id) => {
   const rule = (await dbContainer.item(id, id).read()).resource;
   return rule;
 };
 
-exports.getRules = async (query) => {
+const getRules = async (query) => {
   const rulesAlias = "Rules";
   const parameters = [];
 
@@ -47,12 +47,12 @@ exports.getRules = async (query) => {
         previousValue === "" ? " WHERE" : " AND"
       } CONTAINS(${rulesAlias}${dotsToSquares(
         currentValue.name.replace(/ /g, "_")
-      )}, @${currentValue.name.replace(/ /g, "_")}, true)`,
+      )}, @${currentValue.name.replace(/ /g, "_").replace(/\./g, "_")}, true)`,
     ""
   );
   parameters.push(
     ...query.filters.map((filter) => ({
-      name: `@${filter.name.replace(/ /g, "_")}`,
+      name: `@${filter.name.replace(/ /g, "_").replace(/\./g, "_")}`,
       value: filter.value,
     }))
   );
@@ -93,15 +93,15 @@ exports.getRules = async (query) => {
   return resp;
 };
 
-exports.patchRule = async (id, rule) => {
+const patchRule = async (id, rule) => {
   const date = Date.now();
   try {
     const toPatch = [
-      { op: "replace", path: "/changed", value: date },
+      { op: "replace" as const, path: "/changed", value: date },
       ...("content" in rule
         ? [
             {
-              op: "replace",
+              op: "replace" as const,
               path: "/content",
               value: rule.content,
             },
@@ -110,14 +110,20 @@ exports.patchRule = async (id, rule) => {
       ...("content" in rule
         ? [
             {
-              op: "replace",
+              op: "replace" as const,
               path: "/json",
               value: spacesToUnderscores(yamlToJSON(rule.content)),
             },
           ]
         : []),
       ...("isPublished" in rule
-        ? [{ op: "replace", path: "/isPublished", value: rule.isPublished }]
+        ? [
+            {
+              op: "replace" as const,
+              path: "/isPublished",
+              value: rule.isPublished,
+            },
+          ]
         : []),
     ];
     const ruleFromCosmos = await dbContainer.item(id, id).patch(toPatch);
@@ -127,8 +133,8 @@ exports.patchRule = async (id, rule) => {
   }
 };
 
-exports.postRule = async (content, creator) => {
-  const date = Date.now();
+const postRule = async (content, creator) => {
+  const date = Date.now().toString();
   const toCreate = {
     changed: date,
     content,
@@ -139,4 +145,12 @@ exports.postRule = async (content, creator) => {
   };
   const rule = (await dbContainer.items.create(toCreate)).resource;
   return rule;
+};
+
+export default {
+  deleteRule,
+  getRule,
+  getRules,
+  patchRule,
+  postRule,
 };

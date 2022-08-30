@@ -1,12 +1,18 @@
-const Authenticator = require("../utils/AuthService");
-const fetch = require("node-fetch");
-const url = `https://${process.env["DRUPAL_BASE_URL"]}`;
-const {
+import Authenticator from "../utils/AuthService";
+import fetch from "node-fetch";
+import {
   yamlToJSON,
   jsonToYAML,
   resolvePath,
   buildJSON,
-} = require("../utils/json_yaml");
+} from "../utils/json_yaml";
+
+interface IDrupalResponse {
+  data?: [],
+  links?: { next: { href: string } }
+}
+
+const url = `https://${process.env["DRUPAL_BASE_URL"]}`;
 
 const StorageAuthenticator = new Authenticator(
   process.env["DRUPAL_BASE_URL"],
@@ -17,7 +23,7 @@ const StorageAuthenticator = new Authenticator(
   process.env["DRUPAL_CLIENT_SECRET"]
 );
 
-exports.deleteRule = async (id) => {
+const deleteRule = async (id) => {
   const token = await StorageAuthenticator.getToken();
   const path = `${url}/jsonapi/node/conformance_rule/${id}`;
   const options = {
@@ -29,12 +35,12 @@ exports.deleteRule = async (id) => {
   };
   const res = await fetch(path, options);
   return {
-    status: res.statusCode,
-    body: res.statusMessage,
+    status: res.status,
+    body: res.statusText,
   };
 };
 
-exports.getRule = async (id) => {
+const getRule = async (id) => {
   const token = await StorageAuthenticator.getToken();
   const path = `${url}/jsonapi/node/conformance_rule/${id}`;
   const options = {
@@ -46,7 +52,7 @@ exports.getRule = async (id) => {
   return fetchRuleFromDrupal(path, options);
 };
 
-exports.getRules = async (query) => {
+const getRules = async (query) => {
   let params = {};
   // limit
   params["page[limit]"] = query.limit || 50;
@@ -83,7 +89,7 @@ exports.getRules = async (query) => {
   return fetchRulesFromDrupal(query, path, options);
 };
 
-exports.patchRule = async (id, rule) => {
+const patchRule = async (id, rule) => {
   const token = await StorageAuthenticator.getToken();
   const path = `${url}/jsonapi/node/conformance_rule/${id}`;
   const options = {
@@ -107,7 +113,7 @@ exports.patchRule = async (id, rule) => {
   return fetchRuleFromDrupal(path, options);
 };
 
-exports.postRule = async (content, creator) => {
+const postRule = async (content, creator) => {
   const token = await StorageAuthenticator.getToken();
   const path = `${url}/jsonapi/node/conformance_rule`;
   const options = {
@@ -165,7 +171,7 @@ function yamlToDrupal(content) {
       resolvePath(rule, generic.replace("json.", ""))
     );
   }
-  attributes.body = { value: content };
+  attributes["body"] = { value: content };
   return attributes;
 }
 
@@ -201,12 +207,12 @@ function drupalToRule(rule) {
 }
 
 async function fetchRuleFromDrupal(path, options) {
-  const responseJson = await (await fetch(path, options)).json();
+  const responseJson: IDrupalResponse = await (await fetch(path, options)).json();
   return drupalToRule(responseJson.data);
 }
 
 async function fetchRulesFromDrupal(query, path, options) {
-  const responseJson = await (await fetch(path, options)).json();
+  const responseJson: IDrupalResponse = await (await fetch(path, options)).json();
   const resp = {
     rules: responseJson.data.map((rule) => drupalToRule(rule)),
   };
@@ -214,7 +220,11 @@ async function fetchRulesFromDrupal(query, path, options) {
     const params = new URL(responseJson.links.next.href).searchParams;
     query.limit = params.get("page[limit]");
     query.offset = params.get("page[offset]");
-    resp.next = query;
+    resp["next"] = query;
   }
   return resp;
 }
+
+export default {
+  deleteRule, getRule, getRules, patchRule, postRule
+};

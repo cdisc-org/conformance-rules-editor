@@ -15,5 +15,6 @@
       "direction": "out",
       "name": "res"
     }
-  ]
+  ],
+  "scriptFile": "../dist/delete_rule/index.js"
 }

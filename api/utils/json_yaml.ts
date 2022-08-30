@@ -1,6 +1,6 @@
-const jsYaml = require("js-yaml");
+import jsYaml from "js-yaml";
 
-exports.jsonToYAML = (body) => {
+export const jsonToYAML = (body) => {
   try {
     return jsYaml.dump(body);
   } catch (yamlException) {
@@ -8,7 +8,7 @@ exports.jsonToYAML = (body) => {
   }
 };
 
-exports.yamlToJSON = (body) => {
+export const yamlToJSON = (body) => {
   try {
     return jsYaml.load(body);
   } catch (yamlException) {
@@ -16,52 +16,52 @@ exports.yamlToJSON = (body) => {
   }
 };
 
-exports.resolvePath = (object, path, defaultValue = `<Missing '${path}'>`) =>
+export const resolvePath = (object, path, defaultValue = `<Missing '${path}'>`) =>
   isValidYaml(object)
     ? path.split(".").reduce((o, p) => (o ? o[p] : defaultValue), object)
     : defaultValue;
 
-exports.buildJSON = (object, path, value) => {
+export const buildJSON = (object, path, value) => {
   const split = path.split(".");
   let child = object;
   for (const [i, prop] of split.entries()) {
     if (i === split.length - 1) {
       child[prop] = value;
     } else {
-      child[prop] = child[prop] == null ? {} : child[prop];
+      child[prop] = child[prop] ?? {};
       child = child[prop];
     }
   }
   return object;
 };
 
-exports.dotsToSquares = (dot) =>
+export const dotsToSquares = (dot) =>
   dot
     .split(".")
     .map((term) => `["${term}"]`)
     .join("");
 
-exports.traverseJson = (json, func) => {
+export const traverseJson = (json, func) => {
   if (json !== null && typeof json === "object") {
     for (const value of Object.values(json)) {
-      this.traverseJson(value, func);
+      traverseJson(value, func);
     }
   }
   func(json);
   return json;
 };
 
-exports.underscoresToSpaces = (json) => replaceKeyNames(json, "_", " ");
+export const underscoresToSpaces = (json) => replaceKeyNames(json, "_", " ");
 
-exports.spacesToUnderscores = (json) => replaceKeyNames(json, " ", "_");
+export const spacesToUnderscores = (json) => replaceKeyNames(json, " ", "_");
 
-exports.jsonToQuery = (json) => {
+export const jsonToQuery = (json) => {
   if (json instanceof Object) {
     const objectString = Object.entries(json).reduce(
       (previousValue, [currentKey, currentValue]) =>
         `${previousValue}${
           previousValue ? ", " : ""
-        }"${currentKey}": ${this.jsonToQuery(currentValue)}`,
+        }"${currentKey}": ${jsonToQuery(currentValue)}`,
       ""
     );
     return `{ ${objectString} }`;
@@ -76,7 +76,7 @@ function isValidYaml(rule) {
 }
 
 function replaceKeyNames(json, pattern, replacement) {
-  return exports.traverseJson(json, (node) => {
+  return traverseJson(json, (node) => {
     if (node !== null && typeof node === "object" && !(node instanceof Array)) {
       const keys = Object.keys(node).filter((key) => key.includes(pattern));
       for (const key of keys) {

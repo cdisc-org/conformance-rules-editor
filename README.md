@@ -41,8 +41,14 @@ If using Windows, you may need to change the Powershell execution policy:
 1. Open Powershell in Administrator mode
 2. Run the command: `Set-ExecutionPolicy RemoteSigned` and input `Y` at the prompt.
 
-Using VSCode, run the "Everything" compound (see launch.json).
+### Using VSCode
+Run the "Everything" compound (see launch.json).
 
 A browser should open that points to: http://localhost:4280/
 
 Alternatively, you can run the launch components individually.
+
+### Using the commandline
+Run: `$Env:BROWSER='none'; swa start http://localhost:3000 --api-location ./api --run 'npm start'`
+
+Navigate to: http://localhost:4280/

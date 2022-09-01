@@ -1,6 +1,6 @@
-const https = require("https");
+import https from "https";
 
-module.exports = async function (context, req, url, token) {
+export default async (context, req, url, token?) => {
   const postData = JSON.stringify(req.body);
 
   const options = {
@@ -39,7 +39,6 @@ module.exports = async function (context, req, url, token) {
             };
           }
         }
-        context.done();
       });
     })
     .on("error", (error) => {
@@ -47,7 +46,6 @@ module.exports = async function (context, req, url, token) {
         status: 500,
         body: error,
       };
-      context.done();
     });
   request.write(postData);
   await new Promise((resolve, reject) => {

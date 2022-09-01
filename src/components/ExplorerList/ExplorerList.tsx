@@ -10,16 +10,11 @@ import ExplorerHead, {
   HeadCell,
 } from "../ExplorerHead/ExplorerHead";
 import { debounce } from "lodash";
-
-export interface PaginationLink {
-  href: string;
-}
-
-export interface PaginationLinks {
-  prev?: PaginationLink;
-  self: PaginationLink;
-  next?: PaginationLink;
-}
+import { IRule } from "../../types/IRule";
+import { IRules } from "../../types/IRules";
+import { resolvePath } from "../../utils/json_yaml";
+import { IQuery } from "../../types/IQuery";
+import { IFilter } from "../../types/IFilter";
 
 enum FetchType {
   FilterSort,
@@ -27,7 +22,7 @@ enum FetchType {
 }
 
 interface Fetch {
-  params: string;
+  params: IQuery;
   type: FetchType;
 }
 
@@ -46,16 +41,16 @@ export default function ExplorerList() {
     setCreator,
     setPublished,
   } = useContext(AppContext);
-  const [rulesList, setRulesList] = useState<typeof ExplorerItem[]>([]);
+  const [rulesList, setRulesList] = useState([]);
   const [wantsMoreRules, setWantsMoreRules] = useState<boolean>(false);
-  const [paginationLinks, setPaginationLinks] = useState<PaginationLinks>(null);
+  const [paginationLinks, setPaginationLinks] = useState<IQuery>(null);
   const [rulesLoaded, setRulesLoaded] = useState<boolean>(false);
   const [fetchParams, setFetchParams] = useState<Fetch>(null);
   const rulesListRef = useRef<any>();
 
   /* More rules exist than the ones already loaded in the scroll pane */
   const hasMoreRules = useCallback(
-    () => paginationLinks !== null && "next" in paginationLinks,
+    () => paginationLinks !== undefined && paginationLinks !== null,
     [paginationLinks]
   );
 
@@ -66,22 +61,25 @@ export default function ExplorerList() {
   );
 
   const populateRulesList = useCallback(
-    (responseJson) => {
-      setPaginationLinks(responseJson.links);
+    (responseJson: IRules) => {
+      setPaginationLinks(responseJson.next);
       setRulesList([
         ...rulesList,
-        ...responseJson.data.map((ruleItem, ruleIndex) => (
-          <ExplorerItem
-            key={ruleItem.id}
-            storageId={ruleItem.id}
-            coreId={ruleItem.attributes.title}
-            ruleType={ruleItem.attributes.field_conformance_rule_type}
-            creator={ruleItem.attributes.field_conformance_rule_creator}
-            published={ruleItem.attributes.status}
-            created={ruleItem.attributes.created}
-            changed={ruleItem.attributes.changed}
-          />
-        )),
+        ...responseJson.rules.map((ruleItem: IRule, ruleIndex) => {
+          const rule = ruleItem.json;
+          return (
+            <ExplorerItem
+              key={ruleItem.id}
+              storageId={ruleItem.id}
+              coreId={resolvePath(rule, "Core.Id")}
+              ruleType={resolvePath(rule, "Rule Type")}
+              creator={ruleItem.creator}
+              published={ruleItem.isPublished}
+              created={ruleItem.created}
+              changed={ruleItem.changed}
+            />
+          );
+        }),
       ]);
       setRulesLoaded(true);
     },
@@ -134,28 +132,24 @@ export default function ExplorerList() {
     if (dirtyExplorerList) {
       setPaginationLinks(null);
       setRulesList([]);
-      const sortParams = orderBy
-        ? "sort=" + (order === "desc" ? "-" : "") + orderBy
-        : "";
-      const filterParams = Object.entries(searchText).reduce(
-        (previousValue, currentValue) => {
-          return (
-            previousValue +
-            (previousValue && currentValue[1] ? "&" : "") +
-            (currentValue[1]
-              ? `filter[${currentValue[0]}][operator]=CONTAINS&filter[${currentValue[0]}][value]=${currentValue[1]}`
-              : "")
-          );
-        },
-        ""
-      );
-      const includeParams =
-        "fields[node--conformance_rule]=" +
-        headCells.map((headCell: HeadCell) => headCell.queryParam).join(",");
+      const params = {
+        orderBy: orderBy,
+        order: order,
+        select: headCells.map((headCell: HeadCell) => headCell.queryParam),
+        filters: Object.entries(searchText)
+          .filter(
+            ([_, filterValue]: [string, string]) =>
+              !(filterValue == null || filterValue === "")
+          )
+          .map(
+            ([filterName, filterValue]: [string, string]): IFilter => ({
+              name: filterName,
+              value: filterValue,
+            })
+          ),
+      };
       setFetchParams({
-        params: [includeParams, sortParams, filterParams]
-          .filter((value: string) => value)
-          .join("&"),
+        params: params,
         type: FetchType.FilterSort,
       });
       setDirtyExplorerList(false);
@@ -171,7 +165,7 @@ export default function ExplorerList() {
       (wantsMoreRules || scrollbarsMissing())
     ) {
       setFetchParams({
-        params: paginationLinks.next.href.split("?")[1],
+        params: paginationLinks,
         type: FetchType.Pagination,
       });
       setWantsMoreRules(false);
@@ -188,20 +182,12 @@ export default function ExplorerList() {
   /* Load the editor with a new value */
   useEffect(() => {
     if (isRuleSelected()) {
-      /* Unset before the async call so that api is only called once */
-      dataService
-        .get_rule(selectedRule)
-        .then(function (response) {
-          return response.json();
-        })
-        .then(function (responseJson) {
-          const attributes = JSON.parse(responseJson.body).data.attributes;
-          setCreator(attributes.field_conformance_rule_creator);
-          setPublished(attributes.status);
-          const content = attributes.body.value;
-          setUnmodifiedRule(content);
-          setModifiedRule(content);
-        });
+      dataService.get_rule(selectedRule).then((responseJson: IRule) => {
+        setCreator(responseJson.creator);
+        setPublished(responseJson.isPublished);
+        setUnmodifiedRule(responseJson.content);
+        setModifiedRule(responseJson.content);
+      });
     }
   }, [
     selectedRule,

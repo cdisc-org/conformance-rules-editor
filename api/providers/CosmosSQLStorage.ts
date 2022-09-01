@@ -94,7 +94,7 @@ const getRules = async (query) => {
 };
 
 const patchRule = async (id, rule) => {
-  const date = Date.now();
+  const date = new Date();
   try {
     const toPatch = [
       { op: "replace" as const, path: "/changed", value: date },
@@ -134,7 +134,7 @@ const patchRule = async (id, rule) => {
 };
 
 const postRule = async (content, creator) => {
-  const date = Date.now().toString();
+  const date = new Date();
   const toCreate = {
     changed: date,
     content,

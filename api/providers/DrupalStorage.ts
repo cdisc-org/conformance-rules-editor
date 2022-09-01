@@ -8,8 +8,8 @@ import {
 } from "../utils/json_yaml";
 
 interface IDrupalResponse {
-  data?: [],
-  links?: { next: { href: string } }
+  data?: [];
+  links?: { next: { href: string } };
 }
 
 const url = `https://${process.env["DRUPAL_BASE_URL"]}`;
@@ -207,12 +207,16 @@ function drupalToRule(rule) {
 }
 
 async function fetchRuleFromDrupal(path, options) {
-  const responseJson: IDrupalResponse = await (await fetch(path, options)).json();
+  const responseJson: IDrupalResponse = await (
+    await fetch(path, options)
+  ).json();
   return drupalToRule(responseJson.data);
 }
 
 async function fetchRulesFromDrupal(query, path, options) {
-  const responseJson: IDrupalResponse = await (await fetch(path, options)).json();
+  const responseJson: IDrupalResponse = await (
+    await fetch(path, options)
+  ).json();
   const resp = {
     rules: responseJson.data.map((rule) => drupalToRule(rule)),
   };
@@ -226,5 +230,9 @@ async function fetchRulesFromDrupal(query, path, options) {
 }
 
 export default {
-  deleteRule, getRule, getRules, patchRule, postRule
+  deleteRule,
+  getRule,
+  getRules,
+  patchRule,
+  postRule,
 };

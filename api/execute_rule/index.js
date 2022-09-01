@@ -5,7 +5,6 @@ module.exports = async function (context, req) {
   await post_json(
     context,
     req,
-    process.env["EXECUTE_RULE_URL"],
-    await EngineAuthenticator.getToken()
+    process.env["EXECUTE_RULE_URL"]
   );
 };

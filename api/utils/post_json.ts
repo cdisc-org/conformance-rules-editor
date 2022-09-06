@@ -8,7 +8,6 @@ export default async (
   token?: String
 ) => {
   const url = `https://${requestInfo}`;
-  const postData = JSON.stringify(req.body);
   const init = {
     method: "POST",
     headers: {

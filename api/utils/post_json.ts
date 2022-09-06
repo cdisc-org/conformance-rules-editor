@@ -1,54 +1,44 @@
-import https from "https";
+import fetch, { RequestInfo } from "node-fetch";
+import { Context, HttpRequest } from "@azure/functions";
 
-export default async (context, req, url, token?) => {
+export default async (
+  context: Context,
+  req: HttpRequest,
+  requestInfo: RequestInfo,
+  token?: String
+) => {
+  const url = `https://${requestInfo}`;
   const postData = JSON.stringify(req.body);
-
-  const options = {
-    hostname: url.split("/")[0],
-    path: "/" + url.split("/").slice(1).join("/"),
+  const init = {
     method: "POST",
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
-      "Content-Length": Buffer.byteLength(postData),
       ...(token && {
         Authorization: "Bearer " + token,
       }),
     },
+    body: JSON.stringify(req.body),
   };
 
-  var resp_body = "";
-  const request = https
-    .request(options, (resp) => {
-      resp.on("data", (chunk) => {
-        resp_body += chunk;
-      });
+  const res = await fetch(url, init);
 
-      resp.on("end", () => {
-        if (resp.statusCode !== 200) {
-          context.res["status"] = resp.statusCode;
-          context.res["body"] = resp.statusMessage;
-        }
-        if (resp_body) {
-          try {
-            context.res.json(JSON.parse(resp_body));
-          } catch (jsonParseException) {
-            context.res = {
-              status: 500,
-              body: `Core Engine returned invalid JSON: ${resp_body}`,
-            };
-          }
-        }
-      });
-    })
-    .on("error", (error) => {
+  if (res.status === 200) {
+    try {
+      context.res = {
+        status: res.status,
+        body: await res.json(),
+      };
+    } catch (jsonParseException) {
       context.res = {
         status: 500,
-        body: error,
+        body: `Core Engine returned invalid JSON: ${res.body}`,
       };
-    });
-  request.write(postData);
-  await new Promise((resolve, reject) => {
-    request.end();
-  });
+    }
+  } else {
+    context.res = {
+      status: res.status,
+      body: res.statusText,
+    };
+  }
 };

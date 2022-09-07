@@ -11,7 +11,6 @@ interface Props {
     published,
     created,
     changed,
-    revisionTimestamp?,
 }
 
 export default function ExplorerItem(props: Props) {

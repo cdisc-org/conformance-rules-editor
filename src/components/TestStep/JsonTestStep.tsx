@@ -1,4 +1,5 @@
 import { useEffect, useContext } from "react";
+import { spacesToUnderscores, yamlToJSON } from "../../utils/json_yaml";
 import AppContext, { Status, Steps } from "../AppContext";
 import TestStep from "./TestStep";
 
@@ -8,46 +9,16 @@ export default function JsonTestStep() {
   );
 
   useEffect(() => {
-    let isSubscribed = true;
-
+    const json = spacesToUnderscores(yamlToJSON(modifiedRule));
     setJsonCheck({
-      status: Status.Pending,
-      details: [],
+      status: Status.Pass,
+      details: [json],
     });
-
-    dataService
-      .generate_rule_json(modifiedRule)
-      .then((response) => {
-        if (isSubscribed) {
-          setJsonCheck(
-            "error" in response
-              ? {
-                  status: Status.Fail,
-                  details: [`${response.error}: ${response.message}`],
-                }
-              : {
-                  status: Status.Pass,
-                  details: [response],
-                }
-          );
-        }
-      })
-      .catch(async (exception) => {
-        if (isSubscribed) {
-          setJsonCheck({
-            status: Status.Fail,
-            details: [exception.message, await exception.details],
-          });
-        }
-      });
-    return () => {
-      isSubscribed = false;
-    };
   }, [modifiedRule, dataService, setJsonCheck]);
 
   return (
     <TestStep
-      title="Convert YAML to JSON Executable Rule"
+      title="Convert YAML to JSON Rule"
       step={Steps.JSON}
       results={jsonCheck}
     />

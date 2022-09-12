@@ -1,78 +1,74 @@
 {
-    "$id": "https://cdisc.org/CORE-cdisc.json",
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "additionalProperties": false,
-    "description": "Validation schema CDISC Rules 1.0",
-    "properties": {
-        "Authority": {
-            "$ref": "CORE-base.json#/properties/Authority"
-        },
-        "Check": {
-            "$ref": "CORE-base.json#/properties/Check"
-        },
-        "Core": {
-            "additionalProperties": false,
-            "properties": {
-                "Id": {
-                    "allOf": [
-                        {
-                            "$ref": "CORE-base.json#/properties/Core/properties/Id"
-                        },
-                        {
-                            "pattern": "^CDISC\\..*\\..*$",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "Status": {
-                    "$ref": "CORE-base.json#/properties/Core/properties/Status"
-                },
-                "Version": {
-                    "$ref": "CORE-base.json#/properties/Core/properties/Version"
-                }
-            },
-            "required": [
-                "Id",
-                "Status",
-                "Version"
-            ],
-            "type": "object"
-        },
-        "Description": {
-            "$ref": "CORE-base.json#/properties/Description"
-        },
-        "Match Datasets": {
-            "$ref": "CORE-base.json#/properties/Match Datasets"
-        },
-        "Operations": {
-            "$ref": "CORE-base.json#/properties/Operations"
-        },
-        "Outcome": {
-            "$ref": "CORE-base.json#/properties/Outcome"
-        },
-        "Executability": {
-            "$ref": "CORE-base.json#/properties/Executability"
-        },
-        "Rule Type": {
-            "$ref": "CORE-base.json#/properties/Rule Type"
-        },
-        "Scope": {
-            "$ref": "CORE-base.json#/properties/Scope"
-        },
-        "Sensitivity": {
-            "$ref": "CORE-base.json#/properties/Sensitivity"
-        }
+  "$id": "https://cdisc.org/CORE-cdisc.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": false,
+  "description": "Validation schema CDISC Rules 1.0",
+  "properties": {
+    "Authority": {
+      "$ref": "CORE-base.json#/properties/Authority"
     },
-    "required": [
-        "Authority",
-        "Check",
-        "Core",
-        "Description",
-        "Outcome",
-        "Executability",
-        "Rule Type",
-        "Scope",
-        "Sensitivity"
-    ],
-    "type": "object"
+    "Check": {
+      "$ref": "CORE-base.json#/properties/Check"
+    },
+    "Core": {
+      "additionalProperties": false,
+      "properties": {
+        "Id": {
+          "allOf": [
+            {
+              "$ref": "CORE-base.json#/properties/Core/properties/Id"
+            },
+            {
+              "pattern": "^CDISC\\..*\\..*$",
+              "type": "string"
+            }
+          ]
+        },
+        "Status": {
+          "$ref": "CORE-base.json#/properties/Core/properties/Status"
+        },
+        "Version": {
+          "$ref": "CORE-base.json#/properties/Core/properties/Version"
+        }
+      },
+      "required": ["Id", "Status", "Version"],
+      "type": "object"
+    },
+    "Description": {
+      "$ref": "CORE-base.json#/properties/Description"
+    },
+    "Match Datasets": {
+      "$ref": "CORE-base.json#/properties/Match Datasets"
+    },
+    "Operations": {
+      "$ref": "CORE-base.json#/properties/Operations"
+    },
+    "Outcome": {
+      "$ref": "CORE-base.json#/properties/Outcome"
+    },
+    "Executability": {
+      "$ref": "CORE-base.json#/properties/Executability"
+    },
+    "Rule Type": {
+      "$ref": "CORE-base.json#/properties/Rule Type"
+    },
+    "Scope": {
+      "$ref": "CORE-base.json#/properties/Scope"
+    },
+    "Sensitivity": {
+      "$ref": "CORE-base.json#/properties/Sensitivity"
+    }
+  },
+  "required": [
+    "Authority",
+    "Check",
+    "Core",
+    "Description",
+    "Outcome",
+    "Executability",
+    "Rule Type",
+    "Scope",
+    "Sensitivity"
+  ],
+  "type": "object"
 }

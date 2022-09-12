@@ -1,313 +1,285 @@
 {
-    "$defs": {
-        "Classes": {
-            "items": {
-                "enum": [
-                    "ALL",
-                    "EVENTS",
-                    "FINDINGS",
-                    "FINDINGS ABOUT",
-                    "INTERVENTIONS",
-                    "RELATIONSHIP",
-                    "SPECIAL PURPOSE",
-                    "STUDY REFERENCE",
-                    "TRIAL DESIGN"
-                ],
-                "type": "string"
-            },
-            "type": "array"
-        },
-        "Dataset": {
-            "allOf": [
-                {
-                    "$ref": "CORE-base.json#/$defs/Dataset"
-                },
-                {
-                    "pattern": "^(ALL|AP--|APRELSUB|RELREC|RELSPEC|RELSUB|[A-Z]{2}|[A-Z]{4}|SUPP[A-Z]{2}|SUPP[A-Z]{4}|SQAP[A-Z]{4}|SUPP--)$",
-                    "type": "string"
-                }
-            ]
-        },
-        "Domains": {
-            "items": {
-                "$ref": "#/$defs/Dataset"
-            },
-            "type": "array"
-        }
+  "$defs": {
+    "Classes": {
+      "items": {
+        "enum": [
+          "ALL",
+          "EVENTS",
+          "FINDINGS",
+          "FINDINGS ABOUT",
+          "INTERVENTIONS",
+          "RELATIONSHIP",
+          "SPECIAL PURPOSE",
+          "STUDY REFERENCE",
+          "TRIAL DESIGN"
+        ],
+        "type": "string"
+      },
+      "type": "array"
     },
-    "$id": "https://cdisc.org/CORE-sdtm.json",
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "additionalProperties": false,
-    "description": "Validation schema CDISC Rules 1.0",
-    "properties": {
-        "Authority": {
+    "Dataset": {
+      "allOf": [
+        {
+          "$ref": "CORE-base.json#/$defs/Dataset"
+        },
+        {
+          "pattern": "^(ALL|AP--|APRELSUB|RELREC|RELSPEC|RELSUB|[A-Z]{2}|[A-Z]{4}|SUPP[A-Z]{2}|SUPP[A-Z]{4}|SQAP[A-Z]{4}|SUPP--)$",
+          "type": "string"
+        }
+      ]
+    },
+    "Domains": {
+      "items": {
+        "$ref": "#/$defs/Dataset"
+      },
+      "type": "array"
+    }
+  },
+  "$id": "https://cdisc.org/CORE-sdtm.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": false,
+  "description": "Validation schema CDISC Rules 1.0",
+  "properties": {
+    "Authority": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "Organization": {
+            "$ref": "CORE-cdisc.json#/properties/Authority/items/properties/Organization"
+          },
+          "Standards": {
             "items": {
-                "additionalProperties": false,
-                "properties": {
-                    "Organization": {
-                        "$ref": "CORE-cdisc.json#/properties/Authority/items/properties/Organization"
-                    },
-                    "Standards": {
-                        "items": {
-                            "additionalProperties": false,
-                            "properties": {
-                                "Name": {
-                                    "$ref": "CORE-cdisc.json#/properties/Authority/items/properties/Standards/items/properties/Name"
-                                },
-                                "References": {
-                                    "items": {
-                                        "additionalProperties": false,
-                                        "properties": {
-                                            "Citations": {
-                                                "$ref": "CORE-cdisc.json#/properties/Authority/items/properties/Standards/items/properties/References/items/properties/Citations"
-                                            },
-                                            "Criteria": {
-                                                "$ref": "CORE-cdisc.json#/properties/Authority/items/properties/Standards/items/properties/References/items/properties/Criteria"
-                                            },
-                                            "Origin": {
-                                                "allOf": [
-                                                    {
-                                                        "$ref": "CORE-cdisc.json#/properties/Authority/items/properties/Standards/items/properties/References/items/properties/Origin"
-                                                    },
-                                                    {
-                                                        "const": "SDTM and SDTMIG Conformance Rules"
-                                                    }
-                                                ]
-                                            },
-                                            "Related Rules": {
-                                                "$ref": "CORE-cdisc.json#/properties/Authority/items/properties/Standards/items/properties/References/items/properties/Related Rules"
-                                            },
-                                            "Release Notes": {
-                                                "$ref": "CORE-cdisc.json#/properties/Authority/items/properties/Standards/items/properties/References/items/properties/Release Notes"
-                                            },
-                                            "Rule Identifier": {
-                                                "$ref": "CORE-cdisc.json#/properties/Authority/items/properties/Standards/items/properties/References/items/properties/Rule Identifier"
-                                            },
-                                            "Severity": {
-                                                "$ref": "CORE-cdisc.json#/properties/Authority/items/properties/Standards/items/properties/References/items/properties/Severity"
-                                            },
-                                            "Validator Rule Message": {
-                                                "$ref": "CORE-cdisc.json#/properties/Authority/items/properties/Standards/items/properties/References/items/properties/Validator Rule Message"
-                                            },
-                                            "Version": {
-                                                "allOf": [
-                                                    {
-                                                        "$ref": "CORE-cdisc.json#/properties/Authority/items/properties/Standards/items/properties/References/items/properties/Version"
-                                                    },
-                                                    {
-                                                        "const": "2.0"
-                                                    }
-                                                ]
-                                            }
-                                        },
-                                        "required": [
-                                            "Citations",
-                                            "Origin",
-                                            "Rule Identifier",
-                                            "Version"
-                                        ],
-                                        "type": "object"
-                                    },
-                                    "minItems": 1,
-                                    "type": "array"
-                                },
-                                "Version": {
-                                    "$ref": "CORE-cdisc.json#/properties/Authority/items/properties/Standards/items/properties/Version"
-                                }
-                            },
-                            "required": [
-                                "Name",
-                                "References",
-                                "Version"
-                            ],
-                            "type": "object"
-                        },
-                        "minItems": 1,
-                        "type": "array"
-                    }
+              "additionalProperties": false,
+              "properties": {
+                "Name": {
+                  "$ref": "CORE-cdisc.json#/properties/Authority/items/properties/Standards/items/properties/Name"
                 },
-                "required": [
-                    "Organization",
-                    "Standards"
-                ],
-                "type": "object"
-            },
-            "minItems": 1,
-            "maxItems": 1,
-            "type": "array"
-        },
-        "Check": {
-            "$ref": "CORE-cdisc.json#/properties/Check"
-        },
-        "Core": {
-            "additionalProperties": false,
-            "properties": {
-                "Id": {
-                    "allOf": [
-                        {
-                            "$ref": "CORE-cdisc.json#/properties/Core/properties/Id"
-                        },
-                        {
-                            "pattern": "^CDISC\\.SDTMIG\\.CG\\d{4}$",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "Status": {
-                    "$ref": "CORE-cdisc.json#/properties/Core/properties/Status"
-                },
-                "Version": {
-                    "$ref": "CORE-cdisc.json#/properties/Core/properties/Version"
-                }
-            },
-            "required": [
-                "Id",
-                "Status",
-                "Version"
-            ],
-            "type": "object"
-        },
-        "Description": {
-            "$ref": "CORE-cdisc.json#/properties/Description"
-        },
-        "Match Datasets": {
-            "items": {
-                "additionalProperties": false,
-                "properties": {
-                    "Name": {
-                        "$ref": "#/$defs/Dataset"
-                    },
-                    "Is Relationship": {
-                        "$ref": "CORE-cdisc.json#/properties/Match Datasets/items/properties/Is Relationship"
-                    },
-                    "Keys": {
-                        "$ref": "CORE-cdisc.json#/properties/Match Datasets/items/properties/Keys"
-                    }
-                },
-                "required": [
-                    "Name",
-                    "Keys"
-                ],
-                "type": "object"
-            },
-            "type": "array"
-        },
-        "Operations": {
-            "items": {
-                "additionalProperties": false,
-                "properties": {
-                    "domain": {
-                        "$ref": "#/$defs/Dataset"
-                    },
-                    "group": {
-                        "$ref": "CORE-cdisc.json#/properties/Operations/items/properties/group"
-                    },
-                    "id": {
-                        "$ref": "CORE-cdisc.json#/properties/Operations/items/properties/id"
-                    },
-                    "name": {
-                        "$ref": "CORE-cdisc.json#/properties/Operations/items/properties/name"
-                    },
-                    "operator": {
-                        "$ref": "CORE-cdisc.json#/properties/Operations/items/properties/operator"
-                    }
-                },
-                "required": [
-                    "id",
-                    "name",
-                    "operator"
-                ],
-                "type": "object"
-            },
-            "type": "array"
-        },
-        "Outcome": {
-            "$ref": "CORE-cdisc.json#/properties/Outcome"
-        },
-        "Executability": {
-            "$ref": "CORE-cdisc.json#/properties/Executability"
-        },
-        "Rule Type": {
-            "$ref": "CORE-cdisc.json#/properties/Rule Type"
-        },
-        "Scope": {
-            "additionalProperties": false,
-            "properties": {
-                "Classes": {
-                    "oneOf": [
-                        {
-                            "additionalProperties": false,
-                            "properties": {
-                                "Include": {
-                                    "$ref": "#/$defs/Classes"
-                                }
-                            },
-                            "required": [
-                                "Include"
-                            ],
-                            "type": "object"
-                        },
-                        {
-                            "additionalProperties": false,
-                            "properties": {
-                                "Exclude": {
-                                    "$ref": "#/$defs/Classes"
-                                }
-                            },
-                            "required": [
-                                "Exclude"
-                            ],
-                            "type": "object"
-                        }
-                    ]
-                },
-                "Domains": {
+                "References": {
+                  "items": {
                     "additionalProperties": false,
                     "properties": {
-                        "Exclude": {
-                            "$ref": "#/$defs/Domains"
-                        },
-                        "Include": {
-                            "$ref": "#/$defs/Domains"
-                        },
-                        "include_split_datasets": {
-                            "type": "boolean"
-                        }
+                      "Citations": {
+                        "$ref": "CORE-cdisc.json#/properties/Authority/items/properties/Standards/items/properties/References/items/properties/Citations"
+                      },
+                      "Criteria": {
+                        "$ref": "CORE-cdisc.json#/properties/Authority/items/properties/Standards/items/properties/References/items/properties/Criteria"
+                      },
+                      "Origin": {
+                        "allOf": [
+                          {
+                            "$ref": "CORE-cdisc.json#/properties/Authority/items/properties/Standards/items/properties/References/items/properties/Origin"
+                          },
+                          {
+                            "const": "SDTM and SDTMIG Conformance Rules"
+                          }
+                        ]
+                      },
+                      "Related Rules": {
+                        "$ref": "CORE-cdisc.json#/properties/Authority/items/properties/Standards/items/properties/References/items/properties/Related Rules"
+                      },
+                      "Release Notes": {
+                        "$ref": "CORE-cdisc.json#/properties/Authority/items/properties/Standards/items/properties/References/items/properties/Release Notes"
+                      },
+                      "Rule Identifier": {
+                        "$ref": "CORE-cdisc.json#/properties/Authority/items/properties/Standards/items/properties/References/items/properties/Rule Identifier"
+                      },
+                      "Severity": {
+                        "$ref": "CORE-cdisc.json#/properties/Authority/items/properties/Standards/items/properties/References/items/properties/Severity"
+                      },
+                      "Validator Rule Message": {
+                        "$ref": "CORE-cdisc.json#/properties/Authority/items/properties/Standards/items/properties/References/items/properties/Validator Rule Message"
+                      },
+                      "Version": {
+                        "allOf": [
+                          {
+                            "$ref": "CORE-cdisc.json#/properties/Authority/items/properties/Standards/items/properties/References/items/properties/Version"
+                          },
+                          {
+                            "const": "2.0"
+                          }
+                        ]
+                      }
                     },
-                    "type": "object"
-                }
-            },
-            "required": [
-                "Classes",
-                "Domains"
-            ],
-            "type": "object"
-        },
-        "Sensitivity": {
-            "oneOf": [
-                {
-                    "$ref": "CORE-cdisc.json#/properties/Sensitivity"
-                },
-                {
-                    "enum": [
-                        "Class",
-                        "Domain"
+                    "required": [
+                      "Citations",
+                      "Origin",
+                      "Rule Identifier",
+                      "Version"
                     ],
-                    "type": "string"
+                    "type": "object"
+                  },
+                  "minItems": 1,
+                  "type": "array"
+                },
+                "Version": {
+                  "$ref": "CORE-cdisc.json#/properties/Authority/items/properties/Standards/items/properties/Version"
                 }
-            ]
-        }
+              },
+              "required": ["Name", "References", "Version"],
+              "type": "object"
+            },
+            "minItems": 1,
+            "type": "array"
+          }
+        },
+        "required": ["Organization", "Standards"],
+        "type": "object"
+      },
+      "minItems": 1,
+      "maxItems": 1,
+      "type": "array"
     },
-    "required": [
-        "Authority",
-        "Check",
-        "Core",
-        "Description",
-        "Outcome",
-        "Executability",
-        "Rule Type",
-        "Scope",
-        "Sensitivity"
-    ],
-    "type": "object"
+    "Check": {
+      "$ref": "CORE-cdisc.json#/properties/Check"
+    },
+    "Core": {
+      "additionalProperties": false,
+      "properties": {
+        "Id": {
+          "allOf": [
+            {
+              "$ref": "CORE-cdisc.json#/properties/Core/properties/Id"
+            },
+            {
+              "pattern": "^CDISC\\.SDTMIG\\.CG\\d{4}$",
+              "type": "string"
+            }
+          ]
+        },
+        "Status": {
+          "$ref": "CORE-cdisc.json#/properties/Core/properties/Status"
+        },
+        "Version": {
+          "$ref": "CORE-cdisc.json#/properties/Core/properties/Version"
+        }
+      },
+      "required": ["Id", "Status", "Version"],
+      "type": "object"
+    },
+    "Description": {
+      "$ref": "CORE-cdisc.json#/properties/Description"
+    },
+    "Match Datasets": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "Name": {
+            "$ref": "#/$defs/Dataset"
+          },
+          "Is Relationship": {
+            "$ref": "CORE-cdisc.json#/properties/Match Datasets/items/properties/Is Relationship"
+          },
+          "Keys": {
+            "$ref": "CORE-cdisc.json#/properties/Match Datasets/items/properties/Keys"
+          }
+        },
+        "required": ["Name", "Keys"],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "Operations": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "domain": {
+            "$ref": "#/$defs/Dataset"
+          },
+          "group": {
+            "$ref": "CORE-cdisc.json#/properties/Operations/items/properties/group"
+          },
+          "id": {
+            "$ref": "CORE-cdisc.json#/properties/Operations/items/properties/id"
+          },
+          "name": {
+            "$ref": "CORE-cdisc.json#/properties/Operations/items/properties/name"
+          },
+          "operator": {
+            "$ref": "CORE-cdisc.json#/properties/Operations/items/properties/operator"
+          }
+        },
+        "required": ["id", "name", "operator"],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "Outcome": {
+      "$ref": "CORE-cdisc.json#/properties/Outcome"
+    },
+    "Executability": {
+      "$ref": "CORE-cdisc.json#/properties/Executability"
+    },
+    "Rule Type": {
+      "$ref": "CORE-cdisc.json#/properties/Rule Type"
+    },
+    "Scope": {
+      "additionalProperties": false,
+      "properties": {
+        "Classes": {
+          "oneOf": [
+            {
+              "additionalProperties": false,
+              "properties": {
+                "Include": {
+                  "$ref": "#/$defs/Classes"
+                }
+              },
+              "required": ["Include"],
+              "type": "object"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "Exclude": {
+                  "$ref": "#/$defs/Classes"
+                }
+              },
+              "required": ["Exclude"],
+              "type": "object"
+            }
+          ]
+        },
+        "Domains": {
+          "additionalProperties": false,
+          "properties": {
+            "Exclude": {
+              "$ref": "#/$defs/Domains"
+            },
+            "Include": {
+              "$ref": "#/$defs/Domains"
+            },
+            "include_split_datasets": {
+              "type": "boolean"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "required": ["Classes", "Domains"],
+      "type": "object"
+    },
+    "Sensitivity": {
+      "oneOf": [
+        {
+          "$ref": "CORE-cdisc.json#/properties/Sensitivity"
+        },
+        {
+          "enum": ["Class", "Domain"],
+          "type": "string"
+        }
+      ]
+    }
+  },
+  "required": [
+    "Authority",
+    "Check",
+    "Core",
+    "Description",
+    "Outcome",
+    "Executability",
+    "Rule Type",
+    "Scope",
+    "Sensitivity"
+  ],
+  "type": "object"
 }

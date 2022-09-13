@@ -41,8 +41,45 @@
       },
       "type": "array"
     },
-    "Dataset": {
+    "Classes": {
+      "items": {
+        "enum": [
+          "ALL",
+          "EVENTS",
+          "FINDINGS",
+          "FINDINGS ABOUT",
+          "INTERVENTIONS",
+          "RELATIONSHIP",
+          "SPECIAL PURPOSE",
+          "STUDY REFERENCE",
+          "TRIAL DESIGN"
+        ],
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "Data Structure": {
+      "enum": [
+        "ADAM OTHER",
+        "ALL",
+        "BASIC DATA STRUCTURE",
+        "DEVICE LEVEL ANALYSIS DATASET",
+        "MEDICAL DEVICE BASIC DATA STRUCTURE",
+        "MEDICAL DEVICE OCCURRENCE DATA STRUCTURE",
+        "OCCURRENCE DATA STRUCTURE",
+        "SUBJECT LEVEL ANALYSIS DATASET"
+      ],
       "type": "string"
+    },
+    "Dataset": {
+      "pattern": "^(ALL|AP--|APRELSUB|RELREC|RELSPEC|RELSUB|SDTM|[A-Z]{2}|[A-Z]{4}|SUPP[A-Z]{2}|SUPP[A-Z]{4}|SQAP[A-Z]{4}|SUPP--)$",
+      "type": "string"
+    },
+    "Domains": {
+      "items": {
+        "$ref": "#/$defs/Dataset"
+      },
+      "type": "array"
     },
     "OperationId": {
       "pattern": "^\\$.+$",
@@ -243,6 +280,16 @@
       "required": ["operator"],
       "type": "object"
     },
+    "Subclass": {
+      "enum": [
+        "ADVERSE EVENT",
+        "ALL",
+        "MEDICAL DEVICE TIME-TO-EVENT",
+        "NON-COMPARTMENTAL ANALYSIS",
+        "TIME-TO-EVENT"
+      ],
+      "type": "string"
+    },
     "VariableName": {
       "pattern": "^(--[A-Z0-9]{1,6}|[A-Z][A-Z0-9]{0,7})$",
       "type": "string"
@@ -256,151 +303,352 @@
     "Authority": {
       "items": {
         "additionalProperties": false,
-        "properties": {
-          "Organization": {
-            "anyOf": [
-              {
+        "allOf": [
+          {
+            "properties": {
+              "Organization": {
                 "type": "string"
               },
-              {
-                "enum": ["CDISC"],
-                "type": "string"
-              }
-            ]
-          },
-          "Standards": {
-            "items": {
-              "additionalProperties": false,
-              "properties": {
-                "Name": {
-                  "type": "string"
-                },
-                "References": {
-                  "items": {
-                    "additionalProperties": false,
-                    "properties": {
-                      "Citations": {
-                        "items": {
-                          "additionalProperties": false,
-                          "properties": {
-                            "Cited Guidance": {
-                              "type": "string"
-                            },
-                            "Document": {
-                              "type": "string"
-                            },
-                            "Item": {
-                              "type": "string"
-                            },
-                            "Section": {
-                              "type": "string"
-                            }
-                          },
-                          "required": ["Document", "Section", "Cited Guidance"],
-                          "type": "object"
-                        },
-                        "type": "array"
-                      },
-                      "Criteria": {
+              "Standards": {
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "Name": {
+                      "type": "string"
+                    },
+                    "References": {
+                      "items": {
                         "additionalProperties": false,
-                        "anyOf": [
-                          {
-                            "required": ["Logical Expression"]
-                          },
-                          {
-                            "required": ["Plain Language Expression"]
-                          }
-                        ],
                         "properties": {
-                          "Logical Expression": {
+                          "Citations": {
+                            "items": {
+                              "additionalProperties": false,
+                              "properties": {
+                                "Cited Guidance": {
+                                  "type": "string"
+                                },
+                                "Document": {
+                                  "type": "string"
+                                },
+                                "Item": {
+                                  "type": "string"
+                                },
+                                "Section": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "Document",
+                                "Section",
+                                "Cited Guidance"
+                              ],
+                              "type": "object"
+                            },
+                            "type": "array"
+                          },
+                          "Criteria": {
                             "additionalProperties": false,
+                            "anyOf": [
+                              {
+                                "required": ["Logical Expression"]
+                              },
+                              {
+                                "required": ["Plain Language Expression"]
+                              }
+                            ],
                             "properties": {
-                              "Condition": {
+                              "Logical Expression": {
+                                "additionalProperties": false,
+                                "properties": {
+                                  "Condition": {
+                                    "type": "string"
+                                  },
+                                  "Rule": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": ["Rule"],
+                                "type": "object"
+                              },
+                              "Plain Language Expression": {
                                 "type": "string"
                               },
-                              "Rule": {
+                              "Type": {
+                                "enum": ["Failure", "Success"],
                                 "type": "string"
                               }
                             },
-                            "required": ["Rule"],
+                            "required": ["Type"],
                             "type": "object"
                           },
-                          "Plain Language Expression": {
+                          "Origin": {
                             "type": "string"
                           },
-                          "Type": {
-                            "enum": ["Failure", "Success"],
-                            "type": "string"
-                          }
-                        },
-                        "required": ["Type"],
-                        "type": "object"
-                      },
-                      "Origin": {
-                        "type": "string"
-                      },
-                      "Related Rules": {
-                        "additionalProperties": false,
-                        "properties": {
-                          "Id": {
+                          "Related Rules": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "Id": {
+                                "type": "string"
+                              },
+                              "Relationship": {
+                                "enum": ["Predecessor", "Related", "Successor"],
+                                "type": "string"
+                              }
+                            },
+                            "required": ["Id", "Relationship"],
+                            "type": "object"
+                          },
+                          "Release Notes": {
                             "type": "string"
                           },
-                          "Relationship": {
-                            "enum": ["Predecessor", "Related", "Successor"],
+                          "Rule Identifier": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "Id": {
+                                "type": "string"
+                              },
+                              "Version": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["Id"],
+                            "type": "object"
+                          },
+                          "Severity": {
                             "type": "string"
-                          }
-                        },
-                        "required": ["Id", "Relationship"],
-                        "type": "object"
-                      },
-                      "Release Notes": {
-                        "type": "string"
-                      },
-                      "Rule Identifier": {
-                        "additionalProperties": false,
-                        "properties": {
-                          "Id": {
+                          },
+                          "Validator Rule Message": {
                             "type": "string"
                           },
                           "Version": {
                             "type": "string"
                           }
                         },
-                        "required": ["Id", "Version"],
+                        "required": [
+                          "Citations",
+                          "Origin",
+                          "Rule Identifier",
+                          "Version"
+                        ],
                         "type": "object"
                       },
-                      "Severity": {
-                        "type": "string"
-                      },
-                      "Validator Rule Message": {
-                        "type": "string"
-                      },
-                      "Version": {
-                        "type": "string"
-                      }
+                      "minItems": 1,
+                      "type": "array"
                     },
-                    "required": [
-                      "Citations",
-                      "Origin",
-                      "Rule Identifier",
-                      "Version"
-                    ],
-                    "type": "object"
+                    "Version": {
+                      "type": "string"
+                    }
                   },
-                  "minItems": 1,
-                  "type": "array"
+                  "required": ["Name", "References", "Version"],
+                  "type": "object"
                 },
-                "Version": {
-                  "type": "string"
+                "minItems": 1,
+                "type": "array"
+              }
+            }
+          },
+          {
+            "oneOf": [
+              {
+                "properties": {
+                  "Organization": {
+                    "const": "CDISC"
+                  },
+                  "Standards": {
+                    "items": {
+                      "oneOf": [
+                        {
+                          "properties": {
+                            "Name": {
+                              "const": "ADaMIG"
+                            },
+                            "References": {
+                              "items": {
+                                "properties": {
+                                  "Origin": {
+                                    "const": "ADaM Conformance Rules"
+                                  },
+                                  "Rule Identifier": {
+                                    "properties": {
+                                      "Id": {
+                                        "pattern": "^\\d{1,3}(\\.\\d{1,2})?$"
+                                      }
+                                    },
+                                    "type": "object"
+                                  },
+                                  "Version": {
+                                    "enum": ["4.0"]
+                                  }
+                                }
+                              }
+                            },
+                            "Version": {
+                              "enum": ["1.0", "1.1", "1.2", "1.3"]
+                            }
+                          }
+                        },
+                        {
+                          "properties": {
+                            "Name": {
+                              "const": "SDTMIG"
+                            },
+                            "References": {
+                              "items": {
+                                "properties": {
+                                  "Origin": {
+                                    "const": "SDTM and SDTMIG Conformance Rules"
+                                  },
+                                  "Rule Identifier": {
+                                    "properties": {
+                                      "Id": {
+                                        "pattern": "^CG\\d{4}$"
+                                      },
+                                      "Version": {
+                                        "enum": ["1", "2", "3"]
+                                      }
+                                    },
+                                    "type": "object"
+                                  },
+                                  "Version": {
+                                    "enum": ["2.0"]
+                                  }
+                                }
+                              }
+                            },
+                            "Version": {
+                              "enum": ["3.2", "3.3", "3.4"]
+                            }
+                          }
+                        },
+                        {
+                          "properties": {
+                            "Name": {
+                              "const": "SENDIG"
+                            },
+                            "References": {
+                              "items": {
+                                "properties": {
+                                  "Origin": {
+                                    "const": "SEND Conformance Rules"
+                                  },
+                                  "Rule Identifier": {
+                                    "properties": {
+                                      "Id": {
+                                        "pattern": "^\\d{1,3}(\\.\\d)?$"
+                                      }
+                                    },
+                                    "type": "object"
+                                  },
+                                  "Version": {
+                                    "enum": ["4.0"]
+                                  }
+                                }
+                              }
+                            },
+                            "Version": {
+                              "enum": ["3.0", "3.1", "3.1.1"]
+                            }
+                          }
+                        },
+                        {
+                          "properties": {
+                            "Name": {
+                              "const": "SENDIG-DART"
+                            },
+                            "References": {
+                              "items": {
+                                "properties": {
+                                  "Origin": {
+                                    "const": "SEND Conformance Rules"
+                                  },
+                                  "Rule Identifier": {
+                                    "properties": {
+                                      "Id": {
+                                        "pattern": "^\\d{1,3}(\\.\\d)?$"
+                                      }
+                                    },
+                                    "type": "object"
+                                  },
+                                  "Version": {
+                                    "enum": ["4.0"]
+                                  }
+                                }
+                              }
+                            },
+                            "Version": {
+                              "enum": ["1.1"]
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
                 }
               },
-              "required": ["Name", "References", "Version"],
-              "type": "object"
-            },
-            "minItems": 1,
-            "type": "array"
+              {
+                "properties": {
+                  "Organization": {
+                    "const": "FDA"
+                  },
+                  "Standards": {
+                    "items": {
+                      "allOf": [
+                        {
+                          "properties": {
+                            "References": {
+                              "items": {
+                                "properties": {
+                                  "Origin": {
+                                    "const": "FDA Validator Rules"
+                                  },
+                                  "Rule Identifier": {
+                                    "properties": {
+                                      "Id": {
+                                        "pattern": "^eCTD \\d{4}|FDAB\\d{3}|TCG \\d(\\.\\d){2,3}|$"
+                                      }
+                                    },
+                                    "type": "object"
+                                  },
+                                  "Version": {
+                                    "enum": ["1.5 March 2021"]
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "oneOf": [
+                            {
+                              "properties": {
+                                "Name": {
+                                  "const": "SDTMIG"
+                                },
+                                "Version": {
+                                  "enum": ["3.1.2", "3.1.3", "3.2", "3.3"]
+                                }
+                              }
+                            },
+                            {
+                              "properties": {
+                                "Name": {
+                                  "const": "SENDIG"
+                                },
+                                "Version": {
+                                  "enum": ["3.0", "3.1"]
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            ]
           }
-        },
+        ],
         "required": ["Organization", "Standards"],
         "type": "object"
       },
@@ -414,6 +662,7 @@
       "additionalProperties": false,
       "properties": {
         "Id": {
+          "pattern": "^CORE-\\d{6}$",
           "type": "string"
         },
         "Version": {
@@ -430,12 +679,23 @@
     "Description": {
       "type": "string"
     },
+    "Executability": {
+      "enum": [
+        "Fully Executable",
+        "Partially Executable - Possible Overreporting",
+        "Partially Executable - Possible Underreporting"
+      ],
+      "type": "string"
+    },
     "Match Datasets": {
       "items": {
         "additionalProperties": false,
         "properties": {
           "Name": {
-            "$ref": "#/$defs/Dataset"
+            "anyOf": [
+              { "$ref": "#/$defs/Data Structure" },
+              { "$ref": "#/$defs/Dataset" }
+            ]
           },
           "Is Relationship": {
             "const": true
@@ -457,7 +717,10 @@
         "additionalProperties": false,
         "properties": {
           "domain": {
-            "$ref": "#/$defs/Dataset"
+            "anyOf": [
+              { "$ref": "#/$defs/Data Structure" },
+              { "$ref": "#/$defs/Dataset" }
+            ]
           },
           "group": {
             "items": {
@@ -516,14 +779,6 @@
       "required": ["Message"],
       "type": "object"
     },
-    "Executability": {
-      "enum": [
-        "Fully Executable",
-        "Partially Executable - Possible Overreporting",
-        "Partially Executable - Possible Underreporting"
-      ],
-      "type": "string"
-    },
     "Rule Type": {
       "oneOf": [
         {
@@ -560,17 +815,104 @@
     },
     "Scope": {
       "additionalProperties": false,
+      "properties": {
+        "Classes": {
+          "oneOf": [
+            {
+              "additionalProperties": false,
+              "properties": {
+                "Include": {
+                  "$ref": "#/$defs/Classes"
+                }
+              },
+              "required": ["Include"],
+              "type": "object"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "Exclude": {
+                  "$ref": "#/$defs/Classes"
+                }
+              },
+              "required": ["Exclude"],
+              "type": "object"
+            }
+          ]
+        },
+        "Data Structures": {
+          "additionalProperties": false,
+          "properties": {
+            "Exclude": {
+              "$ref": "#/$defs/Data Structure"
+            },
+            "Include": {
+              "$ref": "#/$defs/Data Structure"
+            }
+          },
+          "type": "object"
+        },
+        "Datasets": {
+          "additionalProperties": false,
+          "properties": {
+            "Exclude": {
+              "$ref": "#/$defs/Dataset"
+            },
+            "Include": {
+              "$ref": "#/$defs/Dataset"
+            }
+          },
+          "type": "object"
+        },
+        "Domains": {
+          "additionalProperties": false,
+          "properties": {
+            "Exclude": {
+              "$ref": "#/$defs/Domains"
+            },
+            "Include": {
+              "$ref": "#/$defs/Domains"
+            },
+            "include_split_datasets": {
+              "type": "boolean"
+            }
+          },
+          "type": "object"
+        },
+        "Subclasses": {
+          "additionalProperties": false,
+          "properties": {
+            "Exclude": {
+              "$ref": "#/$defs/Subclass"
+            },
+            "Include": {
+              "$ref": "#/$defs/Subclass"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "oneOf": [
+        {
+          "required": ["Classes", "Domains"]
+        },
+        { "required": ["Data Structures"] }
+      ],
       "type": "object"
     },
     "Sensitivity": {
       "enum": [
-        "Study",
-        "Dataset",
-        "Variable",
+        "Class",
         "Code_list",
-        "Term",
+        "Data Structure",
+        "Dataset",
+        "Domain",
         "Record",
-        "Value"
+        "Study",
+        "Subclass",
+        "Term",
+        "Value",
+        "Variable"
       ],
       "type": "string"
     }

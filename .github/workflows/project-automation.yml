@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: alex-page/github-project-automation-plus@v0.8.1
         with:
-          project: Backlog
+          project: Conformance Rules Editor
           column: To do
           repo-token: ${{ secrets.GITHUB_TOKEN }}
   assigned-in-progress:
@@ -20,6 +20,6 @@ jobs:
     steps:
       - uses: alex-page/github-project-automation-plus@v0.8.1
         with:
-          project: Backlog
+          project: Conformance Rules Editor
           column: In progress
           repo-token: ${{ secrets.GITHUB_TOKEN }}

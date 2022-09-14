@@ -1,0 +1,25 @@
+name: Move into To do and In progress
+
+on:
+  issues:
+    types: [opened, assigned]
+
+jobs:
+  opened-to-do:
+    if: github.event.action == 'opened'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: alex-page/github-project-automation-plus@v0.8.1
+        with:
+          project: Conformance Rules Editor
+          column: To do
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+  assigned-in-progress:
+    if: github.event.action == 'assigned'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: alex-page/github-project-automation-plus@v0.8.1
+        with:
+          project: Conformance Rules Editor
+          column: In progress
+          repo-token: ${{ secrets.GITHUB_TOKEN }}

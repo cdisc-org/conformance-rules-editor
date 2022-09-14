@@ -13,7 +13,7 @@ jobs:
         with:
           project: Conformance Rules Editor
           column: To do
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          repo-token: ${{ secrets.GHPROJECT_TOKEN }}
   assigned-in-progress:
     if: github.event.action == 'assigned'
     runs-on: ubuntu-latest
@@ -22,4 +22,4 @@ jobs:
         with:
           project: Conformance Rules Editor
           column: In progress
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          repo-token: ${{ secrets.GHPROJECT_TOKEN }}

@@ -5,9 +5,7 @@
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
-      "methods": [
-        "delete"
-      ],
+      "methods": ["delete"],
       "route": "rules/{id}"
     },
     {
@@ -15,5 +13,6 @@
       "direction": "out",
       "name": "res"
     }
-  ]
+  ],
+  "scriptFile": "../dist/delete_rule/index.js"
 }

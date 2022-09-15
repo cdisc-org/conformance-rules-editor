@@ -2,11 +2,11 @@ import React, { useState, useEffect, useCallback } from "react";
 import { DataService, ISchema } from "../services/DataService";
 import AppContext, {
   IAppError,
-  Order,
   Status,
   IResults,
   Steps,
 } from "./AppContext";
+import { TOrder } from "../types/TOrder";
 import { AlertState } from "./GeneralAlert/GeneralAlert";
 import { SchemasSettings, setDiagnosticsOptions } from "monaco-yaml";
 
@@ -24,7 +24,7 @@ const AppContextProvider: React.FC = ({
   const [dirtyExplorerList, setDirtyExplorerList] = useState<boolean>(false);
   const [alertState, setAlertState] = useState<AlertState>(null);
   const [username, setUsername] = useState<string>(null);
-  const [order, setOrder] = useState<Order>("desc");
+  const [order, setOrder] = useState<TOrder>("desc");
   const [orderBy, setOrderBy] = useState<string>("changed");
   const [searchText, setSearchText] = useState<{ [key: string]: string }>({});
   const [syntaxCheck, setSyntaxCheck] = useState<IResults>({

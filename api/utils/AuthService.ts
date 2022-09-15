@@ -1,6 +1,16 @@
-const https = require("https");
+import https from "https";
 
-class Authenticator {
+export default class Authenticator {
+
+  token: string;
+  expires: number;
+  baseUrl: string;
+  path: string;
+  grantType: string;
+  scope: string;
+  clientId: string;
+  clientSecret: string;
+
   constructor(baseUrl, path, grantType, scope, clientId, clientSecret) {
     this.token = "";
     this.expires = Date.now();
@@ -12,7 +22,7 @@ class Authenticator {
     this.clientSecret = clientSecret;
   }
 
-  async generateToken() {
+  async generateToken(): Promise<string> {
     const postData = new URLSearchParams({
       grant_type: this.grantType,
       scope: this.scope,
@@ -49,7 +59,7 @@ class Authenticator {
     });
   }
 
-  async getToken() {
+  async getToken(): Promise<string> {
     if (this.token === "" || Date.now() > this.expires) {
       console.log("generating new token");
       const data = await this.generateToken();
@@ -59,22 +69,4 @@ class Authenticator {
     }
     return this.token;
   }
-}
-
-exports.StorageAuthenticator = new Authenticator(
-  process.env["API_BASE_URL"],
-  process.env["API_PATH"],
-  process.env["API_GRANT_TYPE"],
-  process.env["API_SCOPE"],
-  process.env["API_CLIENT_ID"],
-  process.env["API_CLIENT_SECRET"]
-);
-
-exports.EngineAuthenticator = new Authenticator(
-  process.env["ENGINE_BASE_URL"],
-  process.env["ENGINE_PATH"],
-  process.env["ENGINE_GRANT_TYPE"],
-  process.env["ENGINE_SCOPE"],
-  process.env["ENGINE_CLIENT_ID"],
-  process.env["ENGINE_CLIENT_SECRET"]
-);
+};

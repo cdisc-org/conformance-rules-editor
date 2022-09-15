@@ -10,45 +10,37 @@ import AppContext from "../AppContext";
 
 export interface HeadCell {
   label: string;
-  getter: (object) => string;
   queryParam: string;
 }
 
 export const headCells: readonly HeadCell[] = [
   {
-    queryParam: "title",
+    queryParam: "json.Core.Id",
     label: "Core ID",
-    getter: (ruleItem) => ruleItem.attributes.title,
   },
   {
-    queryParam: "field_conformance_rule_type",
+    queryParam: "json.Rule Type",
     label: "Rule Type",
-    getter: (ruleItem) => ruleItem.attributes.field_conformance_rule_type,
   },
   {
-    queryParam: "field_conformance_rule_creator",
+    queryParam: "creator",
     label: "Creator",
-    getter: (ruleItem) => ruleItem.attributes.field_conformance_rule_creator,
   },
   {
     queryParam: "id",
     label: "Universal ID",
-    getter: (ruleItem) => ruleItem.id,
   },
   {
-    queryParam: "status",
+    queryParam: "isPublished",
     label: "Published",
-    getter: (ruleItem) => ruleItem.attributes.status,
   },
   {
     queryParam: "created",
     label: "Created Timestamp",
-    getter: (ruleItem) => ruleItem.attributes.created,
   },
   {
     queryParam: "changed",
     label: "Changed Timestamp",
-    getter: (ruleItem) => ruleItem.attributes.changed,
   },
 ];
 

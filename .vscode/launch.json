@@ -1,77 +1,63 @@
 {
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "Launch Chrome",
-            "request": "launch",
-            "type": "chrome",
-            "url": "http://localhost:4280",
-            "webRoot": "${workspaceFolder}",
-            "presentation": {
-                "hidden": true,
-                "group": "",
-                "order": 1
-            }
-        },
-        {
-            "name": "Launch Edge",
-            "request": "launch",
-            "type": "msedge",
-            "url": "http://localhost:4280",
-            "webRoot": "${workspaceFolder}",
-            "presentation": {
-                "hidden": true,
-                "group": "",
-                "order": 1
-            }
-        },
-        {
-            "name": "Attach to Node Functions",
-            "type": "node",
-            "request": "attach",
-            "port": 9229,
-            "preLaunchTask": "func: host start",
-            "presentation": {
-                "hidden": true,
-                "group": "",
-                "order": 1
-            }
-        }
-    ],
-    "compounds": [
-        {
-            "name": "Launch Chrome SWA",
-            "configurations": [
-                "Attach to Node Functions",
-                "Launch Chrome"
-            ],
-            "stopAll": true,
-            "preLaunchTask": "swa start"
-        },
-        {
-            "name": "Relaunch Chrome Debug",
-            "configurations": [
-                "Attach to Node Functions",
-                "Launch Chrome"
-            ],
-            "stopAll": true
-        },
-        {
-            "name": "Launch Edge SWA",
-            "configurations": [
-                "Attach to Node Functions",
-                "Launch Edge"
-            ],
-            "stopAll": true,
-            "preLaunchTask": "swa start"
-        },
-        {
-            "name": "Relaunch Edge Debug",
-            "configurations": [
-                "Attach to Node Functions",
-                "Launch Edge"
-            ],
-            "stopAll": true
-        }
-    ]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Emulator",
+      "command": "swa start http://localhost:3000 --api-location http://localhost:7071",
+      "request": "launch",
+      "type": "node-terminal",
+      "presentation": {
+        "group": "2"
+      }
+    },
+    {
+      "name": "Frontend",
+      "command": "npm start",
+      "request": "launch",
+      "type": "node-terminal",
+      "env": { "BROWSER": "NONE" },
+      "presentation": {
+        "group": "2"
+      }
+    },
+    {
+      "name": "Backend",
+      "command": "npm start",
+      "request": "launch",
+      "type": "node-terminal",
+      "cwd": "${workspaceFolder}/api",
+      "presentation": {
+        "group": "2"
+      }
+    },
+    {
+      "name": "Launch Chrome",
+      "request": "launch",
+      "type": "chrome",
+      "url": "http://localhost:4280",
+      "webRoot": "${workspaceFolder}",
+      "presentation": {
+        "group": "2"
+      }
+    },
+    {
+      "name": "Launch Edge",
+      "request": "launch",
+      "type": "msedge",
+      "url": "http://localhost:4280",
+      "webRoot": "${workspaceFolder}",
+      "presentation": {
+        "group": "2"
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "name": "🚀 Everything",
+      "configurations": ["Emulator", "Frontend", "Backend", "Launch Chrome"],
+      "presentation": {
+        "group": "1"
+      }
+    }
+  ]
 }

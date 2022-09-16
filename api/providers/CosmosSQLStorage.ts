@@ -141,7 +141,7 @@ const postRule = async (content, creator) => {
     created: date,
     creator,
     isPublished: false,
-    json: spacesToUnderscores(yamlToJSON(content)),
+    json: spacesToUnderscores(yamlToJSON(content) ?? {}),
   };
   const rule = (await dbContainer.items.create(toCreate)).resource;
   return rule;

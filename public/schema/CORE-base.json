@@ -444,8 +444,7 @@
           {
             "properties": {
               "Organization": {
-                "const": "CDISC",
-                "type": "string"
+                "const": "CDISC"
               },
               "Standards": {
                 "items": {
@@ -607,8 +606,7 @@
           {
             "properties": {
               "Organization": {
-                "const": "FDA",
-                "type": "string"
+                "const": "FDA"
               },
               "Standards": {
                 "items": {

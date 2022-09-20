@@ -81,3 +81,7 @@ Alternatively, you can run the launch components individually.
 Run: `$Env:BROWSER='none'; swa start http://localhost:3000 --api-location ./api --run 'npm start'`
 
 Navigate to: http://localhost:4280/
+
+## UML
+
+![YUML](./docs/doc.svg)

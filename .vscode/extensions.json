@@ -1,5 +1,6 @@
 {
   "recommendations": [
+    "JaimeOlivares.yuml",
     "ms-azuretools.vscode-azurefunctions",
     "ms-azuretools.vscode-azurestaticwebapps"
   ]

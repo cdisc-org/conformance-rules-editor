@@ -544,7 +544,7 @@
                                 "type": "object"
                               },
                               "Version": {
-                                "enum": ["4.0"]
+                                "enum": ["5.0"]
                               }
                             },
                             "type": "object"
@@ -580,7 +580,7 @@
                                 "type": "object"
                               },
                               "Version": {
-                                "enum": ["4.0"]
+                                "enum": ["5.0"]
                               }
                             },
                             "type": "object"

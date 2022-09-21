@@ -30,7 +30,7 @@ export default function SchemaTestStep() {
             });
             const validate = ajv.getSchema(
               schemas.filter(
-                (schema: ISchema): boolean => schema.standard === "sdtm"
+                (schema: ISchema): boolean => schema.standard === "base"
               )[0].id
             );
             const valid = validate(yamlDoc);

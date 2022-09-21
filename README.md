@@ -2,7 +2,7 @@
 
 ## Reference Guide
 
-![Reference Guide](./docs/)
+https://cdisc-org.github.io/conformance-rules-editor/
 
 ## Environment Setup
 

@@ -1,5 +1,9 @@
 # conformance-rules-editor
 
+## Reference Guide
+
+![Reference Guide](./docs/)
+
 ## Environment Setup
 
 ### Install dependencies

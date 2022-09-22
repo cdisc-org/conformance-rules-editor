@@ -6,7 +6,7 @@ nav_order: 1
 
 # Reference Guide
 
-{:toc}
+- TOC {:toc}
 
 ## Rules of Thumb
 
@@ -31,10 +31,10 @@ Reference: JSON schema as a standard: https://json-schema.org
 
 ### Useful Key Bindings
 
-| Keystroke on PC | Functionality                                                        |
-| --------------- | -------------------------------------------------------------------- |
-| Ctrl-Space      | <ul><li>Trigger suggestions</li><li>Plop node & attributes</li></ul> |
-| Shift-Alt-F     | Format document                                                      |
+| Keystroke on PC | Functionality                                       |
+| --------------- | --------------------------------------------------- |
+| Ctrl-Space      | Trigger suggestions<br/>Plop node & attributes<br/> |
+| Shift-Alt-F     | Format document                                     |
 
 ## Variable-to-Variable Check
 

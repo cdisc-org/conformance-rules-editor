@@ -6,6 +6,8 @@ nav_order: 1
 
 # Reference Guide
 
+{: .no_toc }
+
 <details open markdown="block">
   <summary>
     Table of contents

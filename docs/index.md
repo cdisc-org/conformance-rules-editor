@@ -6,8 +6,7 @@ nav_order: 1
 
 # Reference Guide
 
-<ul><li>TOC</li></ul>
-{:toc}
+- TOC <newline> {:toc}
 
 ## Rules of Thumb
 

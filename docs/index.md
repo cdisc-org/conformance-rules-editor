@@ -6,8 +6,6 @@ nav_order: 1
 
 # Reference Guide
 
-{: .no_toc }
-
 <details open markdown="block">
   <summary>
     Table of contents
@@ -36,7 +34,7 @@ Links to the schema:
 
 - Base Schema: https://rule-editor.cdisc.org/schema/CORE-base.json
 
-Reference: JSON schema as a standard: https://json-schema.org
+Reference: [JSON schema as a standard](https://json-schema.org)
 
 ### Useful Key Bindings
 
@@ -150,4 +148,4 @@ https://yaml.org/spec/1.2/spec.html
 
 ### Y/N
 
-Y or N strings must be enclosed by quotes. If they aren't, the Schema validation will give an error. This is because YAML treats Y and N as a Boolean datatype instead of a string datatype. More details: https://yaml.org/type/bool.html
+Y or N strings must be enclosed by quotes. If they aren't, the Schema validation will give an error. This is because YAML treats Y and N as a Boolean datatype instead of a string datatype. [More details.](https://yaml.org/type/bool.html)

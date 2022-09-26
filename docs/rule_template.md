@@ -1,9 +1,3 @@
----
-layout: default
-title: Rule Template
-nav_order: 3
----
-
 # Rule Template
 
 ```yml

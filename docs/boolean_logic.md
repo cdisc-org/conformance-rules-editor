@@ -1,26 +1,12 @@
----
-layout: default
-title: Boolean Logic
-nav_order: 2
----
-
 # Boolean Logic
-
-<details open markdown="block">
-  <summary>
-    Table of contents
-  </summary>
-  {: .text-delta }
-- TOC
-{:toc}
-</details>
 
 ## Boolean Set Operators
 
 ### all
 
-- Meaning: and
-- Example: `ECDOSE = null and ECSTAT is null`
+Meaning: "and"
+
+> ECDOSE = null and ECSTAT is null
 
 ```yaml
 all:
@@ -32,8 +18,9 @@ all:
 
 ### any
 
-- Meaning: or
-- Example: `--DOSE ^= null or --DOSTOT ^= null or --DOSTXT ^= null`
+Meaning: "or"
+
+> --DOSE ^= null or --DOSTOT ^= null or --DOSTXT ^= null
 
 ```yaml
 any:
@@ -47,7 +34,7 @@ any:
 
 ### not
 
-- Meaning: not (complement)
+Meaning: "not" (complement)
 
 ## Boolean Algebra
 
@@ -68,8 +55,10 @@ In general, these are considered false:
 ## Truth Tables
 
 - Rule ID: CG0008
-- Condition: `--TPTREF = null`
-- Rule: `--ELTM = null`
+- Condition:
+  > --TPTREF = null
+- Rule
+  > --ELTM = null
 - Citation:
   > The interval of time between a planned time point and a fixed reference point, represented in a standardized character format. The fixed reference point is in --TPTREF.
 
@@ -101,8 +90,10 @@ Check:
 Note that another rule exists to check for the presence of --ELTM and --TPTREF:
 
 - Rule ID: CG0092
-- Condition: `--ELTM present in dataset`
-- Rule: `--TPTREF present in dataset`
+- Condition
+  > --ELTM present in dataset
+- Rule
+  > --TPTREF present in dataset
 - Citation:
   > The description of a time point that acts as a fixed reference for a series of planned time points, used for study data tabulation. Description of the fixed reference point referred to by --ELTM, --TPTNUM, --TPT, --STINT, and --ENINT.
 

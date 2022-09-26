@@ -1,19 +1,4 @@
----
-layout: default
-title: Home
-nav_order: 1
----
-
 # Reference Guide
-
-<details open markdown="block">
-  <summary>
-    Table of contents
-  </summary>
-  {: .text-delta }
-- TOC
-{:toc}
-</details>
 
 ## Rules of Thumb
 
@@ -22,7 +7,8 @@ nav_order: 1
 
 ## Rule Editor
 
-URL: https://rule-editor.cdisc.org
+Production URL: https://rule-editor.cdisc.org
+Training URL: https://training-rule-editor.cdisc.org
 
 Access to CDISC Library account is required.
 

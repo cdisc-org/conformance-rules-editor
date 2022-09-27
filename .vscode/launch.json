@@ -49,17 +49,21 @@
       "presentation": {
         "group": "2"
       }
+    },
+    {
+      "name": "Serve Docs",
+      "command": "docsify serve ./docs",
+      "request": "launch",
+      "type": "node-terminal",
+      "presentation": {
+        "group": "2"
+      }
     }
   ],
   "compounds": [
     {
       "name": "🚀 Everything",
-      "configurations": [
-        "Emulator",
-        "Frontend",
-        "Backend",
-        "Launch Chrome"
-      ],
+      "configurations": ["Emulator", "Frontend", "Backend", "Launch Chrome"],
       "presentation": {
         "group": "1"
       }

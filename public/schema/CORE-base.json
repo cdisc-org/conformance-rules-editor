@@ -932,19 +932,7 @@
       "type": "object"
     },
     "Sensitivity": {
-      "enum": [
-        "Class",
-        "Code_list",
-        "Data Structure",
-        "Dataset",
-        "Domain",
-        "Record",
-        "Study",
-        "Subclass",
-        "Term",
-        "Value",
-        "Variable"
-      ],
+      "enum": ["Dataset", "Record"],
       "type": "string"
     }
   },

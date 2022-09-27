@@ -1,4 +1,4 @@
-# Check Parameters
+# Check Parameter
 
 ## comparator
 

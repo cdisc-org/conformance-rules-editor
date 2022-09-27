@@ -1,11 +1,5 @@
 # Check Operator
 
->
-
-```yaml
-
-```
-
 ## Relational
 
 - ### equal_to

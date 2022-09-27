@@ -60,6 +60,6 @@ Scopes:
   Standards:
     - Name: SDTMIG
       Version: "3.4"
-Sensitivity: Study|Dataset|Variable|Code_list|Term|Record|Value|Class|Domain
+Sensitivity: Dataset|Record
 Severity: Error|Notice|Reject|Warning
 ```

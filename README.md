@@ -82,6 +82,6 @@ Run: `$Env:BROWSER='none'; swa start http://localhost:3000 --api-location ./api 
 
 Navigate to: http://localhost:4280/
 
-## UML
+## More...
 
-![YUML](./docs/doc.svg)
+For more development details, refer to the [wiki](https://github.com/cdisc-org/conformance-rules-editor/wiki).

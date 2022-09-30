@@ -1,7 +1,6 @@
-import https from "https";
+import fetch, { RequestInit, Response } from "node-fetch";
 
 export default class Authenticator {
-
   token: string;
   expires: number;
   baseUrl: string;
@@ -30,43 +29,32 @@ export default class Authenticator {
       client_secret: this.clientSecret,
     }).toString();
 
-    const options = {
-      hostname: this.baseUrl,
-      path: this.path,
+    const options: RequestInit = {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
-        "Content-Length": postData.length,
       },
+      body: postData,
     };
 
-    var resp_body = "";
-    return new Promise((resolve, reject) => {
-      var req = https.request(options, (resp) => {
-        resp.on("data", (chunk) => {
-          resp_body += chunk;
-        });
-
-        resp.on("end", () => resolve(resp_body));
-      });
-      req.on("error", (error) => {
-        console.log("error");
-        console.log(error);
-      });
-      req.write(postData);
-      req.end();
-      return resp_body;
-    });
+    const res: Response = await fetch(
+      `https://${this.baseUrl}${this.path}`,
+      options
+    );
+    if (res.status === 200) {
+      return await res.json();
+    } else {
+      console.log(`Error generating token: ${res.status} - ${res.statusText}`);
+    }
   }
 
   async getToken(): Promise<string> {
     if (this.token === "" || Date.now() > this.expires) {
       console.log("generating new token");
-      const data = await this.generateToken();
-      const json_data = JSON.parse(data);
+      const json_data = await this.generateToken();
       this.token = json_data["access_token"];
       this.expires = Date.now() + json_data["expires_in"];
     }
     return this.token;
   }
-};
+}

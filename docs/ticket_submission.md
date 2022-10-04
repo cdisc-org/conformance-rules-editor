@@ -9,12 +9,12 @@ There are cases where you may be trying to write a rule and you find that operat
    1. Filter for your issue using the `summary` field, which contains the conformance rule id.
    1. Once you've identified the JIRA issue, make note of the the JIRA issue url and id. The id will appear at the top of the issue and is of the format: `CORERULES-#####`
 1. Create a Github issue
-   1. The issue submission in the repository for the CORE engine code is located here: https://github.com/cdisc-org/cdisc-rules-engine/issues
-   1. Select `New Issue` (green button)
+   1. The issue submission in the repository for the CORE engine code is located here: https://github.com/cdisc-org/cdisc-rules-engine/issues/new/choose
       - Note that if you do not have a Github account, you will need to follow the prompts to create one
-   1. Select between a `Rule-Blocking Bug` or `Rule-Blocking Enhancement`
+   1. Select between a `Rule-Blocking Bug` or `Rule-Blocking Enhancement` and click `Get started` (green button)
    1. Follow the instructions in the issue template to fill out the github issue
       - Use the JIRA id (`CORERULES-#####`) and url that you noted in the previous steps to create the title and issue content.
+      - Note that you can switch to the `Preview` tab to view a preview of your issue.
    1. After creating the github issue, make note of the new issue url
 1. Create a reference to the Github issue
    1. Return to the original jira ticket

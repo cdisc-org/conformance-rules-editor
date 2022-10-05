@@ -22,7 +22,7 @@ Operations:
 
 ## dy
 
-Calculates the number of days between the DTC and RFSTDTC
+Calculates the number of days between the DTC and RFSTDTC. Logic: https://github.com/cdisc-org/cdisc-rules-engine/blob/main/cdisc_rules_engine/operations/day_data_validator.py
 
 ## max
 

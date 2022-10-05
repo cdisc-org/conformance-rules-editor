@@ -4,7 +4,7 @@ There are 4 categories of Test Results. You can use the contents of the "Results
 
 ## Errors
 
-You will see "Errors" when there is an unexpected problem with the rule, the test data, or the CORE Engine. Viewing the Test Results Pane will help determine the cause of the Error. If it has been determined that the error is caused by the CORE Engine, a ticket should be raised in the CORE Engine software.
+You will see "Errors" when there is an unexpected problem with the rule, the test data, or the CORE Engine. Viewing the Test Results Pane will help determine the cause of the Error. If it has been determined that the error is caused by the CORE Engine, [a ticket should be raised in the CORE Engine software](ticket_submission.md).
 
 ## Positives
 

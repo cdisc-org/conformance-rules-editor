@@ -55,7 +55,7 @@ Scopes:
     Exclude|Include:
       - All|Events|Findings|Findings About|Interventions|Relationship|Special-Purpose|Study Reference|Trial Design
   Domains:
-    Exlude|Include|include_split_datasets:
+    Exclude|Include|include_split_datasets:
       -
   Standards:
     - Name: SDTMIG

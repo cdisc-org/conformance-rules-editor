@@ -80,7 +80,9 @@ export default function ResultsTestStep() {
         (aggregateDomainResult: number, currentDomainResult: {}[]) =>
           aggregateDomainResult +
           (Array.isArray(currentDomainResult) &&
-          currentDomainResult.length === 0
+          (currentDomainResult.length === 0 ||
+            (currentDomainResult[0]["executionStatus"] === "success" &&
+              currentDomainResult[0]["errors"].length === 0))
             ? 1
             : 0),
         0

@@ -8,7 +8,10 @@
           "maxProperties": 1,
           "patternProperties": {
             "^all|any$": {
-              "$ref": "#/$defs/CheckList"
+              "items": {
+                "$ref": "#/$defs/CheckItem"
+              },
+              "type": "array"
             }
           },
           "type": "object"
@@ -34,12 +37,6 @@
           "$ref": "#/$defs/Operator"
         }
       ]
-    },
-    "CheckList": {
-      "items": {
-        "$ref": "#/$defs/CheckItem"
-      },
-      "type": "array"
     },
     "Classes": {
       "items": {

@@ -152,12 +152,6 @@ export class DataService {
         uri: "file:///CORE-base.json",
         url: "schema/CORE-base.json",
       },
-      {
-        standard: "sdtm",
-        id: "https://cdisc.org/CORE-sdtm.json",
-        uri: "file:///CORE-sdtm.json",
-        url: "schema/CORE-sdtm.json",
-      },
     ];
     const responses: Response[] = await Promise.all(
       schemas.map(

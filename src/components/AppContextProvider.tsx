@@ -1,11 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { DataService, ISchema } from "../services/DataService";
-import AppContext, {
-  IAppError,
-  Status,
-  IResults,
-  Steps,
-} from "./AppContext";
+import AppContext, { IAppError, Status, IResults, Steps } from "./AppContext";
 import { TOrder } from "../types/TOrder";
 import { AlertState } from "./GeneralAlert/GeneralAlert";
 import { SchemasSettings, setDiagnosticsOptions } from "monaco-yaml";
@@ -152,7 +147,7 @@ const AppContextProvider: React.FC = ({
           (schema: ISchema): SchemasSettings => ({
             uri: schema.uri,
             schema: schema.json,
-            fileMatch: schema.standard === "sdtm" ? ["*"] : [],
+            fileMatch: schema.standard === "base" ? ["*"] : [],
           })
         ),
       });

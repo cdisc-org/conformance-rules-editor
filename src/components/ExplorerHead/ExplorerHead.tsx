@@ -23,7 +23,7 @@ export const headCells: readonly HeadCell[] = [
     label: "Rule Type",
   },
   {
-    queryParam: "creator",
+    queryParam: "creator.name",
     label: "Creator",
   },
   {

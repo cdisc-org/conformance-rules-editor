@@ -19,6 +19,8 @@
 [Base Storage Provider|Get-Rules();Get-Rule();Post-Rule();Patch-Rule();Delete-Rule(){bg:orange}]
 [Drupal Storage{bg:orange}]
 [Cosmos SQL Storage{bg:orange}]
+[Base Users Provider|Get-Users-By-Ids();Get-Users-By-Name();{bg:orange}]
+[MS Graph Users{bg:orange}]
 
 // Azure SWA
 [Azure SWA / Emulator{bg:darkolivegreen}]
@@ -32,7 +34,9 @@
 [Query|limit;offset;orderBy;order;select;filters]
 [Rule|changed;content;created;creator;id;isPublished;json]
 
-
+// Users
+[Users|id]
+[User|id;name]
 
 // RELATIONSHIPS
 
@@ -62,3 +66,10 @@
 [Query]->[Base Storage Provider]
 [Base Storage Provider]->[Rule]
 [Rule]->[Rule List]
+
+// Users Query
+[Base Storage Provider]->[Users]
+[Users]->[Base Users Provider]
+[Base Users Provider]->[User]
+[User]->[Base Storage Provider]
+[Base Users Provider]^[MS Graph Users]

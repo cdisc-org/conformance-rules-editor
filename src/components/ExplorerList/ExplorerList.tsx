@@ -12,7 +12,6 @@ import ExplorerHead, {
 import { debounce } from "lodash";
 import { IRule } from "../../types/IRule";
 import { IRules } from "../../types/IRules";
-import { resolvePath } from "../../utils/json_yaml";
 import { IQuery } from "../../types/IQuery";
 import { IFilter } from "../../types/IFilter";
 
@@ -65,20 +64,8 @@ export default function ExplorerList() {
       setPaginationLinks(responseJson.next);
       setRulesList([
         ...rulesList,
-        ...responseJson.rules.map((ruleItem: IRule, ruleIndex) => {
-          const rule = ruleItem.json;
-          return (
-            <ExplorerItem
-              key={ruleItem.id}
-              storageId={ruleItem.id}
-              coreId={resolvePath(rule, "Core.Id")}
-              ruleType={resolvePath(rule, "Rule Type")}
-              creator={ruleItem.creator}
-              published={ruleItem.isPublished}
-              created={ruleItem.created}
-              changed={ruleItem.changed}
-            />
-          );
+        ...responseJson.rules.map((ruleItem: IRule) => {
+          return <ExplorerItem key={ruleItem.id} {...ruleItem} />;
         }),
       ]);
       setRulesLoaded(true);
@@ -144,6 +131,7 @@ export default function ExplorerList() {
           .map(
             ([filterName, filterValue]: [string, string]): IFilter => ({
               name: filterName,
+              operator: "contains",
               value: filterValue,
             })
           ),

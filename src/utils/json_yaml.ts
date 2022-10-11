@@ -16,7 +16,11 @@ export const yamlToJSON = (body) => {
   }
 };
 
-export const resolvePath = (object, path, defaultValue = `<Missing '${path}'>`) =>
+export const resolvePath = (
+  object,
+  path,
+  defaultValue = `<Missing '${path}'>`
+) =>
   isValidYaml(object)
     ? path.split(".").reduce((o, p) => (o ? o[p] : defaultValue), object)
     : defaultValue;
@@ -70,6 +74,13 @@ export const jsonToQuery = (json) => {
   }
   throw new Error("Invalid Query Type");
 };
+
+export const jsonName = (name: string): string => name.replace(/ /g, "_");
+
+export const paramName = (name: string): string =>
+  `@${jsonName(name).replace(/\./g, "_")}`;
+
+export const sqlName = (name: string): string => dotsToSquares(jsonName(name));
 
 function isValidYaml(rule) {
   return rule !== undefined && rule !== null && typeof rule === "object";

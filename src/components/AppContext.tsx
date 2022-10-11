@@ -2,6 +2,7 @@ import React from "react";
 import { DataService } from "../services/DataService";
 import { AlertState } from "./GeneralAlert/GeneralAlert";
 import { TOrder } from "../types/TOrder";
+import { IUser } from "../types/IUser";
 
 export interface IAppError {
   title: string;
@@ -49,8 +50,8 @@ export interface IAppContext {
   isRuleDirty: () => boolean;
   alertState: AlertState;
   setAlertState: (alertState: AlertState) => void;
-  username: string;
-  setUsername: (username: string) => void;
+  user: IUser;
+  setUser: (user: IUser) => void;
   order: TOrder;
   setOrder: (order: TOrder) => void;
   orderBy: string;
@@ -69,8 +70,8 @@ export interface IAppContext {
   setTestCheck: (testCheck: IResults) => void;
   testStepExpanded: Steps | false;
   setTestStepExpanded: (testStepExpanded: Steps | false) => void;
-  creator: string;
-  setCreator: (creator: string) => void;
+  creator: IUser;
+  setCreator: (creator: IUser) => void;
   published: boolean;
   setPublished: (published: boolean) => void;
   isMyRule: () => boolean;
@@ -105,8 +106,8 @@ export const defaultAppContext: IAppContext = {
   setAlertState: () => {
     /* Placeholder */
   },
-  username: null,
-  setUsername: () => {
+  user: null,
+  setUser: () => {
     /* Placeholder */
   },
   order: "desc",

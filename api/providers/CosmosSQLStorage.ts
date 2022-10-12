@@ -38,40 +38,46 @@ const getRule = async (id: string): Promise<IRule> => {
   return rule;
 };
 
-const getRules = async (query: IQuery): Promise<IRules> => {
-  const rulesAlias = "Rules";
-  const parameters: SqlParameter[] = [];
+const rulesAlias = "Rules";
 
-  const operations: {
-    [operator: string]: (
-      name: string,
-      value
-    ) => {
-      filter: string;
-      parameters: SqlParameter[];
-    };
-  } = {
-    contains: (name, value) => ({
-      filter: `CONTAINS(${rulesAlias}${sqlName(name)}, ${paramName(
-        name
-      )}, true)`,
-      parameters: [
-        {
-          name: paramName(name),
-          value: value,
-        },
-      ],
-    }),
-    in: (name, value) => ({
-      filter: `${rulesAlias}${sqlName(name)} IN (${[...value.keys()]
-        .map((index: number) => `${paramName(name)}${index}`)
-        .join(",")})`,
-      parameters: value.map((param, index) => ({
-        name: `${paramName(name)}${index}`,
-        value: param,
-      })),
-    }),
+function containsOperation(
+  name: string,
+  value: string | number
+): {
+  filter: string;
+  parameters: SqlParameter[];
+} {
+  return {
+    filter: `CONTAINS(${rulesAlias}${sqlName(name)}, ${paramName(name)}, true)`,
+    parameters: [
+      {
+        name: paramName(name),
+        value: value,
+      },
+    ],
   };
+}
+
+function inOperation(
+  name: string,
+  value: string[] | number[]
+): {
+  filter: string;
+  parameters: SqlParameter[];
+} {
+  return {
+    filter: `${rulesAlias}${sqlName(name)} IN (${[...value.keys()]
+      .map((index: number) => `${paramName(name)}${index}`)
+      .join(",")})`,
+    parameters: value.map((param, index) => ({
+      name: `${paramName(name)}${index}`,
+      value: param,
+    })),
+  };
+}
+
+const getRules = async (query: IQuery): Promise<IRules> => {
+  const parameters: SqlParameter[] = [];
 
   // select
   const select = {};
@@ -80,6 +86,18 @@ const getRules = async (query: IQuery): Promise<IRules> => {
   }
 
   // filter
+  const operations: {
+    [operator: string]: (
+      name: string,
+      value: any
+    ) => {
+      filter: string;
+      parameters: SqlParameter[];
+    };
+  } = {
+    contains: containsOperation,
+    in: inOperation,
+  };
   var filters = "";
   for (const filter of query.filters) {
     const filterParam = operations[filter.operator](filter.name, filter.value);
@@ -125,7 +143,7 @@ const getRules = async (query: IQuery): Promise<IRules> => {
     };
     return resp;
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 };
 

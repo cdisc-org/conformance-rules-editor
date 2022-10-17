@@ -74,9 +74,12 @@ const AppContextProvider: React.FC = ({
     modifiedRule,
   ]);
 
-  const isMyRule = useCallback(
-    () => user && creator && user.id === creator.id,
-    [user, creator]
+  const isRuleModifiable = useCallback(
+    () =>
+      !isRuleSelected() ||
+      (user && creator && user.id === creator.id) ||
+      (user && user.company && user.company.toUpperCase() === "CDISC"),
+    [user, creator, isRuleSelected]
   );
 
   const appContext = {
@@ -120,7 +123,7 @@ const AppContextProvider: React.FC = ({
     setCreator,
     published,
     setPublished,
-    isMyRule,
+    isRuleModifiable,
   };
 
   useEffect(() => {

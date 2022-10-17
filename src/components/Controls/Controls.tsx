@@ -24,7 +24,7 @@ export default function Controls() {
     setDirtyExplorerList,
     isRuleDirty,
     setAlertState,
-    isMyRule,
+    isRuleModifiable,
     published,
     setPublished,
   } = useContext(AppContext);
@@ -125,7 +125,7 @@ export default function Controls() {
         <Tooltip title="Delete Rule">
           <span>
             <IconButton
-              disabled={!isRuleSelected() || !isMyRule()}
+              disabled={!isRuleSelected() || !isRuleModifiable()}
               onClick={() => setDeleteDialog(true)}
               color="primary"
             >

@@ -21,7 +21,7 @@ window.MonacoEnvironment = {
 };
 
 export default function YamlEditor() {
-  const { modifiedRule, setModifiedRule } = useContext(AppContext);
+  const { modifiedRule, setModifiedRule, isRuleModifiable } = useContext(AppContext);
 
   return (
     <Editor
@@ -32,6 +32,7 @@ export default function YamlEditor() {
       options={{
         automaticLayout: true,
         wordWrap: "on",
+        readOnly: !isRuleModifiable()
       }}
     />
   );

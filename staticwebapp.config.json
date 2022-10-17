@@ -64,7 +64,7 @@
               "clientSecretSettingName": "SWA_CLIENT_SECRET"
             },
             "openIdConnectConfiguration": {
-              "wellKnownOpenIdConfiguration": "https://cdisclibrary.b2clogin.com/cdisclibrary.onmicrosoft.com/b2c_1a_signuporsignin/v2.0/.well-known/openid-configuration"
+              "wellKnownOpenIdConfiguration": "https://cdisclibrary.b2clogin.com/cdisclibrary.onmicrosoft.com/b2c_1a_signupsigninreset/v2.0/.well-known/openid-configuration"
             }
           },
           "login": {

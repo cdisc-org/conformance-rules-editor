@@ -40,9 +40,9 @@ export class DataService {
       .then(function (responseJson) {
         return {
           id: responseJson.clientPrincipal.userId,
-          name: responseJson.clientPrincipal.claims.filter(
+          name: responseJson.clientPrincipal.claims.find(
             (claim) => claim.typ === "name"
-          )[0].val,
+          )?.val,
         };
       });
   };

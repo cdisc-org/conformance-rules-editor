@@ -59,19 +59,19 @@ With the information given above, attached here is a mock of the well-templated 
 - The Identifier, Events, Interventions, Findings, Timing, and Associated Persons worksheets are variables from SDTM v2.0.
 - The \*.xpt worksheets contain domain metadata from SDTMIG v3.4, as well as AC, APRELSUB, DI, and TX from SDTM v2.0.
 
-[unit-test-sdtmig-3-4-template.xlsx](files/unit-test-sdtmig-3-4-template.xlsx)
+[unit-test-sdtmig-3-4-template.xlsx](files/unit-test-sdtmig-3-4-template.xlsx ":ignore")
 
 Also, here is a mock Excel workbook for positive testing against a fictitious CORE rule Id 12345, using:
 
 - dm.xpt and ae.xpt.
 - Both with variable metadata adjusted, unused columns removed, data rows added.
 
-[unit-test-coreid-12345-positive.xlsx](files/unit-test-coreid-12345-positive.xlsx)
+[unit-test-coreid-12345-positive.xlsx](files/unit-test-coreid-12345-positive.xlsx ":ignore")
 
 CDISC has 2 sets of mock study in SDTM format. They have been converted into Excel format, which can be tailored for unit test data.
 
-- [CDISCTestData-sdtm-xpt-xlsx.zip](files/CDISCTestData-sdtm-xpt-xlsx.zip) A set of test data files transformed from the CDISCTestData Github repo, sourced from /SDTM/XPT. Per Read Me, this mock study implements "SDTM IG Version 3.2."
-- [sdtm-msg-2-0-m5-datasets-xlsx.zip](files/sdtm-msg-2-0-m5-datasets-xlsx.zip) A set of test data files transformed from the example submission bundled in the SDTM MSG v2.0, sourced from /m5/datasets/cdiscpilot01/tabulations/sdtm, as well as the split subdirectory. Per documentation, this example submission implements "SDTM v1.7/SDTMIG v3.3, and SDTM Terminology 2020-03-27."
+- [CDISCTestData-sdtm-xpt-xlsx.zip](files/CDISCTestData-sdtm-xpt-xlsx.zip ":ignore") A set of test data files transformed from the CDISCTestData Github repo, sourced from /SDTM/XPT. Per Read Me, this mock study implements "SDTM IG Version 3.2."
+- [sdtm-msg-2-0-m5-datasets-xlsx.zip](files/sdtm-msg-2-0-m5-datasets-xlsx.zip ":ignore") A set of test data files transformed from the example submission bundled in the SDTM MSG v2.0, sourced from /m5/datasets/cdiscpilot01/tabulations/sdtm, as well as the split subdirectory. Per documentation, this example submission implements "SDTM v1.7/SDTMIG v3.3, and SDTM Terminology 2020-03-27."
 
 ## Storage
 

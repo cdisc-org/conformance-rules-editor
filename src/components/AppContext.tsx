@@ -74,7 +74,7 @@ export interface IAppContext {
   setCreator: (creator: IUser) => void;
   published: boolean;
   setPublished: (published: boolean) => void;
-  isMyRule: () => boolean;
+  isRuleModifiable: () => boolean;
 }
 
 export const defaultAppContext: IAppContext = {
@@ -169,7 +169,7 @@ export const defaultAppContext: IAppContext = {
   setPublished: () => {
     /* Placeholder */
   },
-  isMyRule: () => false,
+  isRuleModifiable: () => false,
 };
 
 const AppContext = React.createContext<IAppContext>(defaultAppContext);

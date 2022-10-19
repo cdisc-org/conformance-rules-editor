@@ -43,6 +43,9 @@ export class DataService {
           name: responseJson.clientPrincipal.claims.find(
             (claim) => claim.typ === "name"
           )?.val,
+          company: responseJson.clientPrincipal.claims.find(
+            (claim) => claim.typ === "extension_CompanyName"
+          )?.val,
         };
       });
   };

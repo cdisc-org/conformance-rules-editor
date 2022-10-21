@@ -23,15 +23,16 @@ export default async (
   const res = await fetch(url, init);
 
   if (res.status === 200) {
+    const text = await res.text();
     try {
       context.res = {
         status: res.status,
-        body: await res.json(),
+        body: JSON.parse(text),
       };
     } catch (jsonParseException) {
       context.res = {
         status: 500,
-        body: `Core Engine returned invalid JSON: ${res.body}`,
+        body: `Core Engine returned invalid JSON: ${text}`,
       };
     }
   } else {

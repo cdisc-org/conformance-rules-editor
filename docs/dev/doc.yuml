@@ -1,0 +1,75 @@
+// {type:class}
+// {direction:leftToRight}
+// {generate:true}
+
+
+
+// ENTITIES
+
+// UI
+[UI|React;Node.js;TS{bg:maroon}]
+[Rule List|Add-Rule();Save-Rule();Revert-Changes();Delete-Rule();(Un)publish-Rule();Sort();Field-Search();Global-Search(){bg:maroon}]
+[Rule YAML Editor|VS-Code-Monaco|JSON-Schema-AutoComplete();JSON-Schema-Validate();JSON-Schema-Autosuggest();Code-Editor(){bg:maroon}]
+[Rule Test|Validate-YAML-Syntax();Validate-against-Schema();Convert-Rule-to-JSON();Load-Test-Data();Exceute-Rule(){bg:maroon}]
+[JSON Schema{bg:maroon}]
+
+// API
+[API|Node.js;TS|Azure Function Apps{bg:orange}]
+[cdisc-rules-engine|Execute-Rule(){bg:orange}]
+[Base Storage Provider|Get-Rules();Get-Rule();Post-Rule();Patch-Rule();Delete-Rule(){bg:orange}]
+[Drupal Storage{bg:orange}]
+[Cosmos SQL Storage{bg:orange}]
+[Base Users Provider|Get-Users-By-Ids();Get-Users-By-Name();{bg:orange}]
+[MS Graph Users{bg:orange}]
+
+// Azure SWA
+[Azure SWA / Emulator{bg:darkolivegreen}]
+[Auth|Azure B2C{bg:darkolivegreen}]
+
+// Execute Rule
+[Payload|Rule;Test-Datasets]
+[Result|Errors;Postives;Negatives;Absent-Variable-Skips]
+
+// Rule List Query
+[Query|limit;offset;orderBy;order;select;filters]
+[Rule|changed;content;created;creator;id;isPublished;json]
+
+// Users
+[Users|id]
+[User|id;name]
+
+// RELATIONSHIPS
+
+// UI
+[UI]-.->[Rule List]
+[UI]-.->[Rule YAML Editor]
+[UI]-.->[Rule Test]
+[Rule YAML Editor]-.->[JSON Schema]
+
+// API
+[API]-.->[cdisc-rules-engine]
+[API]-.->[Base Storage Provider]
+[Base Storage Provider]^[Drupal Storage]
+[Base Storage Provider]^[Cosmos SQL Storage]
+
+// Azure SWA
+[Azure SWA / Emulator]-.->[Auth]
+
+// Execute Rule
+[Rule Test]->[Payload]
+[Payload]->[cdisc-rules-engine]
+[cdisc-rules-engine]->[Result]
+[Result]->[Rule Test]
+
+// Rule List Query
+[Rule List]->[Query]
+[Query]->[Base Storage Provider]
+[Base Storage Provider]->[Rule]
+[Rule]->[Rule List]
+
+// Users Query
+[Base Storage Provider]->[Users]
+[Users]->[Base Users Provider]
+[Base Users Provider]->[User]
+[User]->[Base Storage Provider]
+[Base Users Provider]^[MS Graph Users]

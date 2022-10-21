@@ -49,6 +49,15 @@
       "presentation": {
         "group": "2"
       }
+    },
+    {
+      "name": "Serve Docs",
+      "command": "docsify serve ./docs",
+      "request": "launch",
+      "type": "node-terminal",
+      "presentation": {
+        "group": "2"
+      }
     }
   ],
   "compounds": [

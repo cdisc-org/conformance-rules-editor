@@ -1,4 +1,5 @@
 export interface IFilter {
   name: string;
-  value: string | number;
+  operator: "contains" | "in";
+  value: string | number | string[] | number[];
 }

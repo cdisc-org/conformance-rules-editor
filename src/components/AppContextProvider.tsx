@@ -4,6 +4,7 @@ import AppContext, { IAppError, Status, IResults, Steps } from "./AppContext";
 import { TOrder } from "../types/TOrder";
 import { AlertState } from "./GeneralAlert/GeneralAlert";
 import { SchemasSettings, setDiagnosticsOptions } from "monaco-yaml";
+import { IUser } from "../types/IUser";
 
 const AppContextProvider: React.FC = ({
   children,
@@ -18,7 +19,7 @@ const AppContextProvider: React.FC = ({
   /* False, because it will be set to true by the initial filter and sort values */
   const [dirtyExplorerList, setDirtyExplorerList] = useState<boolean>(false);
   const [alertState, setAlertState] = useState<AlertState>(null);
-  const [username, setUsername] = useState<string>(null);
+  const [user, setUser] = useState<IUser>(null);
   const [order, setOrder] = useState<TOrder>("desc");
   const [orderBy, setOrderBy] = useState<string>("changed");
   const [searchText, setSearchText] = useState<{ [key: string]: string }>({});
@@ -47,7 +48,7 @@ const AppContextProvider: React.FC = ({
   const [testStepExpanded, setTestStepExpanded] = useState<Steps | false>(
     false
   );
-  const [creator, setCreator] = useState<string>(null);
+  const [creator, setCreator] = useState<IUser>(null);
   const [published, setPublished] = useState<boolean>(null);
 
   const clearError = () => (appError ? setAppError(null) : undefined);
@@ -73,7 +74,13 @@ const AppContextProvider: React.FC = ({
     modifiedRule,
   ]);
 
-  const isMyRule = useCallback(() => username === creator, [username, creator]);
+  const isRuleModifiable = useCallback(
+    () =>
+      !isRuleSelected() ||
+      (user && creator && user.id === creator.id) ||
+      (user && user.company && user.company.toUpperCase() === "CDISC"),
+    [user, creator, isRuleSelected]
+  );
 
   const appContext = {
     appError,
@@ -92,8 +99,8 @@ const AppContextProvider: React.FC = ({
     isRuleDirty,
     alertState,
     setAlertState,
-    username,
-    setUsername,
+    user,
+    setUser,
     order,
     setOrder,
     orderBy,
@@ -116,16 +123,16 @@ const AppContextProvider: React.FC = ({
     setCreator,
     published,
     setPublished,
-    isMyRule,
+    isRuleModifiable,
   };
 
   useEffect(() => {
     if (dataService) {
-      dataService.get_username().then(function (response) {
-        setUsername(response);
+      dataService.get_user().then(function (response) {
+        setUser(response);
       });
     }
-  }, [dataService, setUsername]);
+  }, [dataService, setUser]);
 
   useEffect(() => {
     setLoadCheck({

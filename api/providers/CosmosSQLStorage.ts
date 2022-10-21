@@ -1,4 +1,7 @@
-import { CosmosClient } from "@azure/cosmos";
+import { CosmosClient, SqlParameter } from "@azure/cosmos";
+import { IQuery } from "../types/IQuery";
+import { IRule } from "../types/IRule";
+import { IRules } from "../types/IRules";
 import {
   yamlToJSON,
   buildJSON,
@@ -6,6 +9,9 @@ import {
   jsonToQuery,
   spacesToUnderscores,
   underscoresToSpaces,
+  sqlName,
+  paramName,
+  jsonName,
 } from "../utils/json_yaml";
 
 const dbContainer = new CosmosClient({
@@ -16,52 +22,96 @@ const dbContainer = new CosmosClient({
   .database(process.env["COSMOS_DATABASE"])
   .container(process.env["COSMOS_CONTAINER"]);
 
-const deleteRule = async (id) => {
+const deleteRule = async (
+  id: string
+): Promise<{
+  status: number;
+}> => {
   const res = await dbContainer.item(id, id).delete();
   return {
     status: res.statusCode,
   };
 };
 
-const getRule = async (id) => {
+const getRule = async (id: string): Promise<IRule> => {
   const rule = (await dbContainer.item(id, id).read()).resource;
   return rule;
 };
 
-const getRules = async (query) => {
-  const rulesAlias = "Rules";
-  const parameters = [];
+const rulesAlias = "Rules";
+
+function containsOperation(
+  name: string,
+  value: string | number
+): {
+  filter: string;
+  parameters: SqlParameter[];
+} {
+  return {
+    filter: `CONTAINS(${rulesAlias}${sqlName(name)}, ${paramName(name)}, true)`,
+    parameters: [
+      {
+        name: paramName(name),
+        value: value,
+      },
+    ],
+  };
+}
+
+function inOperation(
+  name: string,
+  value: string[] | number[]
+): {
+  filter: string;
+  parameters: SqlParameter[];
+} {
+  return {
+    filter: `${rulesAlias}${sqlName(name)} IN (${[...value.keys()]
+      .map((index: number) => `${paramName(name)}${index}`)
+      .join(",")})`,
+    parameters: value.map((param, index) => ({
+      name: `${paramName(name)}${index}`,
+      value: param,
+    })),
+  };
+}
+
+const getRules = async (query: IQuery): Promise<IRules> => {
+  const parameters: SqlParameter[] = [];
 
   // select
   const select = {};
-  for (const selectItem of query.select.map((column) =>
-    column.replace(/ /g, "_")
-  )) {
+  for (const selectItem of query.select.map((column) => jsonName(column))) {
     buildJSON(select, selectItem, `${rulesAlias}${dotsToSquares(selectItem)}`);
   }
 
   // filter
-  const filters = query.filters.reduce(
-    (previousValue, currentValue) =>
-      `${previousValue}${
-        previousValue === "" ? " WHERE" : " AND"
-      } CONTAINS(${rulesAlias}${dotsToSquares(
-        currentValue.name.replace(/ /g, "_")
-      )}, @${currentValue.name.replace(/ /g, "_").replace(/\./g, "_")}, true)`,
-    ""
-  );
-  parameters.push(
-    ...query.filters.map((filter) => ({
-      name: `@${filter.name.replace(/ /g, "_").replace(/\./g, "_")}`,
-      value: filter.value,
-    }))
-  );
+  const operations: {
+    [operator: string]: (
+      name: string,
+      value: any
+    ) => {
+      filter: string;
+      parameters: SqlParameter[];
+    };
+  } = {
+    contains: containsOperation,
+    in: inOperation,
+  };
+  var filters = "";
+  for (const filter of query.filters) {
+    const filterParam = operations[filter.operator](filter.name, filter.value);
+    filters = `${filters}${filters === "" ? " WHERE" : " AND"} ${
+      filterParam.filter
+    }`;
+    parameters.push(...filterParam.parameters);
+  }
 
   //sort order
   const orderBy = query.orderBy
-    ? ` ORDER BY ${rulesAlias}${dotsToSquares(
-        query.orderBy.replace(/ /g, "_")
-      )} ${query.order === "desc" ? "DESC" : "ASC"}`
+    ? ` ORDER BY ${rulesAlias}${sqlName(query.orderBy)} ${
+        query.order === "desc" ? "DESC" : "ASC"
+      }`
     : "";
 
   //offset
@@ -80,20 +130,24 @@ const getRules = async (query) => {
   };
 
   //request
-  const results = await dbContainer.items.query(querySpec).fetchAll();
-  const resp = {
-    rules: results.resources.map((rule) => ({
-      ...rule["$1"],
-      json: underscoresToSpaces(rule["$1"].json),
-    })),
-    ...(results.resources.length === limit && {
-      next: { ...query, offset: offset + limit, limit: limit },
-    }),
-  };
-  return resp;
+  try {
+    const results = await dbContainer.items.query(querySpec).fetchAll();
+    const resp = {
+      rules: results.resources.map((rule) => ({
+        ...rule["$1"],
+        json: underscoresToSpaces(rule["$1"].json),
+      })),
+      ...(results.resources.length === limit && {
+        next: { ...query, offset: offset + limit, limit: limit },
+      }),
+    };
+    return resp;
+  } catch (error) {
+    console.error(error);
+  }
 };
 
-const patchRule = async (id, rule) => {
+const patchRule = async (id: string, rule: IRule): Promise<IRule> => {
   const date = new Date().toJSON();
   try {
     const toPatch = [
@@ -133,15 +187,15 @@ const patchRule = async (id, rule) => {
   }
 };
 
-const postRule = async (content, creator) => {
+const postRule = async (content: string, creatorId: string): Promise<IRule> => {
   const date = new Date().toJSON();
   const toCreate = {
     changed: date,
     content,
     created: date,
-    creator,
+    creator: { id: creatorId },
     isPublished: false,
-    json: spacesToUnderscores(yamlToJSON(content)),
+    json: spacesToUnderscores(yamlToJSON(content) ?? {}),
   };
   const rule = (await dbContainer.items.create(toCreate)).resource;
   return rule;

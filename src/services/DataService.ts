@@ -1,6 +1,7 @@
 import { IQuery } from "../types/IQuery";
 import { IRule } from "../types/IRule";
 import { IRules } from "../types/IRules";
+import { IUser } from "../types/IUser";
 import { IDataset } from "../utils/ExcelDataset";
 
 export interface ISchema {
@@ -31,13 +32,21 @@ export class DataService {
     });
   };
 
-  public get_username = async () => {
+  public get_user = async (): Promise<IUser> => {
     return await this.get_me()
       .then(function (response) {
         return response.json();
       })
       .then(function (responseJson) {
-        return responseJson.clientPrincipal.userDetails;
+        return {
+          id: responseJson.clientPrincipal.userId,
+          name: responseJson.clientPrincipal.claims.find(
+            (claim) => claim.typ === "name"
+          )?.val,
+          company: responseJson.clientPrincipal.claims.find(
+            (claim) => claim.typ === "extension_CompanyName"
+          )?.val,
+        };
       });
   };
 
@@ -128,7 +137,7 @@ export class DataService {
       },
       body: JSON.stringify({
         content: body,
-        creator: await this.get_username(),
+        creatorId: (await this.get_user()).id,
       }),
     })
       .then((response) => response.json())

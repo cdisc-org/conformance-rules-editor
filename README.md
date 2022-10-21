@@ -1,5 +1,9 @@
 # conformance-rules-editor
 
+## Reference Guide
+
+https://cdisc-org.github.io/conformance-rules-editor/
+
 ## Environment Setup
 
 ### Install dependencies
@@ -11,13 +15,16 @@
    npm install -g @azure/static-web-apps-cli
    ```
 4. Using VSCODE, install the "Azure Functions" extension.
-5. Create a local.settings.json in the API folder to support local development of the API. It should contain the following values:
+5. Create a local.settings.json in the API folder to support local development of the API. It should contain the following values which provide information for the staticwebapp config and the Microsoft Graph API for Users' name resolution:
    ```
    {
        "IsEncrypted": false,
        "Values": {
          "EXECUTE_RULE_URL": "<RULE_EXECUTOR_URL>",
-         "FUNCTIONS_WORKER_RUNTIME":"node"
+         "FUNCTIONS_WORKER_RUNTIME": "node",
+         "SWA_TENANT_ID": "<Static Web App Tenant ID>",
+         "SWA_CLIENT_ID": "<Static Web App Client ID>",
+         "SWA_CLIENT_SECRET": "<Static Web App Client Secret>",
        }
    }
    ```
@@ -81,3 +88,7 @@ Alternatively, you can run the launch components individually.
 Run: `$Env:BROWSER='none'; swa start http://localhost:3000 --api-location ./api --run 'npm start'`
 
 Navigate to: http://localhost:4280/
+
+## More...
+
+For more development details, refer to the [wiki](https://github.com/cdisc-org/conformance-rules-editor/wiki).

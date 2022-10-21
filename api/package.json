@@ -20,7 +20,9 @@
   },
   "dependencies": {
     "@azure/cosmos": "^3.17.0",
-    "@azure/identity": "^2.1.0",
+    "@azure/identity": "^3.0.0",
+    "@microsoft/microsoft-graph-client": "^3.0.2",
+    "isomorphic-fetch": "^3.0.0",
     "js-yaml": "^4.1.0",
     "node-fetch": "^2.6.7"
   }

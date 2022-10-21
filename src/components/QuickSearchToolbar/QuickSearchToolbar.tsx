@@ -12,16 +12,12 @@ interface QuickSearchToolbarProps {
 
 export default function QuickSearchToolbar(props: QuickSearchToolbarProps) {
   const { queryParam, label } = props;
-  const { username, searchText, setSearchText } = useContext(AppContext);
+  const { user, searchText, setSearchText } = useContext(AppContext);
   useEffect(() => {
-    if (
-      username &&
-      queryParam === "creator" &&
-      !(queryParam in searchText)
-    ) {
-      setSearchText({ ...searchText, [queryParam]: username });
+    if (user && queryParam === "creator.name" && !(queryParam in searchText)) {
+      setSearchText({ ...searchText, [queryParam]: user.name });
     }
-  }, [username, queryParam, searchText, setSearchText]);
+  }, [user, queryParam, searchText, setSearchText]);
   const onChange = (event) => {
     setSearchText({ ...searchText, [queryParam]: event.target.value });
   };

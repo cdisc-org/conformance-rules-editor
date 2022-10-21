@@ -10,5 +10,5 @@ export interface IStorage {
     getRule: (id: string) => Promise<IRule>;
     getRules: (query: IQuery) => Promise<IRules>;
     patchRule: (id: string, rule: IRule) => Promise<IRule>;
-    postRule: (content: string, creator: string) => Promise<IRule>;
+    postRule: (content: string, creatorId: string) => Promise<IRule>;
 }

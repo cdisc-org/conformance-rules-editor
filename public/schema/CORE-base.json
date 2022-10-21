@@ -56,16 +56,8 @@
       "type": "array"
     },
     "Dataset": {
-      "anyOf": [
-        {
-          "pattern": "^(All|AP--|APRELSUB|RELREC|RELSPEC|RELSUB|[A-Z]{2}|[A-Z]{4}|SUPP[A-Z]{2}|SUPP[A-Z]{4}|SQAP[A-Z]{4}|SUPP--)$",
-          "type": "string"
-        },
-        {
-          "pattern": "^(All|AP--|APRELSUB|POOLDEF|RELREC|RELSPEC|RELSUB|[A-Z]{2}|[A-Z]{4}|SUPP[A-Z]{2}|SUPP[A-Z]{4}|SQAP[A-Z]{4}|SUPP--)$",
-          "type": "string"
-        }
-      ]
+      "pattern": "^(All|AP--|APRELSUB|POOLDEF|RELREC|RELSPEC|RELSUB|[A-Z]{2}|[A-Z]{4}|SUPP[A-Z]{2}|SUPP[A-Z]{4}|SQAP[A-Z]{4}|SUPP--)$",
+      "type": "string"
     },
     "DataStructure": {
       "enum": [

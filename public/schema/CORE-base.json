@@ -59,6 +59,12 @@
       "pattern": "^(All|AP--|APRELSUB|POOLDEF|RELREC|RELSPEC|RELSUB|[A-Z]{2}|[A-Z]{4}|SUPP[A-Z]{2}|SUPP[A-Z]{4}|SQAP[A-Z]{4}|SUPP--)$",
       "type": "string"
     },
+    "Datasets": {
+      "items": {
+        "$ref": "#/$defs/Dataset"
+      },
+      "type": "array"
+    },
     "DataStructure": {
       "enum": [
         "ADAM OTHER",
@@ -71,6 +77,12 @@
         "SUBJECT LEVEL ANALYSIS DATASET"
       ],
       "type": "string"
+    },
+    "DataStructures": {
+      "items": {
+        "$ref": "#/$defs/DataStructure"
+      },
+      "type": "array"
     },
     "Domains": {
       "items": {
@@ -277,15 +289,18 @@
       "required": ["operator"],
       "type": "object"
     },
-    "Subclass": {
-      "enum": [
-        "ADVERSE EVENT",
-        "ALL",
-        "MEDICAL DEVICE TIME-TO-EVENT",
-        "NON-COMPARTMENTAL ANALYSIS",
-        "TIME-TO-EVENT"
-      ],
-      "type": "string"
+    "Subclasses": {
+      "items": {
+        "enum": [
+          "ADVERSE EVENT",
+          "ALL",
+          "MEDICAL DEVICE TIME-TO-EVENT",
+          "NON-COMPARTMENTAL ANALYSIS",
+          "TIME-TO-EVENT"
+        ],
+        "type": "string"
+      },
+      "type": "array"
     },
     "VariableName": {
       "pattern": "^(--[A-Z0-9]{1,6}|[A-Z][A-Z0-9]{0,7})$",
@@ -710,10 +725,10 @@
           "Name": {
             "anyOf": [
               {
-                "$ref": "#/$defs/DataStructure"
+                "$ref": "#/$defs/Dataset"
               },
               {
-                "$ref": "#/$defs/Dataset"
+                "$ref": "#/$defs/DataStructure"
               }
             ]
           },
@@ -740,10 +755,10 @@
           "domain": {
             "anyOf": [
               {
-                "$ref": "#/$defs/DataStructure"
+                "$ref": "#/$defs/Dataset"
               },
               {
-                "$ref": "#/$defs/Dataset"
+                "$ref": "#/$defs/DataStructure"
               }
             ]
           },
@@ -806,38 +821,19 @@
       "type": "object"
     },
     "Rule Type": {
-      "oneOf": [
-        {
-          "const": "Dataset Contents Check against Define XML and Library Metadata"
-        },
-        {
-          "const": "Dataset Contents Check against Library Metadata"
-        },
-        {
-          "const": "Dataset Metadata Check"
-        },
-        {
-          "const": "Dataset Metadata Check against Define XML"
-        },
-        {
-          "const": "Define-XML"
-        },
-        {
-          "const": "Domain Presence Check"
-        },
-        {
-          "const": "Record Data"
-        },
-        {
-          "const": "Value Level Metadata Check against Define XML"
-        },
-        {
-          "const": "Variable Metadata Check"
-        },
-        {
-          "const": "Variable Metadata Check against Define XML"
-        }
-      ]
+      "enum": [
+        "Dataset Contents Check against Define XML and Library Metadata",
+        "Dataset Contents Check against Library Metadata",
+        "Dataset Metadata Check",
+        "Dataset Metadata Check against Define XML",
+        "Define-XML",
+        "Domain Presence Check",
+        "Record Data",
+        "Value Level Metadata Check against Define XML",
+        "Variable Metadata Check",
+        "Variable Metadata Check against Define XML"
+      ],
+      "type": "string"
     },
     "Scope": {
       "additionalProperties": false,
@@ -867,25 +863,37 @@
           ]
         },
         "Data Structures": {
-          "additionalProperties": false,
-          "properties": {
-            "Exclude": {
-              "$ref": "#/$defs/DataStructure"
+          "oneOf": [
+            {
+              "additionalProperties": false,
+              "properties": {
+                "Include": {
+                  "$ref": "#/$defs/DataStructures"
+                }
+              },
+              "required": ["Include"],
+              "type": "object"
             },
-            "Include": {
-              "$ref": "#/$defs/DataStructure"
+            {
+              "additionalProperties": false,
+              "properties": {
+                "Exclude": {
+                  "$ref": "#/$defs/DataStructures"
+                }
+              },
+              "required": ["Exclude"],
+              "type": "object"
             }
-          },
-          "type": "object"
+          ]
         },
         "Datasets": {
           "additionalProperties": false,
           "properties": {
             "Exclude": {
-              "$ref": "#/$defs/Dataset"
+              "$ref": "#/$defs/Datasets"
             },
             "Include": {
-              "$ref": "#/$defs/Dataset"
+              "$ref": "#/$defs/Datasets"
             }
           },
           "type": "object"
@@ -909,10 +917,10 @@
           "additionalProperties": false,
           "properties": {
             "Exclude": {
-              "$ref": "#/$defs/Subclass"
+              "$ref": "#/$defs/Subclasses"
             },
             "Include": {
-              "$ref": "#/$defs/Subclass"
+              "$ref": "#/$defs/Subclasses"
             }
           },
           "type": "object"

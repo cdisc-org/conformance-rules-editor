@@ -65,19 +65,22 @@
       },
       "type": "array"
     },
+    "DataStructure": {
+      "enum": [
+        "ADAM OTHER",
+        "ALL",
+        "BASIC DATA STRUCTURE",
+        "DEVICE LEVEL ANALYSIS DATASET",
+        "MEDICAL DEVICE BASIC DATA STRUCTURE",
+        "MEDICAL DEVICE OCCURRENCE DATA STRUCTURE",
+        "OCCURRENCE DATA STRUCTURE",
+        "SUBJECT LEVEL ANALYSIS DATASET"
+      ],
+      "type": "string"
+    },
     "DataStructures": {
       "items": {
-        "enum": [
-          "ADAM OTHER",
-          "ALL",
-          "BASIC DATA STRUCTURE",
-          "DEVICE LEVEL ANALYSIS DATASET",
-          "MEDICAL DEVICE BASIC DATA STRUCTURE",
-          "MEDICAL DEVICE OCCURRENCE DATA STRUCTURE",
-          "OCCURRENCE DATA STRUCTURE",
-          "SUBJECT LEVEL ANALYSIS DATASET"
-        ],
-        "type": "string"
+        "$ref": "#/$defs/DataStructure"
       },
       "type": "array"
     },

@@ -30,6 +30,9 @@ export class RuleTemplate {
       .replace(/^#\//, "")
       .split("/")
       .reduce((o, p) => (o ? o[p] : {}), this.schema);
+    if (!def) {
+      throw Error(`Missing $ref value ${subschema["$ref"]}`);
+    }
     if (ancestorRefs.has(def)) {
       return "...";
     } else {
@@ -59,6 +62,22 @@ export class RuleTemplate {
         subtemplate[key] = this.walk(value, ancestorRefs, false);
       }
     }
+    if (enumerate && "allOf" in subschema) {
+      return [
+        ...(Object.keys(subtemplate).length ? [subtemplate] : []),
+        ...this.walkAllOf(subschema, ancestorRefs, enumerate),
+      ];
+    } else if (enumerate && "anyOf" in subschema) {
+      return [
+        ...(Object.keys(subtemplate).length ? [subtemplate] : []),
+        ...this.walkAnyOf(subschema, ancestorRefs, enumerate),
+      ];
+    } else if (enumerate && "oneOf" in subschema) {
+      return [
+        ...(Object.keys(subtemplate).length ? [subtemplate] : []),
+        ...this.walkOneOf(subschema, ancestorRefs, enumerate),
+      ];
+    }
     return enumerate ? [subtemplate] : subtemplate;
   }
 
@@ -66,6 +85,16 @@ export class RuleTemplate {
     return "items" in subschema
       ? this.walk(subschema["items"], ancestorRefs, true)
       : [];
+  }
+
+  private walkAllOf(
+    subschema: IJSONSchema,
+    ancestorRefs: Set<IJSONSchema>,
+    enumerate: boolean
+  ) {
+    return enumerate
+      ? subschema["allOf"].map((of) => this.walk(of, ancestorRefs, false))
+      : this.walk(subschema["allOf"][0], ancestorRefs, false);
   }
 
   private walkAnyOf(
@@ -86,16 +115,6 @@ export class RuleTemplate {
     return enumerate
       ? subschema["oneOf"].map((of) => this.walk(of, ancestorRefs, false))
       : this.walk(subschema["oneOf"][0], ancestorRefs, false);
-  }
-
-  private walkAllOf(
-    subschema: IJSONSchema,
-    ancestorRefs: Set<IJSONSchema>,
-    enumerate: boolean
-  ) {
-    return enumerate
-      ? subschema["allOf"].map((of) => this.walk(of, ancestorRefs, false))
-      : this.walk(subschema["allOf"][0], ancestorRefs, false);
   }
 
   private walkEnum(subschema: IJSONSchema, enumerate: boolean) {

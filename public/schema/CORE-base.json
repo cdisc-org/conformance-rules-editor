@@ -371,7 +371,14 @@
         "additionalProperties": false,
         "properties": {
           "Name": {
-            "$ref": "#/$defs/Dataset"
+            "anyOf": [
+              {
+                "$ref": "#/$defs/Dataset"
+              },
+              {
+                "$ref": "#/$defs/DataStructure"
+              }
+            ]
           },
           "Is Relationship": {
             "const": true
@@ -393,7 +400,14 @@
         "additionalProperties": false,
         "properties": {
           "domain": {
-            "$ref": "#/$defs/Dataset"
+            "anyOf": [
+              {
+                "$ref": "#/$defs/Dataset"
+              },
+              {
+                "$ref": "#/$defs/DataStructure"
+              }
+            ]
           },
           "group": {
             "items": {

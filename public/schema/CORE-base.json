@@ -4,16 +4,18 @@
       "oneOf": [
         {
           "additionalProperties": false,
-          "minProperties": 1,
-          "maxProperties": 1,
-          "patternProperties": {
-            "^all|any$": {
-              "items": {
-                "$ref": "#/$defs/CheckItem"
-              },
-              "type": "array"
-            }
+          "properties": {
+            "all": { "$ref": "#/$defs/CheckItems" }
           },
+          "required": ["all"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "any": { "$ref": "#/$defs/CheckItems" }
+          },
+          "required": ["any"],
           "type": "object"
         },
         {
@@ -37,6 +39,12 @@
           "$ref": "#/$defs/Operator"
         }
       ]
+    },
+    "CheckItems": {
+      "items": {
+        "$ref": "#/$defs/CheckItem"
+      },
+      "type": "array"
     },
     "Classes": {
       "items": {
@@ -430,12 +438,7 @@
                         "type": "string"
                       }
                     },
-                    "required": [
-                      "Citations",
-                      "Origin",
-                      "Rule Identifier",
-                      "Version"
-                    ],
+                    "required": ["Origin", "Rule Identifier", "Version"],
                     "type": "object"
                   },
                   "minItems": 1,

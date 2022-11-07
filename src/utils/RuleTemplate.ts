@@ -1,4 +1,5 @@
 import { jsonToYAML } from "./json_yaml";
+import { isEqual, mergeWith } from "lodash";
 
 interface IJSONSchema {
   $ref?: string;
@@ -16,6 +17,7 @@ interface IJSONSchema {
 
 export class RuleTemplate {
   private static readonly maxEnums = 10;
+  private static readonly recursionIndicator = { "...": "" };
 
   private deepCopy(obj) {
     return JSON.parse(JSON.stringify(obj));
@@ -34,7 +36,7 @@ export class RuleTemplate {
       throw Error(`Missing $ref value ${subschema["$ref"]}`);
     }
     if (ancestorRefs.has(def)) {
-      return "...";
+      return this.deepCopy(RuleTemplate.recursionIndicator);
     } else {
       return this.walk(
         this.deepCopy(def),
@@ -83,8 +85,49 @@ export class RuleTemplate {
 
   private walkArray(subschema: IJSONSchema, ancestorRefs: Set<IJSONSchema>) {
     return "items" in subschema
-      ? this.walk(subschema["items"], ancestorRefs, true)
+      ? this.walk(subschema["items"], ancestorRefs, true).sort((a, b) => {
+          /* Put recursion indicators at end of list */
+          if (
+            isEqual(a, RuleTemplate.recursionIndicator) &&
+            !isEqual(b, RuleTemplate.recursionIndicator)
+          ) {
+            return 1;
+          }
+          if (
+            isEqual(b, RuleTemplate.recursionIndicator) &&
+            !isEqual(a, RuleTemplate.recursionIndicator)
+          ) {
+            return -1;
+          }
+          return 0;
+        })
       : [];
+  }
+
+  private walkComposition(
+    subschema: [IJSONSchema],
+    ancestorRefs: Set<IJSONSchema>,
+    enumerate: boolean
+  ) {
+    return enumerate
+      ? subschema.map((of) => this.walk(of, ancestorRefs, false))
+      : this.walk(
+          mergeWith(
+            {},
+            ...subschema,
+            (
+              value: any,
+              srcValue: any,
+              key: string,
+              object: any,
+              source: any
+            ) => {
+              return undefined;
+            }
+          ),
+          ancestorRefs,
+          false
+        );
   }
 
   private walkAllOf(
@@ -92,9 +135,7 @@ export class RuleTemplate {
     ancestorRefs: Set<IJSONSchema>,
     enumerate: boolean
   ) {
-    return enumerate
-      ? subschema["allOf"].map((of) => this.walk(of, ancestorRefs, false))
-      : this.walk(subschema["allOf"][0], ancestorRefs, false);
+    return this.walkComposition(subschema["allOf"], ancestorRefs, enumerate);
   }
 
   private walkAnyOf(
@@ -102,9 +143,7 @@ export class RuleTemplate {
     ancestorRefs: Set<IJSONSchema>,
     enumerate: boolean
   ) {
-    return enumerate
-      ? subschema["anyOf"].map((of) => this.walk(of, ancestorRefs, false))
-      : this.walk(subschema["anyOf"][0], ancestorRefs, false);
+    return this.walkComposition(subschema["anyOf"], ancestorRefs, enumerate);
   }
 
   private walkOneOf(
@@ -112,9 +151,7 @@ export class RuleTemplate {
     ancestorRefs: Set<IJSONSchema>,
     enumerate: boolean
   ) {
-    return enumerate
-      ? subschema["oneOf"].map((of) => this.walk(of, ancestorRefs, false))
-      : this.walk(subschema["oneOf"][0], ancestorRefs, false);
+    return this.walkComposition(subschema["oneOf"], ancestorRefs, enumerate);
   }
 
   private walkEnum(subschema: IJSONSchema, enumerate: boolean) {

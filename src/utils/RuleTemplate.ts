@@ -23,10 +23,15 @@ export class RuleTemplate {
     return JSON.parse(JSON.stringify(obj));
   }
 
-  private walkRef(
+  private enumerate(obj, enumerate: boolean) {
+    return enumerate ? [obj] : obj;
+  }
+
+  private resolveRef(
+    parent: IJSONSchema,
+    key: number | string,
     subschema: IJSONSchema,
-    ancestorRefs: Set<IJSONSchema>,
-    enumerate: boolean
+    ancestorRefs: Set<IJSONSchema>
   ) {
     const def = subschema["$ref"]
       .replace(/^#\//, "")
@@ -38,11 +43,43 @@ export class RuleTemplate {
     if (ancestorRefs.has(def)) {
       return this.deepCopy(RuleTemplate.recursionIndicator);
     } else {
-      return this.walk(
-        this.deepCopy(def),
-        new Set([...ancestorRefs, def]),
-        enumerate
-      );
+      const copy = this.deepCopy(def);
+      this.resolveRefs(parent, key, copy, new Set([...ancestorRefs, def]));
+      return copy;
+    }
+  }
+
+  private resolveRefs(
+    parent: IJSONSchema,
+    key: number | string,
+    subschema: IJSONSchema,
+    ancestorRefs: Set<IJSONSchema>
+  ) {
+    if (typeof subschema === "object" && !Array.isArray(subschema)) {
+      if ("$ref" in subschema) {
+        parent[key] = this.resolveRef(parent, key, subschema, ancestorRefs);
+      } else {
+        for (const [childKey, childValue] of Object.entries(subschema)) {
+          if (childKey === "properties") {
+            for (const [grandchildKey, grandchildValue] of Object.entries(
+              childValue
+            )) {
+              this.resolveRefs(
+                childValue,
+                grandchildKey,
+                grandchildValue,
+                ancestorRefs
+              );
+            }
+          } else {
+            this.resolveRefs(subschema, childKey, childValue, ancestorRefs);
+          }
+        }
+      }
+    } else if (Array.isArray(subschema)) {
+      for (const [childKey, childValue] of subschema.entries()) {
+        this.resolveRefs(subschema, childKey, childValue, ancestorRefs);
+      }
     }
   }
 
@@ -104,6 +141,24 @@ export class RuleTemplate {
       : [];
   }
 
+  private mergeWithCustomizer(
+    objValue: any,
+    srcValue: any,
+    key: string,
+    object: any,
+    source: any
+  ) {
+    if (Array.isArray(objValue) && Array.isArray(srcValue)) {
+      return [...objValue, ...srcValue];
+    }
+    if (Array.isArray(objValue) && srcValue && !Array.isArray(srcValue)) {
+      return [...objValue, srcValue];
+    }
+    if (objValue && !Array.isArray(objValue) && Array.isArray(srcValue)) {
+      return [objValue, ...srcValue];
+    }
+  }
+
   private walkComposition(
     subschema: [IJSONSchema],
     ancestorRefs: Set<IJSONSchema>,
@@ -112,19 +167,7 @@ export class RuleTemplate {
     return enumerate
       ? subschema.map((of) => this.walk(of, ancestorRefs, false))
       : this.walk(
-          mergeWith(
-            {},
-            ...subschema,
-            (
-              value: any,
-              srcValue: any,
-              key: string,
-              object: any,
-              source: any
-            ) => {
-              return undefined;
-            }
-          ),
+          mergeWith({}, ...subschema, this.mergeWithCustomizer),
           ancestorRefs,
           false
         );
@@ -165,38 +208,35 @@ export class RuleTemplate {
   }
 
   private walkConst(subschema: IJSONSchema, enumerate: boolean) {
-    const mock = subschema["const"];
-    return enumerate ? [mock] : mock;
+    return this.enumerate(subschema["const"], enumerate);
   }
 
   private walkPattern(subschema: IJSONSchema, enumerate: boolean) {
-    const mock = "";
-    return enumerate ? [mock] : mock;
+    return this.enumerate("", enumerate);
   }
 
   private walkBoolean(enumerate: boolean) {
-    const mock = "true | false";
-    return enumerate ? [mock] : mock;
+    return this.enumerate("true | false", enumerate);
   }
 
   private walkInteger(enumerate: boolean) {
-    const mock = 12345;
-    return enumerate ? [mock] : mock;
+    return this.enumerate(12345, enumerate);
   }
 
   private walkNumber(enumerate: boolean) {
-    const mock = 12345.6789;
-    return enumerate ? [mock] : mock;
+    return this.enumerate(12345.6789, enumerate);
   }
 
   private walkString(enumerate: boolean) {
-    const mock = "";
-    return enumerate ? [mock] : mock;
+    return this.enumerate("", enumerate);
   }
 
   private walkMultiType(enumerate: boolean) {
-    const mock = "";
-    return enumerate ? [mock] : mock;
+    return this.enumerate("", enumerate);
+  }
+
+  private walkRecursion(subschema: IJSONSchema, enumerate: boolean) {
+    return this.enumerate(subschema, enumerate);
   }
 
   private walk(
@@ -220,8 +260,6 @@ export class RuleTemplate {
       return this.walkOneOf(subschema, ancestorRefs, enumerate);
     } else if ("enum" in subschema) {
       return this.walkEnum(subschema, enumerate);
-    } else if ("$ref" in subschema) {
-      return this.walkRef(subschema, ancestorRefs, enumerate);
     } else if ("const" in subschema) {
       return this.walkConst(subschema, enumerate);
     } else if ("pattern" in subschema) {
@@ -236,6 +274,8 @@ export class RuleTemplate {
       return this.walkString(enumerate);
     } else if (Array.isArray(subschema["type"])) {
       return this.walkMultiType(enumerate);
+    } else if (isEqual(subschema, RuleTemplate.recursionIndicator)) {
+      return this.walkRecursion(subschema, enumerate);
     }
     throw Error(`Unknown JSON Schema type for ${JSON.stringify(subschema)}`);
   }
@@ -247,7 +287,10 @@ export class RuleTemplate {
   }
 
   public schemaToTemplate(): string {
-    const template = this.walk(this.schema, new Set(), false);
+    const resolved = this.deepCopy(this.schema);
+    this.resolveRefs(null, null, resolved, new Set());
+    //TODO: merge compositions leaf-first, then walk again
+    const template = this.walk(resolved, new Set(), false);
     return jsonToYAML(template);
   }
 }

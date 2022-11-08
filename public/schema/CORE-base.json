@@ -64,8 +64,25 @@
       "type": "array"
     },
     "Dataset": {
-      "pattern": "^(All|AP--|APRELSUB|POOLDEF|RELREC|RELSPEC|RELSUB|[A-Z]{2}|[A-Z]{4}|SUPP[A-Z]{2}|SUPP[A-Z]{4}|SQAP[A-Z]{4}|SUPP--)$",
-      "type": "string"
+      "anyOf": [
+        {
+          "enum": [
+            "All",
+            "AP--",
+            "APRELSUB",
+            "POOLDEF",
+            "RELREC",
+            "RELSPEC",
+            "RELSUB",
+            "SUPP--"
+          ],
+          "type": "string"
+        },
+        {
+          "pattern": "^([A-Z]{2}|[A-Z]{4}|SUPP[A-Z]{2}|SUPP[A-Z]{4}|SQAP[A-Z]{4})$",
+          "type": "string"
+        }
+      ]
     },
     "Datasets": {
       "items": {

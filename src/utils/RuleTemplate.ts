@@ -1,5 +1,6 @@
 import { jsonToYAML } from "./json_yaml";
 import { isEqual, mergeWith } from "lodash";
+import eachDeep from "deepdash-es/eachDeep";
 
 interface IJSONSchema {
   $ref?: string;
@@ -20,80 +21,94 @@ export class RuleTemplate {
   private static readonly recursionSymbol = { "...": "" };
   private static readonly stringSymbol = "";
 
-  private deepCopy(obj) {
+  private static deepCopy(obj) {
     return JSON.parse(JSON.stringify(obj));
   }
 
-  private removeDuplicates(arr) {
+  private static removeDuplicates(arr) {
     return arr.filter((item, index) => arr.indexOf(item) === index);
   }
 
-  private enumerate(obj, enumerate: boolean) {
+  private static enumerate(obj, enumerate: boolean) {
     return enumerate ? [obj] : obj;
   }
 
-  private resolveRef(
-    parent: IJSONSchema,
-    key: number | string,
-    subschema: IJSONSchema,
-    ancestorRefs: Set<IJSONSchema>
-  ) {
-    const def = subschema["$ref"]
+  private static getDefByRef(ref: string, schema) {
+    const def = ref
       .replace(/^#\//, "")
       .split("/")
-      .reduce((o, p) => (o ? o[p] : {}), this.schema);
+      .reduce((o, p) => (o ? o[p] : {}), schema);
     if (!def) {
-      throw Error(`Missing $ref value ${subschema["$ref"]}`);
+      throw Error(`Missing $ref value ${ref}`);
     }
-    if (ancestorRefs.has(def)) {
-      return this.deepCopy(RuleTemplate.recursionSymbol);
-    } else {
-      const copy = this.deepCopy(def);
-      this.resolveRefs(parent, key, copy, new Set([...ancestorRefs, def]));
-      return copy;
-    }
+    return def;
   }
 
-  private resolveObject(subschema, ancestorRefs: Set<IJSONSchema>) {
-    for (const [childKey, childValue] of Object.entries(subschema)) {
-      if (childKey === "properties") {
-        for (const [grandchildKey, grandchildValue] of Object.entries(
-          childValue
-        )) {
-          this.resolveRefs(
-            childValue,
-            grandchildKey,
-            grandchildValue,
-            ancestorRefs
-          );
+  private resolveRefs(subschema) {
+    const cyclical = eachDeep(
+      subschema,
+      (value, key, parent, context) => {
+        if (
+          key !== "properties" &&
+          typeof value === "object" &&
+          "$ref" in value
+        ) {
+          parent[key] = RuleTemplate.getDefByRef(value["$ref"], this.schema);
         }
-      } else {
-        this.resolveRefs(subschema, childKey, childValue, ancestorRefs);
-      }
-    }
+      },
+      {}
+    );
+    const acyclical = eachDeep(
+      cyclical,
+      (value, key, parent, context) => {
+        if (context.isCircular) {
+          parent[key] = RuleTemplate.deepCopy(RuleTemplate.recursionSymbol);
+          return false;
+        }
+      },
+      { checkCircular: true }
+    );
+    return acyclical;
   }
 
-  private resolveArray(subschema, ancestorRefs: Set<IJSONSchema>) {
-    for (const [childKey, childValue] of subschema.entries()) {
-      this.resolveRefs(subschema, childKey, childValue, ancestorRefs);
-    }
-  }
-
-  private resolveRefs(
-    parent,
-    key: number | string,
-    subschema,
-    ancestorRefs: Set<IJSONSchema>
+  private mergeWithCustomizer(
+    objValue: any,
+    srcValue: any,
+    key: string,
+    object: any,
+    source: any
   ) {
-    if (typeof subschema === "object" && !Array.isArray(subschema)) {
-      if ("$ref" in subschema) {
-        parent[key] = this.resolveRef(parent, key, subschema, ancestorRefs);
-      } else {
-        this.resolveObject(subschema, ancestorRefs);
-      }
-    } else if (Array.isArray(subschema)) {
-      this.resolveArray(subschema, ancestorRefs);
+    if (Array.isArray(objValue) && Array.isArray(srcValue)) {
+      return RuleTemplate.removeDuplicates([...objValue, ...srcValue]);
     }
+    if (Array.isArray(objValue) && srcValue && !Array.isArray(srcValue)) {
+      return RuleTemplate.removeDuplicates([...objValue, srcValue]);
+    }
+    if (objValue && !Array.isArray(objValue) && Array.isArray(srcValue)) {
+      return RuleTemplate.removeDuplicates([objValue, ...srcValue]);
+    }
+  }
+
+  private mergeCompositions(subschema: IJSONSchema) {
+    return eachDeep(
+      subschema,
+      (value, key, parent, context) => {
+        if (
+          context.afterIterate &&
+          (!context.parent ||
+            !context.parent.parent ||
+            context.parent.parent.value["type"] !== "array") &&
+          (key === "allOf" || key === "anyOf" || key === "oneOf")
+        ) {
+          delete parent[key];
+          context.parent.parent.value[context.parent.key] = {
+            ...parent,
+            ...mergeWith({}, ...value, this.mergeWithCustomizer),
+          };
+        }
+      },
+      { callbackAfterIterate: true }
+    );
   }
 
   private walkObject(subschema: IJSONSchema, enumerate: boolean) {
@@ -126,13 +141,13 @@ export class RuleTemplate {
         ...this.walkOneOf(subschema, enumerate),
       ];
     }
-    return this.enumerate(subtemplate, enumerate);
+    return RuleTemplate.enumerate(subtemplate, enumerate);
   }
 
   private walkArray(subschema: IJSONSchema) {
     if ("items" in subschema) {
       const walked = this.walk(subschema["items"], true);
-      const deduped = this.removeDuplicates(walked);
+      const deduped = RuleTemplate.removeDuplicates(walked);
       const filtered = deduped.filter(
         (item) => deduped.length === 1 || item !== ""
       );
@@ -187,35 +202,35 @@ export class RuleTemplate {
   }
 
   private walkConst(subschema: IJSONSchema, enumerate: boolean) {
-    return this.enumerate(subschema["const"], enumerate);
+    return RuleTemplate.enumerate(subschema["const"], enumerate);
   }
 
   private walkPattern(subschema: IJSONSchema, enumerate: boolean) {
-    return this.enumerate(RuleTemplate.stringSymbol, enumerate);
+    return RuleTemplate.enumerate(RuleTemplate.stringSymbol, enumerate);
   }
 
   private walkBoolean(enumerate: boolean) {
-    return this.enumerate("true | false", enumerate);
+    return RuleTemplate.enumerate("true | false", enumerate);
   }
 
   private walkInteger(enumerate: boolean) {
-    return this.enumerate(12345, enumerate);
+    return RuleTemplate.enumerate(12345, enumerate);
   }
 
   private walkNumber(enumerate: boolean) {
-    return this.enumerate(12345.6789, enumerate);
+    return RuleTemplate.enumerate(12345.6789, enumerate);
   }
 
   private walkString(enumerate: boolean) {
-    return this.enumerate(RuleTemplate.stringSymbol, enumerate);
+    return RuleTemplate.enumerate(RuleTemplate.stringSymbol, enumerate);
   }
 
   private walkMultiType(enumerate: boolean) {
-    return this.enumerate(RuleTemplate.stringSymbol, enumerate);
+    return RuleTemplate.enumerate(RuleTemplate.stringSymbol, enumerate);
   }
 
   private walkRecursion(subschema: IJSONSchema, enumerate: boolean) {
-    return this.enumerate(subschema, enumerate);
+    return RuleTemplate.enumerate(subschema, enumerate);
   }
 
   private walk(subschema: IJSONSchema, enumerate: boolean) {
@@ -251,108 +266,6 @@ export class RuleTemplate {
     throw Error(`Unknown JSON Schema type for ${JSON.stringify(subschema)}`);
   }
 
-  private mergeObject(subschema: IJSONSchema) {
-    if ("properties" in subschema) {
-      for (const [key, value] of Object.entries(subschema["properties"])) {
-        if ("allOf" in value) {
-          subschema["properties"][key] = this.mergeAllOf(value, false);
-        } else if ("anyOf" in value) {
-          subschema["properties"][key] = this.mergeAnyOf(value, false);
-        } else if ("oneOf" in value) {
-          subschema["properties"][key] = this.mergeOneOf(value, false);
-        }
-        this.mergeCompositions(value, false);
-      }
-    }
-    if ("patternProperties" in subschema) {
-      for (const [key, value] of Object.entries(
-        subschema["patternProperties"]
-      )) {
-        if ("allOf" in value) {
-          subschema["patternProperties"][key] = this.mergeAllOf(value, false);
-        } else if ("anyOf" in value) {
-          subschema["patternProperties"][key] = this.mergeAnyOf(value, false);
-        } else if ("oneOf" in value) {
-          subschema["patternProperties"][key] = this.mergeOneOf(value, false);
-        }
-        this.mergeCompositions(value, false);
-      }
-    }
-    return subschema;
-  }
-
-  private mergeArray(subschema: IJSONSchema) {
-    if ("items" in subschema) {
-      this.mergeCompositions(subschema["items"], true);
-    }
-    return subschema;
-  }
-
-  private mergeWithCustomizer(
-    objValue: any,
-    srcValue: any,
-    key: string,
-    object: any,
-    source: any
-  ) {
-    if (Array.isArray(objValue) && Array.isArray(srcValue)) {
-      return [...objValue, ...srcValue];
-    }
-    if (Array.isArray(objValue) && srcValue && !Array.isArray(srcValue)) {
-      return [...objValue, srcValue];
-    }
-    if (objValue && !Array.isArray(objValue) && Array.isArray(srcValue)) {
-      return [objValue, ...srcValue];
-    }
-  }
-
-  private mergeComposition(
-    subschema: IJSONSchema,
-    propertyName: string,
-    enumerate: boolean
-  ) {
-    if (enumerate) {
-      return subschema;
-    }
-    const value = subschema[propertyName];
-    delete subschema[propertyName];
-    return {
-      ...subschema,
-      ...mergeWith(
-        {},
-        ...value.map((of) => this.mergeCompositions(of, false)),
-        this.mergeWithCustomizer
-      ),
-    };
-  }
-
-  private mergeAllOf(subschema: IJSONSchema, enumerate: boolean) {
-    return this.mergeComposition(subschema, "allOf", enumerate);
-  }
-
-  private mergeAnyOf(subschema: IJSONSchema, enumerate: boolean) {
-    return this.mergeComposition(subschema, "anyOf", enumerate);
-  }
-
-  private mergeOneOf(subschema: IJSONSchema, enumerate: boolean) {
-    return this.mergeComposition(subschema, "oneOf", enumerate);
-  }
-
-  private mergeCompositions(subschema: IJSONSchema, enumerate: boolean) {
-    if (subschema["type"] === "object") {
-      return this.mergeObject(subschema);
-    } else if (subschema["type"] === "array") {
-      return this.mergeArray(subschema);
-    } else if ("allOf" in subschema) {
-      return this.mergeAllOf(subschema, enumerate);
-    } else if ("anyOf" in subschema) {
-      return this.mergeAnyOf(subschema, enumerate);
-    } else if ("oneOf" in subschema) {
-      return this.mergeOneOf(subschema, enumerate);
-    }
-    return subschema;
-  }
-
   private readonly schema: IJSONSchema;
 
   public constructor(schema: IJSONSchema) {
@@ -360,9 +273,8 @@ export class RuleTemplate {
   }
 
   public schemaToTemplate(): string {
-    const resolved = this.deepCopy(this.schema);
-    this.resolveRefs(null, null, resolved, new Set());
-    const merged = this.mergeCompositions(resolved, false);
+    const resolved = RuleTemplate.deepCopy(this.resolveRefs(this.schema));
+    const merged = this.mergeCompositions(resolved);
     const template = this.walk(merged, false);
     return jsonToYAML(template);
   }

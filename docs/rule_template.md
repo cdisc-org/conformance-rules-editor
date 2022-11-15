@@ -2,14 +2,17 @@
 
 ```yml
 Authority:
-  Organization: ""
+  Organization: CDISC
 Check:
-  ^all|any$:
-    - ...
+  all:
     - comparator: ""
       context: ""
       date_component: year | month | day | hour | minute | second | microsecond
-      name: ""
+      name: >-
+        dataset_class | dataset_is_non_standard | dataset_label |
+        dataset_location | dataset_name | dataset_size | dataset_structure |
+        define_variable_allowed_terms | define_variable_ccode |
+        define_variable_data_type | ...
       operator: >-
         additional_columns_empty | additional_columns_not_empty |
         conformant_value_data_type | conformant_value_length | contains |
@@ -23,6 +26,52 @@ Check:
       value: ""
       value_is_literal: true
       within: ""
+    - ...: ""
+  any:
+    - comparator: ""
+      context: ""
+      date_component: year | month | day | hour | minute | second | microsecond
+      name: >-
+        dataset_class | dataset_is_non_standard | dataset_label |
+        dataset_location | dataset_name | dataset_size | dataset_structure |
+        define_variable_allowed_terms | define_variable_ccode |
+        define_variable_data_type | ...
+      operator: >-
+        additional_columns_empty | additional_columns_not_empty |
+        conformant_value_data_type | conformant_value_length | contains |
+        contains_all | contains_case_insensitive | date_equal_to |
+        date_greater_than | date_greater_than_or_equal_to | ...
+      order: asc | dsc
+      ordering: ""
+      prefix: 12345
+      suffix: 12345
+      target: ""
+      value: ""
+      value_is_literal: true
+      within: ""
+    - ...: ""
+  not:
+    comparator: ""
+    context: ""
+    date_component: year | month | day | hour | minute | second | microsecond
+    name: >-
+      dataset_class | dataset_is_non_standard | dataset_label | dataset_location
+      | dataset_name | dataset_size | dataset_structure |
+      define_variable_allowed_terms | define_variable_ccode |
+      define_variable_data_type | ...
+    operator: >-
+      additional_columns_empty | additional_columns_not_empty |
+      conformant_value_data_type | conformant_value_length | contains |
+      contains_all | contains_case_insensitive | date_equal_to |
+      date_greater_than | date_greater_than_or_equal_to | ...
+    order: asc | dsc
+    ordering: ""
+    prefix: 12345
+    suffix: 12345
+    target: ""
+    value: ""
+    value_is_literal: true
+    within: ""
 Citations:
   - Cited Guidance: ""
     Document: ""
@@ -33,12 +82,16 @@ Core:
   Version: "1"
 Description: ""
 Match Datasets:
-  - Name: ""
+  - Name: >-
+      All | AP-- | APRELSUB | POOLDEF | RELREC | RELSPEC | RELSUB | SUPP-- |
+      ADAM OTHER | ALL | ...
     Is Relationship: true
     Keys:
       - ""
 Operations:
-  - domain: ""
+  - domain: >-
+      All | AP-- | APRELSUB | POOLDEF | RELREC | RELSPEC | RELSUB | SUPP-- |
+      ADAM OTHER | ALL | ...
     group:
       - ""
     id: ""
@@ -49,7 +102,6 @@ Operations:
 Outcome:
   Message: ""
   Output Variables:
-    - ""
     - ""
 References:
   - Origin: ""
@@ -88,6 +140,16 @@ Scopes:
       - Special-Purpose
       - Study Reference
       - Trial Design
+    Exclude:
+      - All
+      - Events
+      - Findings
+      - Findings About
+      - Interventions
+      - Relationship
+      - Special-Purpose
+      - Study Reference
+      - Trial Design
   Data Structures:
     Include:
       - ADAM OTHER
@@ -98,16 +160,25 @@ Scopes:
       - MEDICAL DEVICE OCCURRENCE DATA STRUCTURE
       - OCCURRENCE DATA STRUCTURE
       - SUBJECT LEVEL ANALYSIS DATASET
+    Exclude:
+      - ADAM OTHER
+      - ALL
+      - BASIC DATA STRUCTURE
+      - DEVICE LEVEL ANALYSIS DATASET
+      - MEDICAL DEVICE BASIC DATA STRUCTURE
+      - MEDICAL DEVICE OCCURRENCE DATA STRUCTURE
+      - OCCURRENCE DATA STRUCTURE
+      - SUBJECT LEVEL ANALYSIS DATASET
   Datasets:
     Exclude:
-      - ""
+      - All | AP-- | APRELSUB | POOLDEF | RELREC | RELSPEC | RELSUB | SUPP--
     Include:
-      - ""
+      - All | AP-- | APRELSUB | POOLDEF | RELREC | RELSPEC | RELSUB | SUPP--
   Domains:
     Exclude:
-      - ""
+      - All | AP-- | APRELSUB | POOLDEF | RELREC | RELSPEC | RELSUB | SUPP--
     Include:
-      - ""
+      - All | AP-- | APRELSUB | POOLDEF | RELREC | RELSPEC | RELSUB | SUPP--
     include_split_datasets: true | false
   Standards:
     - Name: ""

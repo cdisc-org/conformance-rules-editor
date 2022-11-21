@@ -26,11 +26,7 @@ export class RuleTemplate {
   }
 
   private static removeDuplicates(arr) {
-    return arr.filter((item, index) => arr.indexOf(item) === index);
-  }
-
-  private static enumerate(obj, enumerate: boolean) {
-    return enumerate ? [obj] : obj;
+    return arr.filter((item, index: number) => arr.indexOf(item) === index);
   }
 
   private static getDefByRef(ref: string, schema) {
@@ -42,6 +38,19 @@ export class RuleTemplate {
       throw Error(`Missing $ref value ${ref}`);
     }
     return def;
+  }
+
+  private static deleteProperties(obj: {}) {
+    for (const key in obj) {
+      delete obj[key];
+    }
+  }
+
+  private static replaceProperties(oldObj: {}, newObj: {}) {
+    RuleTemplate.deleteProperties(oldObj);
+    for (const [key, value] of Object.entries(newObj)) {
+      oldObj[key] = value;
+    }
   }
 
   private resolveRefs(subschema) {
@@ -111,88 +120,54 @@ export class RuleTemplate {
     );
   }
 
-  private walkObject(subschema: IJSONSchema, enumerate: boolean) {
-    const subtemplate = {};
-    if ("properties" in subschema) {
-      for (const [key, value] of Object.entries(subschema["properties"])) {
-        subtemplate[key] = this.walk(value, false);
-      }
-    }
-    if ("patternProperties" in subschema) {
-      for (const [key, value] of Object.entries(
-        subschema["patternProperties"]
-      )) {
-        subtemplate[key] = this.walk(value, false);
-      }
-    }
-    if (enumerate && "allOf" in subschema) {
-      return [
-        ...(Object.keys(subtemplate).length ? [subtemplate] : []),
-        ...this.walkAllOf(subschema, enumerate),
-      ];
-    } else if (enumerate && "anyOf" in subschema) {
-      return [
-        ...(Object.keys(subtemplate).length ? [subtemplate] : []),
-        ...this.walkAnyOf(subschema, enumerate),
-      ];
-    } else if (enumerate && "oneOf" in subschema) {
-      return [
-        ...(Object.keys(subtemplate).length ? [subtemplate] : []),
-        ...this.walkOneOf(subschema, enumerate),
-      ];
-    }
-    return RuleTemplate.enumerate(subtemplate, enumerate);
+  private walkObject(subschema: IJSONSchema) {
+    RuleTemplate.replaceProperties(subschema, {
+      ...subschema["properties"],
+      ...subschema["patternProperties"],
+    });
   }
 
   private walkArray(subschema: IJSONSchema) {
-    if ("items" in subschema) {
-      const walked = this.walk(subschema["items"], true);
-      const deduped = RuleTemplate.removeDuplicates(walked);
-      const filtered = deduped.filter(
-        (item) => deduped.length === 1 || item !== ""
-      );
-      const sorted = filtered.sort((a, b) => {
-        /* Put recursion Symbols at end of list */
-        if (
-          isEqual(a, RuleTemplate.recursionSymbol) &&
-          !isEqual(b, RuleTemplate.recursionSymbol)
-        ) {
-          return 1;
-        }
-        if (
-          isEqual(b, RuleTemplate.recursionSymbol) &&
-          !isEqual(a, RuleTemplate.recursionSymbol)
-        ) {
-          return -1;
-        }
-        return 0;
-      });
-      return sorted;
-    } else {
-      return [];
-    }
+    const items = "items" in subschema ? subschema["items"] : [];
+    const arrayed = Array.isArray(items) ? items : [items];
+    const deduped = RuleTemplate.removeDuplicates(arrayed);
+    /* If array is longer than 1, removed empty string symbols */
+    const filtered = deduped.filter(
+      (item) =>
+        deduped.length === 1 || !isEqual(item, RuleTemplate.stringSymbol)
+    );
+    /* Put recursion Symbols at end of list */
+    const sorted = filtered.sort((a, b) => {
+      if (
+        isEqual(a, RuleTemplate.recursionSymbol) &&
+        !isEqual(b, RuleTemplate.recursionSymbol)
+      ) {
+        return 1;
+      }
+      if (
+        isEqual(b, RuleTemplate.recursionSymbol) &&
+        !isEqual(a, RuleTemplate.recursionSymbol)
+      ) {
+        return -1;
+      }
+      return 0;
+    });
+    return sorted;
   }
 
-  private walkComposition(subschema: [IJSONSchema], enumerate: boolean) {
-    return enumerate
-      ? subschema.map((of) => this.walk(of, false))
-      : this.walk(mergeWith({}, ...subschema, this.mergeWithCustomizer), false);
+  private walkComposition(subschema: IJSONSchema) {
+    return [
+      ...(subschema["allOf"] ? subschema["allOf"].flat() : []),
+      ...(subschema["anyOf"] ? subschema["anyOf"].flat() : []),
+      ...(subschema["oneOf"] ? subschema["oneOf"].flat() : []),
+    ];
   }
 
-  private walkAllOf(subschema: IJSONSchema, enumerate: boolean) {
-    return this.walkComposition(subschema["allOf"], enumerate);
-  }
-
-  private walkAnyOf(subschema: IJSONSchema, enumerate: boolean) {
-    return this.walkComposition(subschema["anyOf"], enumerate);
-  }
-
-  private walkOneOf(subschema: IJSONSchema, enumerate: boolean) {
-    return this.walkComposition(subschema["oneOf"], enumerate);
-  }
-
-  private walkEnum(subschema: IJSONSchema, enumerate: boolean) {
-    return enumerate
+  private walkEnum(subschema: IJSONSchema, parent: IJSONSchema) {
+    const isArray =
+      (typeof parent !== "undefined" && parent["type"] === "array") ||
+      Array.isArray(parent);
+    return isArray
       ? subschema["enum"]
       : subschema["enum"].length <= RuleTemplate.maxEnums
       ? subschema["enum"].join(" | ")
@@ -201,69 +176,74 @@ export class RuleTemplate {
         );
   }
 
-  private walkConst(subschema: IJSONSchema, enumerate: boolean) {
-    return RuleTemplate.enumerate(subschema["const"], enumerate);
+  private walkConst(subschema: IJSONSchema) {
+    return subschema["const"];
   }
 
-  private walkPattern(subschema: IJSONSchema, enumerate: boolean) {
-    return RuleTemplate.enumerate(RuleTemplate.stringSymbol, enumerate);
+  private walkPattern(subschema: IJSONSchema) {
+    return RuleTemplate.stringSymbol;
   }
 
-  private walkBoolean(enumerate: boolean) {
-    return RuleTemplate.enumerate("true | false", enumerate);
+  private walkBoolean() {
+    return "true | false";
   }
 
-  private walkInteger(enumerate: boolean) {
-    return RuleTemplate.enumerate(12345, enumerate);
+  private walkInteger() {
+    return 12345;
   }
 
-  private walkNumber(enumerate: boolean) {
-    return RuleTemplate.enumerate(12345.6789, enumerate);
+  private walkNumber() {
+    return 12345.6789;
   }
 
-  private walkString(enumerate: boolean) {
-    return RuleTemplate.enumerate(RuleTemplate.stringSymbol, enumerate);
+  private walkString() {
+    return RuleTemplate.stringSymbol;
   }
 
-  private walkMultiType(enumerate: boolean) {
-    return RuleTemplate.enumerate(RuleTemplate.stringSymbol, enumerate);
+  private walkMultiType() {
+    return RuleTemplate.stringSymbol;
   }
 
-  private walkRecursion(subschema: IJSONSchema, enumerate: boolean) {
-    return RuleTemplate.enumerate(subschema, enumerate);
+  private walkRecursion(subschema: IJSONSchema) {
+    return subschema;
   }
 
-  private walk(subschema: IJSONSchema, enumerate: boolean) {
-    if (subschema["type"] === "object") {
-      return this.walkObject(subschema, enumerate);
-    } else if (subschema["type"] === "array") {
-      return this.walkArray(subschema);
-    } else if ("allOf" in subschema) {
-      return this.walkAllOf(subschema, enumerate);
-    } else if ("anyOf" in subschema) {
-      return this.walkAnyOf(subschema, enumerate);
-    } else if ("oneOf" in subschema) {
-      return this.walkOneOf(subschema, enumerate);
-    } else if ("enum" in subschema) {
-      return this.walkEnum(subschema, enumerate);
-    } else if ("const" in subschema) {
-      return this.walkConst(subschema, enumerate);
-    } else if ("pattern" in subschema) {
-      return this.walkPattern(subschema, enumerate);
-    } else if (subschema["type"] === "boolean") {
-      return this.walkBoolean(enumerate);
-    } else if (subschema["type"] === "integer") {
-      return this.walkInteger(enumerate);
-    } else if (subschema["type"] === "number") {
-      return this.walkNumber(enumerate);
-    } else if (subschema["type"] === "string") {
-      return this.walkString(enumerate);
-    } else if (Array.isArray(subschema["type"])) {
-      return this.walkMultiType(enumerate);
-    } else if (isEqual(subschema, RuleTemplate.recursionSymbol)) {
-      return this.walkRecursion(subschema, enumerate);
-    }
-    throw Error(`Unknown JSON Schema type for ${JSON.stringify(subschema)}`);
+  private walk(subschema: IJSONSchema) {
+    return eachDeep(
+      subschema,
+      (value, key, parent, context) => {
+        if (!context.afterIterate && typeof value === "object") {
+          if ("enum" in value) {
+            parent[key] = this.walkEnum(value, parent);
+          } else if ("const" in value) {
+            parent[key] = this.walkConst(value);
+          } else if ("pattern" in value) {
+            parent[key] = this.walkPattern(value);
+          } else if (value["type"] === "boolean") {
+            parent[key] = this.walkBoolean();
+          } else if (value["type"] === "integer") {
+            parent[key] = this.walkInteger();
+          } else if (value["type"] === "number") {
+            parent[key] = this.walkNumber();
+          } else if (value["type"] === "string") {
+            parent[key] = this.walkString();
+          } else if (Array.isArray(value["type"])) {
+            parent[key] = this.walkMultiType();
+          } else if (isEqual(value, RuleTemplate.recursionSymbol)) {
+            parent[key] = this.walkRecursion(value);
+          }
+        } else if (context.afterIterate && typeof value === "object") {
+          if (value["type"] === "object") {
+            this.walkObject(value);
+          } else if (value["type"] === "array") {
+            parent[key] = this.walkArray(value);
+          } else if ("allOf" in value || "anyOf" in value || "oneOf" in value) {
+            parent[key] = this.walkComposition(value);
+          }
+        }
+      },
+      { callbackAfterIterate: true }
+    );
   }
 
   private readonly schema: IJSONSchema;
@@ -274,8 +254,8 @@ export class RuleTemplate {
 
   public schemaToTemplate(): string {
     const resolved = RuleTemplate.deepCopy(this.resolveRefs(this.schema));
-    const merged = this.mergeCompositions(resolved);
-    const template = this.walk(merged, false);
-    return jsonToYAML(template);
+    this.mergeCompositions(resolved);
+    this.walk(resolved);
+    return jsonToYAML(resolved);
   }
 }

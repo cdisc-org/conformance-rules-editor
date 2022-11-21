@@ -120,14 +120,14 @@ export class RuleTemplate {
     );
   }
 
-  private walkObject(subschema: IJSONSchema) {
+  private templateObject(subschema: IJSONSchema) {
     RuleTemplate.replaceProperties(subschema, {
       ...subschema["properties"],
       ...subschema["patternProperties"],
     });
   }
 
-  private walkArray(subschema: IJSONSchema) {
+  private templateArray(subschema: IJSONSchema) {
     const items = "items" in subschema ? subschema["items"] : [];
     const arrayed = Array.isArray(items) ? items : [items];
     const deduped = RuleTemplate.removeDuplicates(arrayed);
@@ -155,7 +155,7 @@ export class RuleTemplate {
     return sorted;
   }
 
-  private walkComposition(subschema: IJSONSchema) {
+  private templateComposition(subschema: IJSONSchema) {
     return [
       ...(subschema["allOf"] ? subschema["allOf"].flat() : []),
       ...(subschema["anyOf"] ? subschema["anyOf"].flat() : []),
@@ -163,7 +163,7 @@ export class RuleTemplate {
     ];
   }
 
-  private walkEnum(subschema: IJSONSchema, parent: IJSONSchema) {
+  private templateEnum(subschema: IJSONSchema, parent: IJSONSchema) {
     const isArray =
       (typeof parent !== "undefined" && parent["type"] === "array") ||
       Array.isArray(parent);
@@ -176,69 +176,69 @@ export class RuleTemplate {
         );
   }
 
-  private walkConst(subschema: IJSONSchema) {
+  private templateConst(subschema: IJSONSchema) {
     return subschema["const"];
   }
 
-  private walkPattern(subschema: IJSONSchema) {
+  private templatePattern(subschema: IJSONSchema) {
     return RuleTemplate.stringSymbol;
   }
 
-  private walkBoolean() {
+  private templateBoolean() {
     return "true | false";
   }
 
-  private walkInteger() {
+  private templateInteger() {
     return 12345;
   }
 
-  private walkNumber() {
+  private templateNumber() {
     return 12345.6789;
   }
 
-  private walkString() {
+  private templateString() {
     return RuleTemplate.stringSymbol;
   }
 
-  private walkMultiType() {
+  private templateMultiType() {
     return RuleTemplate.stringSymbol;
   }
 
-  private walkRecursion(subschema: IJSONSchema) {
+  private templateRecursion(subschema: IJSONSchema) {
     return subschema;
   }
 
-  private walk(subschema: IJSONSchema) {
+  private template(subschema: IJSONSchema) {
     return eachDeep(
       subschema,
       (value, key, parent, context) => {
         if (!context.afterIterate && typeof value === "object") {
           if ("enum" in value) {
-            parent[key] = this.walkEnum(value, parent);
+            parent[key] = this.templateEnum(value, parent);
           } else if ("const" in value) {
-            parent[key] = this.walkConst(value);
+            parent[key] = this.templateConst(value);
           } else if ("pattern" in value) {
-            parent[key] = this.walkPattern(value);
+            parent[key] = this.templatePattern(value);
           } else if (value["type"] === "boolean") {
-            parent[key] = this.walkBoolean();
+            parent[key] = this.templateBoolean();
           } else if (value["type"] === "integer") {
-            parent[key] = this.walkInteger();
+            parent[key] = this.templateInteger();
           } else if (value["type"] === "number") {
-            parent[key] = this.walkNumber();
+            parent[key] = this.templateNumber();
           } else if (value["type"] === "string") {
-            parent[key] = this.walkString();
+            parent[key] = this.templateString();
           } else if (Array.isArray(value["type"])) {
-            parent[key] = this.walkMultiType();
+            parent[key] = this.templateMultiType();
           } else if (isEqual(value, RuleTemplate.recursionSymbol)) {
-            parent[key] = this.walkRecursion(value);
+            parent[key] = this.templateRecursion(value);
           }
         } else if (context.afterIterate && typeof value === "object") {
           if (value["type"] === "object") {
-            this.walkObject(value);
+            this.templateObject(value);
           } else if (value["type"] === "array") {
-            parent[key] = this.walkArray(value);
+            parent[key] = this.templateArray(value);
           } else if ("allOf" in value || "anyOf" in value || "oneOf" in value) {
-            parent[key] = this.walkComposition(value);
+            parent[key] = this.templateComposition(value);
           }
         }
       },
@@ -255,7 +255,7 @@ export class RuleTemplate {
   public schemaToTemplate(): string {
     const resolved = RuleTemplate.deepCopy(this.resolveRefs(this.schema));
     this.mergeCompositions(resolved);
-    this.walk(resolved);
+    this.template(resolved);
     return jsonToYAML(resolved);
   }
 }

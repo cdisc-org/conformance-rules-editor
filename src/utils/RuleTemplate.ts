@@ -1,5 +1,5 @@
 import { jsonToYAML } from "./json_yaml";
-import { isEqual, mergeWith } from "lodash";
+import { isEqual, merge, mergeWith } from "lodash";
 import eachDeep from "deepdash-es/eachDeep";
 
 interface IJSONSchema {
@@ -121,10 +121,16 @@ export class RuleTemplate {
   }
 
   private templateObject(subschema: IJSONSchema) {
-    RuleTemplate.replaceProperties(subschema, {
+    const flatObject = {
       ...subschema["properties"],
       ...subschema["patternProperties"],
-    });
+    };
+    if ("allOf" in subschema || "anyOf" in subschema || "oneOf" in subschema) {
+      return this.templateComposition(subschema).map((composite) =>
+        merge({}, flatObject, composite)
+      );
+    }
+    return flatObject;
   }
 
   private templateArray(subschema: IJSONSchema) {
@@ -234,7 +240,13 @@ export class RuleTemplate {
           }
         } else if (context.afterIterate && typeof value === "object") {
           if (value["type"] === "object") {
-            this.templateObject(value);
+            const templateObject = this.templateObject(value);
+            if (parent) {
+              parent[key] = templateObject;
+            } else {
+              /* Object is the root */
+              RuleTemplate.replaceProperties(value, templateObject);
+            }
           } else if (value["type"] === "array") {
             parent[key] = this.templateArray(value);
           } else if ("allOf" in value || "anyOf" in value || "oneOf" in value) {

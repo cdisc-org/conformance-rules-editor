@@ -2,64 +2,286 @@
 
 ```yml
 Authority:
-  Organization: CDISC
+  - Organization: CDISC
+    Standards:
+      - Name: ADaMIG
+        References:
+          - Citations:
+              - Cited Guidance: ""
+                Document: ""
+                Item: ""
+                Section: ""
+            Criteria:
+              Logical Expression:
+                Condition: ""
+                Rule: ""
+              Plain Language Expression: ""
+              Type: Failure | Success
+            Origin: ADaM Conformance Rules
+            Related Rules:
+              Id: ""
+              Relationship: Predecessor | Related | Successor
+            Release Notes: ""
+            Rule Identifier:
+              Id: ""
+              Version: ""
+            Severity: ""
+            Validator Rule Message: ""
+            Version: "4.0"
+        Version: 1.0 | 1.1 | 1.2 | 1.3
+      - Name: SDTMIG
+        References:
+          - Origin: SDTM and SDTMIG Conformance Rules
+            Rule Identifier:
+              Id: ""
+              Version: 1 | 2 | 3
+            Version: "2.0"
+        Version: 3.2 | 3.3 | 3.4
+      - Name: SENDIG
+        References:
+          - Origin: SEND Conformance Rules
+            Rule Identifier:
+              Id: ""
+            Version: "5.0"
+        Version: 3.0 | 3.1 | 3.1.1
+      - Name: SENDIG-DART
+        References:
+          - Origin: SEND Conformance Rules
+            Rule Identifier:
+              Id: ""
+            Version: "5.0"
+        Version: "1.1"
+  - Organization: FDA
+    Standards:
+      - Name: SDTMIG
+        References:
+          - Citations:
+              - Cited Guidance: ""
+                Document: ""
+                Item: ""
+                Section: ""
+            Criteria:
+              Logical Expression:
+                Condition: ""
+                Rule: ""
+              Plain Language Expression: ""
+              Type: Failure | Success
+            Origin: FDA Validator Rules
+            Related Rules:
+              Id: ""
+              Relationship: Predecessor | Related | Successor
+            Release Notes: ""
+            Rule Identifier:
+              Id: ""
+              Version: ""
+            Severity: ""
+            Validator Rule Message: ""
+            Version: 1.5 March 2021
+        Version: 3.1.2 | 3.1.3 | 3.2 | 3.3
+      - References:
+          - Origin: FDA Validator Rules
+            Rule Identifier:
+              Id: ""
+            Version: 1.5 March 2021
+        Name: SENDIG
+        Version: 3.0 | 3.1
 Check:
-  all|any|not:
-    - comparator:
-      context:
-      date_component: year|month|day|hour|minute|second|microsecond
-      name:
-      operator:
-      order: asc|dsc
-      ordering:
-      prefix:
-      suffix:
-      target:
-      value:
+  all:
+    - comparator: ""
+      context: ""
+      date_component: year | month | day | hour | minute | second | microsecond
+      name: >-
+        dataset_class | dataset_is_non_standard | dataset_label |
+        dataset_location | dataset_name | dataset_size | dataset_structure |
+        define_variable_allowed_terms | define_variable_ccode |
+        define_variable_data_type | ...
+      operator: >-
+        additional_columns_empty | additional_columns_not_empty |
+        conformant_value_data_type | conformant_value_length | contains |
+        contains_all | contains_case_insensitive | date_equal_to |
+        date_greater_than | date_greater_than_or_equal_to | ...
+      order: asc | dsc
+      ordering: ""
+      prefix: 12345
+      suffix: 12345
+      target: ""
+      value: ""
       value_is_literal: true
-      within:
-Citations:
-  - Cited Guidance:
-    Document: SDTM v2.0
-    Item:
-    Section:
+      within: ""
+    - ...: ""
+  any:
+    - comparator: ""
+      context: ""
+      date_component: year | month | day | hour | minute | second | microsecond
+      name: >-
+        dataset_class | dataset_is_non_standard | dataset_label |
+        dataset_location | dataset_name | dataset_size | dataset_structure |
+        define_variable_allowed_terms | define_variable_ccode |
+        define_variable_data_type | ...
+      operator: >-
+        additional_columns_empty | additional_columns_not_empty |
+        conformant_value_data_type | conformant_value_length | contains |
+        contains_all | contains_case_insensitive | date_equal_to |
+        date_greater_than | date_greater_than_or_equal_to | ...
+      order: asc | dsc
+      ordering: ""
+      prefix: 12345
+      suffix: 12345
+      target: ""
+      value: ""
+      value_is_literal: true
+      within: ""
+    - ...: ""
+  not:
+    comparator: ""
+    context: ""
+    date_component: year | month | day | hour | minute | second | microsecond
+    name: >-
+      dataset_class | dataset_is_non_standard | dataset_label | dataset_location
+      | dataset_name | dataset_size | dataset_structure |
+      define_variable_allowed_terms | define_variable_ccode |
+      define_variable_data_type | ...
+    operator: >-
+      additional_columns_empty | additional_columns_not_empty |
+      conformant_value_data_type | conformant_value_length | contains |
+      contains_all | contains_case_insensitive | date_equal_to |
+      date_greater_than | date_greater_than_or_equal_to | ...
+    order: asc | dsc
+    ordering: ""
+    prefix: 12345
+    suffix: 12345
+    target: ""
+    value: ""
+    value_is_literal: true
+    within: ""
 Core:
-  Id: CDISC.SDTMIG.CG0000
+  Id: ""
   Version: "1"
-Description:
+  Status: Draft | Published
+Description: ""
+Executability: >-
+  Fully Executable | Partially Executable - Possible Overreporting | Partially
+  Executable - Possible Underreporting
 Match Datasets:
-  - Keys:
-      -
-    Name:
+  - Name: >-
+      All | AP-- | APRELSUB | POOLDEF | RELREC | RELSPEC | RELSUB | SUPP-- |
+      ADAM OTHER | ALL | ...
     Is Relationship: true
+    Keys:
+      - ""
 Operations:
-  - domain:
+  - domain: >-
+      All | AP-- | APRELSUB | POOLDEF | RELREC | RELSPEC | RELSUB | SUPP-- |
+      ADAM OTHER | ALL | ...
     group:
-      -
-    id: $
-    name:
-    operator: distinct|dy|extract_metadata|max|max_date|mean|min|min_date|variable_exists|variable_names|variable_value_count
+      - ""
+    id: ""
+    name: ""
+    operator: >-
+      distinct | dy | extract_metadata | max | max_date | mean | min | min_date
+      | variable_exists | variable_names | ...
 Outcome:
-  Message:
+  Message: ""
   Output Variables:
-    -
-References:
-  - Origin: SDTM and SDTMIG Conformance Rules
-    Rule Identifier:
-      Id: CG0000
-      Version: "1"
-    Version: "2.0"
-Rule Type:
-Scopes:
+    - ""
+Rule Type: >-
+  Dataset Contents Check against Define XML and Library Metadata | Dataset
+  Contents Check against Library Metadata | Dataset Metadata Check | Dataset
+  Metadata Check against Define XML | Define-XML | Domain Presence Check |
+  Record Data | Value Level Metadata Check against Define XML | Variable
+  Metadata Check | Variable Metadata Check against Define XML
+Scope:
   Classes:
-    Exclude|Include:
-      - All|Events|Findings|Findings About|Interventions|Relationship|Special-Purpose|Study Reference|Trial Design
+    Include:
+      - ALL
+      - EVENTS
+      - FINDINGS
+      - FINDINGS ABOUT
+      - INTERVENTIONS
+      - RELATIONSHIP
+      - SPECIAL PURPOSE
+      - STUDY REFERENCE
+      - TRIAL DESIGN
+    Exclude:
+      - ALL
+      - EVENTS
+      - FINDINGS
+      - FINDINGS ABOUT
+      - INTERVENTIONS
+      - RELATIONSHIP
+      - SPECIAL PURPOSE
+      - STUDY REFERENCE
+      - TRIAL DESIGN
+  Data Structures:
+    Include:
+      - ADAM OTHER
+      - ALL
+      - BASIC DATA STRUCTURE
+      - DEVICE LEVEL ANALYSIS DATASET
+      - MEDICAL DEVICE BASIC DATA STRUCTURE
+      - MEDICAL DEVICE OCCURRENCE DATA STRUCTURE
+      - OCCURRENCE DATA STRUCTURE
+      - SUBJECT LEVEL ANALYSIS DATASET
+    Exclude:
+      - ADAM OTHER
+      - ALL
+      - BASIC DATA STRUCTURE
+      - DEVICE LEVEL ANALYSIS DATASET
+      - MEDICAL DEVICE BASIC DATA STRUCTURE
+      - MEDICAL DEVICE OCCURRENCE DATA STRUCTURE
+      - OCCURRENCE DATA STRUCTURE
+      - SUBJECT LEVEL ANALYSIS DATASET
+  Datasets:
+    Exclude:
+      - All
+      - AP--
+      - APRELSUB
+      - POOLDEF
+      - RELREC
+      - RELSPEC
+      - RELSUB
+      - SUPP--
+    Include:
+      - All
+      - AP--
+      - APRELSUB
+      - POOLDEF
+      - RELREC
+      - RELSPEC
+      - RELSUB
+      - SUPP--
   Domains:
-    Exclude|Include|include_split_datasets:
-      -
-  Standards:
-    - Name: SDTMIG
-      Version: "3.4"
-Sensitivity: Dataset|Record
-Severity: Error|Notice|Reject|Warning
+    Exclude:
+      - All
+      - AP--
+      - APRELSUB
+      - POOLDEF
+      - RELREC
+      - RELSPEC
+      - RELSUB
+      - SUPP--
+    Include:
+      - All
+      - AP--
+      - APRELSUB
+      - POOLDEF
+      - RELREC
+      - RELSPEC
+      - RELSUB
+      - SUPP--
+    include_split_datasets: true | false
+  Subclasses:
+    Exclude:
+      - ADVERSE EVENT
+      - ALL
+      - MEDICAL DEVICE TIME-TO-EVENT
+      - NON-COMPARTMENTAL ANALYSIS
+      - TIME-TO-EVENT
+    Include:
+      - ADVERSE EVENT
+      - ALL
+      - MEDICAL DEVICE TIME-TO-EVENT
+      - NON-COMPARTMENTAL ANALYSIS
+      - TIME-TO-EVENT
+Sensitivity: Dataset | Record
 ```

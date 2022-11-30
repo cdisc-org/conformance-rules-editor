@@ -80,7 +80,7 @@ export class RuleTemplate {
     return acyclical;
   }
 
-  private mergeWithCustomizer(
+  private static mergeWithCompositions(
     objValue: any,
     srcValue: any,
     key: string,
@@ -112,12 +112,26 @@ export class RuleTemplate {
           delete parent[key];
           context.parent.parent.value[context.parent.key] = {
             ...parent,
-            ...mergeWith({}, ...value, this.mergeWithCustomizer),
+            ...mergeWith({}, ...value, RuleTemplate.mergeWithCompositions),
           };
         }
       },
       { callbackAfterIterate: true }
     );
+  }
+
+  private static mergeWithObjects(
+    objValue: any,
+    srcValue: any,
+    key: string,
+    object: any,
+    source: any
+  ) {
+    if (Array.isArray(objValue) && Array.isArray(srcValue)) {
+      return srcValue.map((element) =>
+        mergeWith({}, ...objValue, element, RuleTemplate.mergeWithObjects)
+      );
+    }
   }
 
   private templateObject(subschema: IJSONSchema) {
@@ -127,7 +141,7 @@ export class RuleTemplate {
     };
     if ("allOf" in subschema || "anyOf" in subschema || "oneOf" in subschema) {
       return this.templateComposition(subschema).map((composite) =>
-        merge({}, flatObject, composite)
+        mergeWith({}, flatObject, composite, RuleTemplate.mergeWithObjects)
       );
     }
     return flatObject;

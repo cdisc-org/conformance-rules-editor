@@ -416,18 +416,21 @@
                         "type": "string"
                       },
                       "Related Rules": {
-                        "additionalProperties": false,
-                        "properties": {
-                          "Id": {
-                            "type": "string"
+                        "items": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "Id": {
+                              "type": "string"
+                            },
+                            "Relationship": {
+                              "enum": ["Predecessor", "Related", "Successor"],
+                              "type": "string"
+                            }
                           },
-                          "Relationship": {
-                            "enum": ["Predecessor", "Related", "Successor"],
-                            "type": "string"
-                          }
+                          "required": ["Id", "Relationship"],
+                          "type": "object"
                         },
-                        "required": ["Id", "Relationship"],
-                        "type": "object"
+                        "type": "array"
                       },
                       "Release Notes": {
                         "type": "string"
@@ -488,7 +491,17 @@
                         },
                         "References": {
                           "items": {
+                            "additionalProperties": false,
                             "properties": {
+                              "Criteria": {
+                                "properties": {
+                                  "Type": {
+                                    "const": "Failure"
+                                  }
+                                },
+                                "required": ["Type"],
+                                "type": "object"
+                              },
                               "Origin": {
                                 "const": "ADaM Conformance Rules"
                               },
@@ -524,6 +537,15 @@
                           "items": {
                             "additionalProperties": false,
                             "properties": {
+                              "Criteria": {
+                                "properties": {
+                                  "Type": {
+                                    "const": "Success"
+                                  }
+                                },
+                                "required": ["Type"],
+                                "type": "object"
+                              },
                               "Origin": {
                                 "const": "SDTM and SDTMIG Conformance Rules"
                               },
@@ -563,6 +585,15 @@
                           "items": {
                             "additionalProperties": false,
                             "properties": {
+                              "Criteria": {
+                                "properties": {
+                                  "Type": {
+                                    "const": "Success"
+                                  }
+                                },
+                                "required": ["Type"],
+                                "type": "object"
+                              },
                               "Origin": {
                                 "const": "SEND Conformance Rules"
                               },
@@ -599,6 +630,15 @@
                           "items": {
                             "additionalProperties": false,
                             "properties": {
+                              "Criteria": {
+                                "properties": {
+                                  "Type": {
+                                    "const": "Success"
+                                  }
+                                },
+                                "required": ["Type"],
+                                "type": "object"
+                              },
                               "Origin": {
                                 "const": "SEND Conformance Rules"
                               },
@@ -642,10 +682,20 @@
               },
               "Standards": {
                 "items": {
+                  "additionalProperties": false,
                   "properties": {
                     "References": {
                       "items": {
                         "properties": {
+                          "Criteria": {
+                            "properties": {
+                              "Type": {
+                                "const": "Success"
+                              }
+                            },
+                            "required": ["Type"],
+                            "type": "object"
+                          },
                           "Origin": {
                             "const": "FDA Validator Rules"
                           },

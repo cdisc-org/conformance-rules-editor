@@ -1,5 +1,5 @@
 import { jsonToYAML } from "./json_yaml";
-import { isEqual, merge, mergeWith } from "lodash";
+import { isEqual, mergeWith } from "lodash";
 import eachDeep from "deepdash-es/eachDeep";
 
 interface IJSONSchema {

@@ -31,24 +31,77 @@ Authority:
         Version: 1.0 | 1.1 | 1.2 | 1.3
       - Name: SDTMIG
         References:
-          - Origin: SDTM and SDTMIG Conformance Rules
+          - Citations:
+              - Cited Guidance: ""
+                Document: ""
+                Item: ""
+                Section: ""
+            Criteria:
+              Logical Expression:
+                Condition: ""
+                Rule: ""
+              Plain Language Expression: ""
+              Type: Failure | Success
+            Origin: SDTM and SDTMIG Conformance Rules
+            Related Rules:
+              Id: ""
+              Relationship: Predecessor | Related | Successor
+            Release Notes: ""
             Rule Identifier:
               Id: ""
               Version: 1 | 2 | 3
+            Severity: ""
+            Validator Rule Message: ""
             Version: "2.0"
         Version: 3.2 | 3.3 | 3.4
       - Name: SENDIG
         References:
-          - Origin: SEND Conformance Rules
+          - Citations:
+              - Cited Guidance: ""
+                Document: ""
+                Item: ""
+                Section: ""
+            Criteria:
+              Logical Expression:
+                Condition: ""
+                Rule: ""
+              Plain Language Expression: ""
+              Type: Failure | Success
+            Origin: SEND Conformance Rules
+            Related Rules:
+              Id: ""
+              Relationship: Predecessor | Related | Successor
+            Release Notes: ""
             Rule Identifier:
               Id: ""
+              Version: ""
+            Severity: ""
+            Validator Rule Message: ""
             Version: "5.0"
         Version: 3.0 | 3.1 | 3.1.1
       - Name: SENDIG-DART
         References:
-          - Origin: SEND Conformance Rules
+          - Citations:
+              - Cited Guidance: ""
+                Document: ""
+                Item: ""
+                Section: ""
+            Criteria:
+              Logical Expression:
+                Condition: ""
+                Rule: ""
+              Plain Language Expression: ""
+              Type: Failure | Success
+            Origin: SEND Conformance Rules
+            Related Rules:
+              Id: ""
+              Relationship: Predecessor | Related | Successor
+            Release Notes: ""
             Rule Identifier:
               Id: ""
+              Version: ""
+            Severity: ""
+            Validator Rule Message: ""
             Version: "5.0"
         Version: "1.1"
   - Organization: FDA
@@ -78,12 +131,30 @@ Authority:
             Validator Rule Message: ""
             Version: 1.5 March 2021
         Version: 3.1.2 | 3.1.3 | 3.2 | 3.3
-      - References:
-          - Origin: FDA Validator Rules
+      - Name: SENDIG
+        References:
+          - Citations:
+              - Cited Guidance: ""
+                Document: ""
+                Item: ""
+                Section: ""
+            Criteria:
+              Logical Expression:
+                Condition: ""
+                Rule: ""
+              Plain Language Expression: ""
+              Type: Failure | Success
+            Origin: FDA Validator Rules
+            Related Rules:
+              Id: ""
+              Relationship: Predecessor | Related | Successor
+            Release Notes: ""
             Rule Identifier:
               Id: ""
+              Version: ""
+            Severity: ""
+            Validator Rule Message: ""
             Version: 1.5 March 2021
-        Name: SENDIG
         Version: 3.0 | 3.1
 Check:
   all:

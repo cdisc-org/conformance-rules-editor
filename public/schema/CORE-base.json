@@ -67,7 +67,7 @@
       "anyOf": [
         {
           "enum": [
-            "All",
+            "ALL",
             "AP--",
             "APRELSUB",
             "POOLDEF",

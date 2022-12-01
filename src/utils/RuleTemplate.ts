@@ -1,6 +1,7 @@
 import { jsonToYAML } from "./json_yaml";
 import { isEqual, mergeWith } from "lodash";
 import eachDeep from "deepdash-es/eachDeep";
+import { IIterateeContext } from "deepdash-es/IIterateeContext";
 
 interface IJSONSchema {
   $ref?: string;
@@ -17,6 +18,7 @@ interface IJSONSchema {
 }
 
 export class RuleTemplate {
+  /* Limit the number of enum values that appear in scalar values in the template */
   private static readonly maxEnums = 10;
   private static readonly recursionSymbol = { "...": "" };
   private static readonly stringSymbol = "";
@@ -29,6 +31,13 @@ export class RuleTemplate {
     return arr.filter((item, index: number) => arr.indexOf(item) === index);
   }
 
+  /**
+   *
+   * @param ref value of a `$ref` property, which is a [JSON Pointer](https://www.rfc-editor.org/rfc/rfc6901)
+   * @param schema root json schema
+   * @returns a reference to the object within `schema` pointed by `ref`
+   * @throws will throw an error if `ref` value is not found
+   */
   private static getDefByRef(ref: string, schema) {
     const def = ref
       .replace(/^#\//, "")
@@ -53,6 +62,13 @@ export class RuleTemplate {
     }
   }
 
+  /**
+   *
+   * @param subschema source json schema
+   * @returns
+   * Transformed schema where all `$ref` are replaced by a copy of their corresponding definition.
+   * Any cycles are replaced by: `{ "...": "" }`
+   */
   private resolveRefs(subschema) {
     const cyclical = eachDeep(
       subschema,
@@ -80,6 +96,19 @@ export class RuleTemplate {
     return acyclical;
   }
 
+  /**
+   *
+   * Overrides the default behavior of lodash `mergeWith`.
+   * If one of the values (`objValue`, `srcValue`) to be merged is an array,
+   * concatenate or append the values into a new array and remove duplicates.
+   *
+   * @param objValue
+   * @param srcValue
+   * @param key
+   * @param object
+   * @param source
+   * @returns new array
+   */
   private static mergeWithCompositions(
     objValue: any,
     srcValue: any,
@@ -98,16 +127,44 @@ export class RuleTemplate {
     }
   }
 
+  private static isCompositeAndScalar(
+    key: string | number,
+    context: IIterateeContext
+  ) {
+    return (
+      (!context.parent ||
+        !context.parent.parent ||
+        context.parent.parent.value["type"] !== "array") &&
+      (key === "allOf" || key === "anyOf" || key === "oneOf")
+    );
+  }
+
+  /**
+   *
+   * [Compositions](https://json-schema.org/understanding-json-schema/reference/combining.html)
+   * refer to the array values of:
+   * - `allOf`
+   * - `anyOf`
+   * - `oneOf`
+   *
+   * If the parent of a composition is **not** an array,
+   * the composition values are merged together to create a single object.
+   *
+   * If the parent of a composition is an array,
+   * no transformation is done
+   * because the values within the composition can remain in the template as separate array items.
+   *
+   * @param subschema source json schema
+   * @returns the transformed schema.
+   *
+   */
   private mergeCompositions(subschema: IJSONSchema) {
     return eachDeep(
       subschema,
       (value, key, parent, context) => {
         if (
           context.afterIterate &&
-          (!context.parent ||
-            !context.parent.parent ||
-            context.parent.parent.value["type"] !== "array") &&
-          (key === "allOf" || key === "anyOf" || key === "oneOf")
+          RuleTemplate.isCompositeAndScalar(key, context)
         ) {
           delete parent[key];
           context.parent.parent.value[context.parent.key] = {
@@ -120,6 +177,19 @@ export class RuleTemplate {
     );
   }
 
+  /**
+   *
+   * Overrides the default behavior of lodash `mergeWith`.
+   * If both of the values (`objValue`, `srcValue`) to be merged are an array,
+   * distribute (`merge`) the items in the `objValue` array onto the `srcValue` array.
+   *
+   * @param objValue
+   * @param srcValue
+   * @param key
+   * @param object
+   * @param source
+   * @returns the distributed array that has the same cardinality as `srcValue`.
+   */
   private static mergeWithObjects(
     objValue: any,
     srcValue: any,
@@ -228,6 +298,11 @@ export class RuleTemplate {
     return subschema;
   }
 
+  /**
+   *
+   * @param subschema source json schema
+   * @returns a json template representation of the schema
+   */
   private template(subschema: IJSONSchema) {
     return eachDeep(
       subschema,

@@ -170,15 +170,6 @@ const patchRule = async (id: string, rule: IRule): Promise<IRule> => {
             },
           ]
         : []),
-      ...("isPublished" in rule
-        ? [
-            {
-              op: "replace" as const,
-              path: "/isPublished",
-              value: rule.isPublished,
-            },
-          ]
-        : []),
     ];
     const ruleFromCosmos = await dbContainer.item(id, id).patch(toPatch);
     return ruleFromCosmos.resource;
@@ -194,7 +185,6 @@ const postRule = async (content: string, creatorId: string): Promise<IRule> => {
     content,
     created: date,
     creator: { id: creatorId },
-    isPublished: false,
     json: spacesToUnderscores(yamlToJSON(content) ?? {}),
   };
   const rule = (await dbContainer.items.create(toCreate)).resource;

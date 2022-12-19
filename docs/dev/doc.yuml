@@ -32,7 +32,7 @@
 
 // Rule List Query
 [Query|limit;offset;orderBy;order;select;filters]
-[Rule|changed;content;created;creator;id;isPublished;json]
+[Rule|changed;content;created;creator;id;status;json]
 
 // Users
 [Users|id]

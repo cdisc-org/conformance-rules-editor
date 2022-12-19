@@ -1,12 +1,11 @@
 import { useContext, useState } from "react";
 import AppContext from "../AppContext";
 import PromptDialog from "../PromptDialog/PromptDialog";
-import { IconButton, ToggleButton, Toolbar, Tooltip } from "@mui/material";
+import { IconButton, Toolbar, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import SaveIcon from "@mui/icons-material/Save";
 import RestoreIcon from "@mui/icons-material/Restore";
 import DeleteIcon from "@mui/icons-material/Delete";
-import PublishIcon from "@mui/icons-material/Publish";
 import QuickSearchToolbar from "../QuickSearchToolbar/QuickSearchToolbar";
 
 export default function Controls() {
@@ -25,8 +24,6 @@ export default function Controls() {
     isRuleDirty,
     setAlertState,
     isRuleModifiable,
-    published,
-    setPublished,
   } = useContext(AppContext);
 
   const newRule = () => {
@@ -48,15 +45,6 @@ export default function Controls() {
     }
     setDirtyExplorerList(true);
     setAlertState({ message: "Saved successfully", severity: "success" });
-  };
-
-  const toggleRulePublished = () => {
-    dataService
-      .set_rule_published(selectedRule, !published)
-      .then((isPublished: boolean) => {
-        setPublished(isPublished);
-        setDirtyExplorerList(true);
-      });
   };
 
   const discardChanges = () => {
@@ -131,20 +119,6 @@ export default function Controls() {
             >
               <DeleteIcon />
             </IconButton>
-          </span>
-        </Tooltip>
-
-        <Tooltip title={published ? "Unpublish Rule" : "Publish Rule"}>
-          <span>
-            <ToggleButton
-              disabled={isRuleDirty() || !isRuleSelected()}
-              selected={published && !isRuleDirty() && isRuleSelected()}
-              onChange={toggleRulePublished}
-              value="published"
-              color="primary"
-            >
-              <PublishIcon />
-            </ToggleButton>
           </span>
         </Tooltip>
 

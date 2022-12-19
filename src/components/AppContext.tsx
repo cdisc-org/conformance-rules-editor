@@ -72,8 +72,6 @@ export interface IAppContext {
   setTestStepExpanded: (testStepExpanded: Steps | false) => void;
   creator: IUser;
   setCreator: (creator: IUser) => void;
-  published: boolean;
-  setPublished: (published: boolean) => void;
   isRuleModifiable: () => boolean;
 }
 
@@ -163,10 +161,6 @@ export const defaultAppContext: IAppContext = {
   },
   creator: null,
   setCreator: () => {
-    /* Placeholder */
-  },
-  published: null,
-  setPublished: () => {
     /* Placeholder */
   },
   isRuleModifiable: () => false,

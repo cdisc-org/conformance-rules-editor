@@ -31,8 +31,8 @@ export const headCells: readonly HeadCell[] = [
     label: "Universal ID",
   },
   {
-    queryParam: "isPublished",
-    label: "Published",
+    queryParam: "json.Core.Status",
+    label: "Status",
   },
   {
     queryParam: "created",

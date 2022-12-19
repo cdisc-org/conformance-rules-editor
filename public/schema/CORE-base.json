@@ -488,7 +488,6 @@
                         },
                         "References": {
                           "items": {
-                            "additionalProperties": false,
                             "properties": {
                               "Criteria": {
                                 "properties": {
@@ -532,7 +531,6 @@
                         },
                         "References": {
                           "items": {
-                            "additionalProperties": false,
                             "properties": {
                               "Criteria": {
                                 "properties": {
@@ -580,7 +578,6 @@
                         },
                         "References": {
                           "items": {
-                            "additionalProperties": false,
                             "properties": {
                               "Criteria": {
                                 "properties": {
@@ -625,7 +622,6 @@
                         },
                         "References": {
                           "items": {
-                            "additionalProperties": false,
                             "properties": {
                               "Criteria": {
                                 "properties": {

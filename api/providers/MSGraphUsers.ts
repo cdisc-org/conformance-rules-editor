@@ -1,4 +1,9 @@
-import { Client } from "@microsoft/microsoft-graph-client";
+import {
+  BatchRequestContent,
+  BatchResponseContent,
+  Client,
+} from "@microsoft/microsoft-graph-client";
+import { User } from "@microsoft/microsoft-graph-types";
 import { TokenCredentialAuthenticationProvider } from "@microsoft/microsoft-graph-client/authProviders/azureTokenCredentials";
 import { ClientSecretCredential } from "@azure/identity";
 import "isomorphic-fetch";
@@ -20,33 +25,56 @@ const client = Client.initWithMiddleware({
   authProvider,
 });
 
-interface IMSGraphUser {
-  id: string;
-  displayName: string;
-}
+const maxChildClauses = 15;
+
+const chunkify = <ListType>(
+  list: ListType[],
+  chunkSize: number
+): ListType[][] =>
+  [...Array(Math.ceil(list.length / chunkSize))].map((_) =>
+    list.splice(0, chunkSize)
+  );
 
 const getUsersByIds = async (
   ids: string[]
 ): Promise<{ [id: string]: IUser }> => {
-  return ids.length
-    ? Object.assign(
-        {},
-        ...(
-          await client
-            .api("/users")
-            .filter(`id in (${ids.map((id) => `'${id}'`).join(", ")})`)
-            .get()
-        ).value.map((user: IMSGraphUser) => ({
-          [user.id]: { id: user.id, name: user.displayName },
-        }))
-      )
-    : {};
+  if (!ids.length) {
+    return {};
+  }
+  /* We need to batch requests for multiple userids 
+  because graph only allows a filter with a max # of child clauses per query */
+  const chunked = chunkify(ids, maxChildClauses);
+  const requests = await new BatchRequestContent(
+    chunked.map((chunk, chunkIndex) => ({
+      id: chunkIndex.toString(),
+      request: new Request(
+        `/users?$filter=id+in+(${chunk.map((id) => `'${id}'`).join(", ")})`,
+        {
+          method: "GET",
+        }
+      ),
+    }))
+  ).getContent();
+  const responses = [
+    ...new BatchResponseContent(await client.api("/$batch").post(requests))
+      .getResponses()
+      .values(),
+  ];
+  const flat = (
+    await Promise.all(
+      responses.map(async (response: Response) => (await response.json()).value)
+    )
+  ).flat();
+  const users = flat.map((user: User) => ({
+    [user.id]: { id: user.id, name: user.displayName },
+  }));
+  return Object.assign({}, ...users);
 };
 
 const getUsersByName = async (name: string): Promise<IUser[]> => {
   const users: IUser[] = [];
   var response: {
-    value: IMSGraphUser[];
+    value: User[];
     "@odata.nextLink"?: string;
   };
   for (

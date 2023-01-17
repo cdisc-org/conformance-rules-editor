@@ -23,15 +23,15 @@
 <!-- A1 -->
 <g id="node2" class="node">
 <title>A1</title>
-<polygon fill="#b03060" stroke="transparent" points="164.73,-337 164.73,-485 265.73,-485 265.73,-337 164.73,-337"/>
-<polygon fill="none" stroke="#000000" points="165.23,-453 165.23,-485 266.23,-485 266.23,-453 165.23,-453"/>
+<polygon fill="#b03060" stroke="transparent" points="165.73,-337 165.73,-485 264.73,-485 264.73,-337 165.73,-337"/>
+<polygon fill="none" stroke="#000000" points="166.23,-453 166.23,-485 265.23,-485 265.23,-453 166.23,-453"/>
 <text text-anchor="start" x="196.284" y="-466" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Rule List</text>
-<polygon fill="none" stroke="#000000" points="165.23,-337 165.23,-453 266.23,-453 266.23,-337 165.23,-337"/>
+<polygon fill="none" stroke="#000000" points="166.23,-337 166.23,-453 265.23,-453 265.23,-337 166.23,-337"/>
 <text text-anchor="start" x="191.565" y="-434" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Add&#45;Rule()</text>
 <text text-anchor="start" x="189.065" y="-422" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Save&#45;Rule()</text>
 <text text-anchor="start" x="176.007" y="-410" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Revert&#45;Changes()</text>
 <text text-anchor="start" x="186.0115" y="-398" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Delete&#45;Rule()</text>
-<text text-anchor="start" x="174.9035" y="-386" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">(Un)publish&#45;Rule()</text>
+<text text-anchor="start" x="184.0665" y="-386" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Publish&#45;Rule()</text>
 <text text-anchor="start" x="203.233" y="-374" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Sort()</text>
 <text text-anchor="start" x="184.0665" y="-362" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Field&#45;Search()</text>
 <text text-anchor="start" x="180.452" y="-350" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Global&#45;Search()</text>
@@ -39,8 +39,8 @@
 <!-- A0&#45;&gt;A1 -->
 <g id="edge1" class="edge">
 <title>A0&#45;&gt;A1</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M69.9664,-278.0356C93.3655,-299.4535 127.8391,-331.0084 157.3315,-358.0036"/>
-<polygon fill="#000000" stroke="#000000" points="164.7124,-364.7596 154.2976,-361.3271 161.0242,-361.3837 157.3359,-358.0077 157.3359,-358.0077 157.3359,-358.0077 161.0242,-361.3837 160.3743,-354.6883 164.7124,-364.7596 164.7124,-364.7596"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M69.9664,-278.0356C93.5407,-299.6139 128.3562,-331.4817 157.9934,-358.6095"/>
+<polygon fill="#000000" stroke="#000000" points="165.4067,-365.3951 154.9918,-361.9626 161.7184,-362.0191 158.0302,-358.6432 158.0302,-358.6432 158.0302,-358.6432 161.7184,-362.0191 161.0686,-355.3238 165.4067,-365.3951 165.4067,-365.3951"/>
 </g>
 <!-- A2 -->
 <g id="node3" class="node">
@@ -97,8 +97,8 @@
 <!-- A1&#45;&gt;A16 -->
 <g id="edge14" class="edge">
 <title>A1&#45;&gt;A16</title>
-<path fill="none" stroke="#000000" d="M266.0553,-402.8024C296.7665,-397.849 335.2624,-391.6399 363.3097,-387.1162"/>
-<polygon fill="#000000" stroke="#000000" points="373.5095,-385.471 364.3537,-391.506 368.5733,-386.2672 363.6371,-387.0635 363.6371,-387.0635 363.6371,-387.0635 368.5733,-386.2672 362.9205,-382.6209 373.5095,-385.471 373.5095,-385.471"/>
+<path fill="none" stroke="#000000" d="M265.0746,-402.9606C296.0305,-397.9677 335.183,-391.6527 363.5491,-387.0776"/>
+<polygon fill="#000000" stroke="#000000" points="373.4766,-385.4764 364.3207,-391.5114 368.5404,-386.2726 363.6042,-387.0688 363.6042,-387.0688 363.6042,-387.0688 368.5404,-386.2726 362.8876,-382.6262 373.4766,-385.4764 373.4766,-385.4764"/>
 </g>
 <!-- A4 -->
 <g id="node5" class="node">
@@ -157,16 +157,17 @@
 <!-- A7 -->
 <g id="node8" class="node">
 <title>A7</title>
-<polygon fill="#ffa500" stroke="transparent" points="517.73,-267 517.73,-391 597.73,-391 597.73,-267 517.73,-267"/>
-<polygon fill="none" stroke="#000000" points="517.73,-347 517.73,-391 597.73,-391 597.73,-347 517.73,-347"/>
-<text text-anchor="start" x="527.4405" y="-372" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Base Storage</text>
-<text text-anchor="start" x="539.1185" y="-360" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Provider</text>
-<polygon fill="none" stroke="#000000" points="517.73,-267 517.73,-347 597.73,-347 597.73,-267 517.73,-267"/>
-<text text-anchor="start" x="531.9" y="-328" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Get&#45;Rules()</text>
-<text text-anchor="start" x="534.4" y="-316" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Get&#45;Rule()</text>
-<text text-anchor="start" x="532.455" y="-304" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Post&#45;Rule()</text>
-<text text-anchor="start" x="529.6755" y="-292" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Patch&#45;Rule()</text>
-<text text-anchor="start" x="528.0115" y="-280" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Delete&#45;Rule()</text>
+<polygon fill="#ffa500" stroke="transparent" points="517.73,-261 517.73,-397 597.73,-397 597.73,-261 517.73,-261"/>
+<polygon fill="none" stroke="#000000" points="517.73,-353 517.73,-397 597.73,-397 597.73,-353 517.73,-353"/>
+<text text-anchor="start" x="527.4405" y="-378" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Base Storage</text>
+<text text-anchor="start" x="539.1185" y="-366" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Provider</text>
+<polygon fill="none" stroke="#000000" points="517.73,-261 517.73,-353 597.73,-353 597.73,-261 517.73,-261"/>
+<text text-anchor="start" x="531.9" y="-334" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Get&#45;Rules()</text>
+<text text-anchor="start" x="534.4" y="-322" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Get&#45;Rule()</text>
+<text text-anchor="start" x="532.455" y="-310" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Post&#45;Rule()</text>
+<text text-anchor="start" x="529.6755" y="-298" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Patch&#45;Rule()</text>
+<text text-anchor="start" x="528.0115" y="-286" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Delete&#45;Rule()</text>
+<text text-anchor="start" x="528.2905" y="-274" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Max&#45;CoreId()</text>
 </g>
 <!-- A5&#45;&gt;A7 -->
 <g id="edge6" class="edge">
@@ -329,8 +330,8 @@
 <!-- A17&#45;&gt;A1 -->
 <g id="edge17" class="edge">
 <title>A17&#45;&gt;A1</title>
-<path fill="none" stroke="#000000" d="M691.8214,-472.0288C628.3692,-473.7341 472.7931,-474.9524 345.23,-452 322.1034,-447.8388 297.3598,-440.7376 275.7326,-433.6031"/>
-<polygon fill="#000000" stroke="#000000" points="266.0322,-430.3331 276.9457,-429.2633 270.7702,-431.9303 275.5083,-433.5275 275.5083,-433.5275 275.5083,-433.5275 270.7702,-431.9303 274.0708,-437.7917 266.0322,-430.3331 266.0322,-430.3331"/>
+<path fill="none" stroke="#000000" d="M691.8214,-472.0288C628.3692,-473.7341 472.7931,-474.9524 345.23,-452 321.5934,-447.7471 296.2678,-440.423 274.3066,-433.1311"/>
+<polygon fill="#000000" stroke="#000000" points="264.7944,-429.906 275.7098,-428.8553 269.5296,-431.5115 274.2649,-433.117 274.2649,-433.117 274.2649,-433.117 269.5296,-431.5115 272.8199,-437.3787 264.7944,-429.906 264.7944,-429.906"/>
 </g>
 <!-- A18&#45;&gt;A10 -->
 <g id="edge19" class="edge">

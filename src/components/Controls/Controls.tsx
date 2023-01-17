@@ -6,7 +6,9 @@ import AddIcon from "@mui/icons-material/Add";
 import SaveIcon from "@mui/icons-material/Save";
 import RestoreIcon from "@mui/icons-material/Restore";
 import DeleteIcon from "@mui/icons-material/Delete";
+import PublishIcon from "@mui/icons-material/Publish";
 import QuickSearchToolbar from "../QuickSearchToolbar/QuickSearchToolbar";
+import jsYaml from "js-yaml";
 
 export default function Controls() {
   const [discardDialog, setDiscardDialog] = useState<boolean>(false);
@@ -65,6 +67,25 @@ export default function Controls() {
     }
   };
 
+  const publishRule = async () => {
+    try {
+      jsYaml.load(modifiedRule);
+      const rule = await dataService.publish_rule(selectedRule);
+      setModifiedRule(rule.content);
+      setUnmodifiedRule(rule.content);
+      setDirtyExplorerList(true);
+      setAlertState({
+        message: "Published successfully",
+        severity: "success",
+      });
+    } catch (yamlException) {
+      setAlertState({
+        message: `Rule not published: ${yamlException.message}`,
+        severity: "error",
+      });
+    }
+  };
+
   return (
     <>
       <Toolbar
@@ -118,6 +139,18 @@ export default function Controls() {
               color="primary"
             >
               <DeleteIcon />
+            </IconButton>
+          </span>
+        </Tooltip>
+
+        <Tooltip title={"Publish Rule"}>
+          <span>
+            <IconButton
+              disabled={isRuleDirty() || !isRuleSelected()}
+              onClick={publishRule}
+              color="primary"
+            >
+              <PublishIcon />
             </IconButton>
           </span>
         </Tooltip>

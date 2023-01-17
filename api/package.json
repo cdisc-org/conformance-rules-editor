@@ -24,6 +24,7 @@
     "@microsoft/microsoft-graph-client": "^3.0.2",
     "isomorphic-fetch": "^3.0.0",
     "js-yaml": "^4.1.0",
-    "node-fetch": "^2.6.7"
+    "node-fetch": "^2.6.7",
+    "yaml": "^2.2.1"
   }
 }

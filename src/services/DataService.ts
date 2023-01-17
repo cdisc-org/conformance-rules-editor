@@ -114,6 +114,15 @@ export class DataService {
     }).then((response) => response.json());
   };
 
+  public publish_rule = async (ruleId: string): Promise<IRule> => {
+    return fetch(`/api/rules/publish/${ruleId}`, {
+      method: "PATCH",
+      headers: {
+        Accept: "application/json",
+      },
+    }).then((response) => response.json());
+  };
+
   public post_rule = async (body: string): Promise<string> => {
     return fetch(`/api/rules`, {
       method: "POST",

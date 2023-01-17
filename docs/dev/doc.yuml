@@ -8,7 +8,7 @@
 
 // UI
 [UI|React;Node.js;TS{bg:maroon}]
-[Rule List|Add-Rule();Save-Rule();Revert-Changes();Delete-Rule();(Un)publish-Rule();Sort();Field-Search();Global-Search(){bg:maroon}]
+[Rule List|Add-Rule();Save-Rule();Revert-Changes();Delete-Rule();Publish-Rule();Sort();Field-Search();Global-Search(){bg:maroon}]
 [Rule YAML Editor|VS-Code-Monaco|JSON-Schema-AutoComplete();JSON-Schema-Validate();JSON-Schema-Autosuggest();Code-Editor(){bg:maroon}]
 [Rule Test|Validate-YAML-Syntax();Validate-against-Schema();Convert-Rule-to-JSON();Load-Test-Data();Exceute-Rule(){bg:maroon}]
 [JSON Schema{bg:maroon}]
@@ -16,7 +16,7 @@
 // API
 [API|Node.js;TS|Azure Function Apps{bg:orange}]
 [cdisc-rules-engine|Execute-Rule(){bg:orange}]
-[Base Storage Provider|Get-Rules();Get-Rule();Post-Rule();Patch-Rule();Delete-Rule(){bg:orange}]
+[Base Storage Provider|Get-Rules();Get-Rule();Post-Rule();Patch-Rule();Delete-Rule();Max-CoreId();{bg:orange}]
 [Drupal Storage{bg:orange}]
 [Cosmos SQL Storage{bg:orange}]
 [Base Users Provider|Get-Users-By-Ids();Get-Users-By-Name();{bg:orange}]

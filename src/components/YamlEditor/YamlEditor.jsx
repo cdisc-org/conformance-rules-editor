@@ -32,7 +32,8 @@ export default function YamlEditor() {
       options={{
         automaticLayout: true,
         wordWrap: "on",
-        readOnly: !isRuleModifiable()
+        readOnly: !isRuleModifiable(),
+        tabSize: 2
       }}
     />
   );

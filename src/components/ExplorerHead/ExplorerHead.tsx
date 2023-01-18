@@ -27,12 +27,12 @@ export const headCells: readonly HeadCell[] = [
     label: "Creator",
   },
   {
-    queryParam: "id",
-    label: "Universal ID",
-  },
-  {
     queryParam: "json.Core.Status",
     label: "Status",
+  },
+  {
+    queryParam: "json.Authority",
+    label: "Rule Ids",
   },
   {
     queryParam: "created",
@@ -41,6 +41,10 @@ export const headCells: readonly HeadCell[] = [
   {
     queryParam: "changed",
     label: "Changed Timestamp",
+  },
+  {
+    queryParam: "id",
+    label: "Universal ID",
   },
 ];
 

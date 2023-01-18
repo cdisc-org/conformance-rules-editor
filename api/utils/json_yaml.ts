@@ -8,13 +8,23 @@ export const yamlToJSON = (body) => {
   }
 };
 
+const pathReducer = (parents: any[], childName: string) => {
+  return parents
+    .filter((parent) => parent)
+    .flatMap((parent) =>
+      Array.isArray(parent)
+        ? parent.map((child) => child[childName])
+        : parent[childName]
+    );
+};
+
 export const resolvePath = (
   object,
   path,
   defaultValue = `<Missing '${path}'>`
 ) =>
   isValidYaml(object)
-    ? path.split(".").reduce((o, p) => (o ? o[p] : defaultValue), object)
+    ? [...new Set(path.split(".").reduce(pathReducer, [object]))].join(", ")
     : defaultValue;
 
 export const buildJSON = (object, path, value) => {

@@ -1,5 +1,4 @@
 - [Reference Guide](/)
-- [Rule Template](rule_template.md)
 - [Boolean Logic](boolean_logic.md)
 - [Check Operator](check_operator.md)
 - [Check Parameter](check_parameter.md)

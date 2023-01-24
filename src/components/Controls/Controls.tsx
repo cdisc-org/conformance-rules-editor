@@ -15,6 +15,7 @@ export default function Controls() {
   const [deleteDialog, setDeleteDialog] = useState<boolean>(false);
   const {
     dataService,
+    ruleTemplate,
     selectedRule,
     setSelectedRule,
     isRuleSelected,
@@ -30,8 +31,8 @@ export default function Controls() {
 
   const newRule = () => {
     setSelectedRule(null);
-    setUnmodifiedRule("");
-    setModifiedRule("");
+    setUnmodifiedRule(ruleTemplate);
+    setModifiedRule(ruleTemplate);
   };
 
   const saveRule = async () => {

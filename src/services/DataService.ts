@@ -3,6 +3,7 @@ import { IRule } from "../types/IRule";
 import { IRules } from "../types/IRules";
 import { IUser } from "../types/IUser";
 import { IDataset } from "../utils/ExcelDataset";
+import { RuleTemplate } from "../utils/RuleTemplate";
 
 export interface ISchema {
   standard: string;
@@ -176,6 +177,13 @@ export class DataService {
         json: json[schemaIndex],
       })
     );
+  };
+
+  public get_rule_template = async (): Promise<string> => {
+    const schema = (await this.get_rules_schema()).find(
+      (schema) => schema.standard === "base"
+    ).json;
+    return new RuleTemplate(schema).schemaToTemplate();
   };
 
   public execute_rule = async (rule: object, datasets: IDataset[]) => {

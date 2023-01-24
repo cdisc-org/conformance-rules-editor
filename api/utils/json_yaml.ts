@@ -1,5 +1,13 @@
 import jsYaml from "js-yaml";
 
+export const jsonToYAML = (body) => {
+  try {
+    return jsYaml.dump(body);
+  } catch (yamlException) {
+    return undefined;
+  }
+};
+
 export const yamlToJSON = (body) => {
   try {
     return jsYaml.load(body);

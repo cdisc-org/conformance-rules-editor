@@ -454,19 +454,29 @@
               "distinct",
               "dy",
               "extract_metadata",
+              "get_column_order_from_dataset",
+              "get_column_order_from_library",
               "max",
               "max_date",
               "mean",
               "min",
               "min_date",
+              "record_count",
+              "valid_meddra_code_references",
+              "valid_meddra_code_term_pairs",
+              "valid_meddra_term_references",
+              "valid_whodrug_references",
+              "variable_count",
               "variable_exists",
               "variable_names",
-              "variable_value_count"
+              "variable_permissibilities",
+              "variable_value_count",
+              "whodrug_code_hierarchy"
             ],
             "type": "string"
           }
         },
-        "required": ["id", "name", "operator"],
+        "required": ["id", "operator"],
         "type": "object"
       },
       "type": "array"

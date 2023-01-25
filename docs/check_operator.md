@@ -2,6 +2,11 @@
 
 ## Relational
 
+- ### is_true
+- ### is_false
+
+Boolean
+
 - ### equal_to
 - ### not_equal_to
 - ### equal_to_case_insensitive
@@ -163,6 +168,10 @@ Regular Expression value matching
 
 - ### starts_with
 - ### ends_with
+- ### prefix_equal_to
+- ### prefix_not_equal_to
+- ### suffix_equal_to
+- ### suffix_not_equal_to
 
 Substring matching
 
@@ -638,6 +647,10 @@ Ensures that a value of a variable in one record is equal to the value of anothe
 
 - ### is_ordered_set
 - ### is_not_ordered_set
+- ### is_ordered_by
+- ### is_not_ordered_by
+- ### target_is_not_sorted_by
+- ### target_is_sorted_by
 
 This can be used to check that --SEQ variables are ordered.
 
@@ -664,6 +677,9 @@ This can be used to check that --SEQ variables are ordered.
 
 - ### has_same_values
 - ### has_different_values
+
+- ### value_has_multiple_references
+- ### value_does_not_have_multiple_references
 
 ## Codelist
 

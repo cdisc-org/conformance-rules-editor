@@ -984,7 +984,6 @@
     "Rule Type": {
       "enum": [
         "Dataset Contents Check against Define XML and Library Metadata",
-        "Dataset Contents Check against Library Metadata",
         "Dataset Metadata Check",
         "Dataset Metadata Check against Define XML",
         "Define-XML",

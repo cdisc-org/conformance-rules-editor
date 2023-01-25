@@ -353,7 +353,6 @@
                 },
                 "References": {
                   "items": {
-                    "additionalProperties": false,
                     "properties": {
                       "Citations": {
                         "items": {
@@ -679,7 +678,6 @@
               },
               "Standards": {
                 "items": {
-                  "additionalProperties": false,
                   "properties": {
                     "References": {
                       "items": {
@@ -754,7 +752,6 @@
               },
               "Standards": {
                 "items": {
-                  "additionalProperties": false,
                   "properties": {
                     "References": {
                       "items": {

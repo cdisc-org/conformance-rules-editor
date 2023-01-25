@@ -952,7 +952,7 @@
             "type": "string"
           }
         },
-        "required": ["id", "name", "operator"],
+        "required": ["id", "operator"],
         "type": "object"
       },
       "minItems": 1,

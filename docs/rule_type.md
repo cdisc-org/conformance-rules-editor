@@ -4,8 +4,6 @@
 
 Dependency: Define-XML
 
-## Dataset Contents Check against Library Metadata
-
 > Check var populated according to Permissibility.
 
 > Permissible variable that should be dropped

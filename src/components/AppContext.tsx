@@ -38,6 +38,7 @@ export interface IAppContext {
   appError: IAppError;
   setError: (title: string, message: string) => void;
   dataService: DataService;
+  ruleTemplate: string;
   selectedRule: string;
   setSelectedRule: (selectedRule: string) => void;
   isRuleSelected: () => boolean;
@@ -83,6 +84,7 @@ export const defaultAppContext: IAppContext = {
     /* Placeholder */
   },
   dataService: null,
+  ruleTemplate: null,
   selectedRule: null,
   setSelectedRule: () => {
     /* Placeholder */

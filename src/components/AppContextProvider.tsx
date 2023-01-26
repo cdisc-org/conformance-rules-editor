@@ -12,6 +12,7 @@ const AppContextProvider: React.FC = ({
   children: React.ReactNode;
 }) => {
   const [dataService] = useState<DataService>(() => new DataService());
+  const [ruleTemplate, setRuleTemplate] = useState<string>("");
   const [appError, setAppError] = useState<IAppError>();
   const [selectedRule, setSelectedRule] = useState<string>(null);
   const [unmodifiedRule, setUnmodifiedRule] = useState<string>("");
@@ -87,6 +88,7 @@ const AppContextProvider: React.FC = ({
     clearError,
     setError,
     dataService,
+    ruleTemplate,
     selectedRule,
     setSelectedRule,
     isRuleSelected,
@@ -158,6 +160,14 @@ const AppContextProvider: React.FC = ({
           })
         ),
       });
+    });
+  }, [dataService]);
+
+  useEffect(() => {
+    dataService.get_rule_template().then((template) => {
+      setRuleTemplate(template);
+      setUnmodifiedRule(template);
+      setModifiedRule(template);
     });
   }, [dataService]);
 

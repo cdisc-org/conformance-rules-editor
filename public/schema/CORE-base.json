@@ -4,16 +4,18 @@
       "oneOf": [
         {
           "additionalProperties": false,
-          "minProperties": 1,
-          "maxProperties": 1,
-          "patternProperties": {
-            "^all|any$": {
-              "items": {
-                "$ref": "#/$defs/CheckItem"
-              },
-              "type": "array"
-            }
+          "properties": {
+            "all": { "$ref": "#/$defs/CheckItems" }
           },
+          "required": ["all"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "any": { "$ref": "#/$defs/CheckItems" }
+          },
+          "required": ["any"],
           "type": "object"
         },
         {
@@ -38,6 +40,12 @@
         }
       ]
     },
+    "CheckItems": {
+      "items": {
+        "$ref": "#/$defs/CheckItem"
+      },
+      "type": "array"
+    },
     "Classes": {
       "items": {
         "enum": [
@@ -58,14 +66,29 @@
     "Dataset": {
       "anyOf": [
         {
-          "pattern": "^(All|AP--|APRELSUB|RELREC|RELSPEC|RELSUB|[A-Z]{2}|[A-Z]{4}|SUPP[A-Z]{2}|SUPP[A-Z]{4}|SQAP[A-Z]{4}|SUPP--)$",
+          "enum": [
+            "All",
+            "AP--",
+            "APRELSUB",
+            "POOLDEF",
+            "RELREC",
+            "RELSPEC",
+            "RELSUB",
+            "SUPP--"
+          ],
           "type": "string"
         },
         {
-          "pattern": "^(All|AP--|APRELSUB|POOLDEF|RELREC|RELSPEC|RELSUB|[A-Z]{2}|[A-Z]{4}|SUPP[A-Z]{2}|SUPP[A-Z]{4}|SQAP[A-Z]{4}|SUPP--)$",
+          "pattern": "^([A-Z]{2}|[A-Z]{4}|SUPP[A-Z]{2}|SUPP[A-Z]{4}|SQAP[A-Z]{4})$",
           "type": "string"
         }
       ]
+    },
+    "Datasets": {
+      "items": {
+        "$ref": "#/$defs/Dataset"
+      },
+      "type": "array"
     },
     "DataStructure": {
       "enum": [
@@ -79,6 +102,12 @@
         "SUBJECT LEVEL ANALYSIS DATASET"
       ],
       "type": "string"
+    },
+    "DataStructures": {
+      "items": {
+        "$ref": "#/$defs/DataStructure"
+      },
+      "type": "array"
     },
     "Domains": {
       "items": {
@@ -285,15 +314,18 @@
       "required": ["operator"],
       "type": "object"
     },
-    "Subclass": {
-      "enum": [
-        "ADVERSE EVENT",
-        "ALL",
-        "MEDICAL DEVICE TIME-TO-EVENT",
-        "NON-COMPARTMENTAL ANALYSIS",
-        "TIME-TO-EVENT"
-      ],
-      "type": "string"
+    "Subclasses": {
+      "items": {
+        "enum": [
+          "ADVERSE EVENT",
+          "ALL",
+          "MEDICAL DEVICE TIME-TO-EVENT",
+          "NON-COMPARTMENTAL ANALYSIS",
+          "TIME-TO-EVENT"
+        ],
+        "type": "string"
+      },
+      "type": "array"
     },
     "VariableName": {
       "pattern": "^(--[A-Z0-9]{1,6}|[A-Z][A-Z0-9]{0,7})$",
@@ -367,7 +399,14 @@
         "additionalProperties": false,
         "properties": {
           "Name": {
-            "$ref": "#/$defs/Dataset"
+            "anyOf": [
+              {
+                "$ref": "#/$defs/Dataset"
+              },
+              {
+                "$ref": "#/$defs/DataStructure"
+              }
+            ]
           },
           "Is Relationship": {
             "const": true
@@ -389,7 +428,14 @@
         "additionalProperties": false,
         "properties": {
           "domain": {
-            "$ref": "#/$defs/Dataset"
+            "anyOf": [
+              {
+                "$ref": "#/$defs/Dataset"
+              },
+              {
+                "$ref": "#/$defs/DataStructure"
+              }
+            ]
           },
           "group": {
             "items": {
@@ -555,77 +601,32 @@
       "type": "array"
     },
     "Rule Type": {
-      "oneOf": [
-        {
-          "const": "Consistency"
-        },
-        {
-          "const": "Data Domain Aggregation"
-        },
-        {
-          "const": "Data Pattern and Format"
-        },
-        {
-          "const": "Dataset Contents Check against Define XML and Library Metadata"
-        },
-        {
-          "const": "Dataset Contents Check against Library Metadata"
-        },
-        {
-          "const": "Dataset Metadata Check"
-        },
-        {
-          "const": "Dataset Metadata Check against Define XML"
-        },
-        {
-          "const": "Date Arithmetic"
-        },
-        {
-          "const": "Define-XML"
-        },
-        {
-          "const": "Domain Presence Check"
-        },
-        {
-          "const": "External Dictionaries"
-        },
-        {
-          "const": "Functional Dependency"
-        },
-        {
-          "const": "Populated Values"
-        },
-        {
-          "const": "Range & Limit"
-        },
-        {
-          "const": "Relationship Integrity Check"
-        },
-        {
-          "const": "Uniqueness"
-        },
-        {
-          "const": "Value Level Metadata Check against Define XML"
-        },
-        {
-          "const": "Value Presence"
-        },
-        {
-          "const": "Variable Length"
-        },
-        {
-          "const": "Variable Metadata Check"
-        },
-        {
-          "const": "Variable Metadata Check against Define XML"
-        },
-        {
-          "const": "Variable Order"
-        },
-        {
-          "const": "Variable Presence"
-        }
-      ]
+      "enum": [
+        "Consistency",
+        "Data Domain Aggregation",
+        "Data Pattern and Format",
+        "Dataset Contents Check against Define XML and Library Metadata",
+        "Dataset Contents Check against Library Metadata",
+        "Dataset Metadata Check",
+        "Dataset Metadata Check against Define XML",
+        "Date Arithmetic",
+        "Define-XML",
+        "Domain Presence Check",
+        "External Dictionaries",
+        "Functional Dependency",
+        "Populated Values",
+        "Range & Limit",
+        "Relationship Integrity Check",
+        "Uniqueness",
+        "Value Level Metadata Check against Define XML",
+        "Value Presence",
+        "Variable Length",
+        "Variable Metadata Check",
+        "Variable Metadata Check against Define XML",
+        "Variable Order",
+        "Variable Presence"
+      ],
+      "type": "string"
     },
     "Scopes": {
       "additionalProperties": false,
@@ -655,25 +656,37 @@
           ]
         },
         "Data Structures": {
-          "additionalProperties": false,
-          "properties": {
-            "Exclude": {
-              "$ref": "#/$defs/DataStructure"
+          "oneOf": [
+            {
+              "additionalProperties": false,
+              "properties": {
+                "Include": {
+                  "$ref": "#/$defs/DataStructures"
+                }
+              },
+              "required": ["Include"],
+              "type": "object"
             },
-            "Include": {
-              "$ref": "#/$defs/DataStructure"
+            {
+              "additionalProperties": false,
+              "properties": {
+                "Exclude": {
+                  "$ref": "#/$defs/DataStructures"
+                }
+              },
+              "required": ["Exclude"],
+              "type": "object"
             }
-          },
-          "type": "object"
+          ]
         },
         "Datasets": {
           "additionalProperties": false,
           "properties": {
             "Exclude": {
-              "$ref": "#/$defs/Dataset"
+              "$ref": "#/$defs/Datasets"
             },
             "Include": {
-              "$ref": "#/$defs/Dataset"
+              "$ref": "#/$defs/Datasets"
             }
           },
           "type": "object"
@@ -713,10 +726,10 @@
           "additionalProperties": false,
           "properties": {
             "Exclude": {
-              "$ref": "#/$defs/Subclass"
+              "$ref": "#/$defs/Subclasses"
             },
             "Include": {
-              "$ref": "#/$defs/Subclass"
+              "$ref": "#/$defs/Subclasses"
             }
           },
           "type": "object"
@@ -744,7 +757,6 @@
   "required": [
     "Authority",
     "Check",
-    "Citations",
     "Core",
     "Description",
     "Outcome",

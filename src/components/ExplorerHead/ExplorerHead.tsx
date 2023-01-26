@@ -31,7 +31,7 @@ export const headCells: readonly HeadCell[] = [
     label: "Status",
   },
   {
-    queryParam: "json.Authority",
+    queryParam: "json.Authorities",
     label: "Rule Ids",
   },
   {

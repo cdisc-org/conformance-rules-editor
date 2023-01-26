@@ -337,7 +337,7 @@
   "additionalProperties": false,
   "description": "Validation schema CDISC Rules 1.0",
   "properties": {
-    "Authority": {
+    "Authorities": {
       "items": {
         "additionalProperties": false,
         "properties": {
@@ -1099,7 +1099,7 @@
     }
   },
   "required": [
-    "Authority",
+    "Authorities",
     "Check",
     "Core",
     "Description",

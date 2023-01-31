@@ -1,0 +1,122 @@
+:root {
+    --background-color: hsl(0, 0%, 96%);
+    --editor-background: hsl(60, 100%, 100%);
+    --error-color: hsl(0, 85%, 62%);
+    --foreground-color: hsl(0, 0%, 0%);
+    --primary-color: hsl(189, 100%, 63%);
+    --shadow-color: hsla(0, 0%, 27%, 0.239);
+    --scrollbar-color: hsla(0, 0%, 47%, 0.4);
+    --warning-color: hsl(49, 100%, 40%);
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: hsl(0, 0%, 23%);
+      --editor-background: hsl(0, 0%, 12%);
+      --foreground-color: hsl(0, 0%, 100%);
+      --shadow-color: hsl(0, 0%, 43%);
+    }
+  }
+  
+  #monaco-yaml-editor-box nav {
+    align-items: center;
+    background: var(--primary-color);
+    box-shadow: 0px 5px 5px var(--shadow-color);
+    display: flex;
+    flex: 0 0 auto;
+    height: 3rem;
+    justify-content: space-between;
+  }
+  
+  #monaco-yaml-editor-box .nav-icon {
+    margin-right: 1rem;
+    text-decoration: none;
+  }
+  
+  #monaco-yaml-editor-box .nav-icon > img {
+    vertical-align: middle;
+  }
+  
+  #monaco-yaml-editor-box main {
+    background: var(--editor-background);
+    box-shadow: 0 0 10px var(--shadow-color);
+    display: flex;
+    flex: 1 1 auto;
+    flex-flow: column;
+    margin: 1.5rem;
+  }
+  
+  #monaco-yaml-editor-box #schema-selection {
+    background-color: var(--editor-background);
+    border: none;
+    border-bottom: 1px solid var(--shadow-color);
+    color: var(--foreground-color);
+    width: 100%;
+  }
+  
+  #monaco-yaml-editor-box #monaco-yaml-breadcrumbs {
+    border-bottom: 1px solid var(--shadow-color);
+    color: var(--foreground-color);
+    flex: 0 0 1rem;
+  }
+  
+  #monaco-yaml-editor-box .breadcrumb {
+    cursor: pointer;
+  }
+  
+  #monaco-yaml-editor-box #monaco-yaml-breadcrumbs::before,
+  #monaco-yaml-editor-box .breadcrumb:not(:last-child)::after {
+    content: '›';
+    margin: 0 0.2rem;
+  }
+  
+  #monaco-yaml-editor-box #monaco-yaml-breadcrumbs .breadcrumb.array::before {
+    content: '[]';
+  }
+  
+  #monaco-yaml-editor-box #monaco-yaml-breadcrumbs .breadcrumb.object::before {
+    content: '{}';
+  }
+  
+  #monaco-yaml-editor-box #editor {
+    flex: 1 1 auto;
+  }
+  
+  #monaco-yaml-editor-box #monaco-yaml-problems {
+    border-top: 1px solid var(--shadow-color);
+    flex: 0 0 20vh;
+    color: var(--foreground-color);
+    overflow-y: scroll;
+  }
+  
+  #monaco-yaml-editor-box #monaco-yaml-problems .problem {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    padding: 0.25rem;
+  }
+  
+  #monaco-yaml-editor-box #monaco-yaml-problems .problem:hover {
+    background-color: var(--shadow-color);
+  }
+  
+  #monaco-yaml-editor-box #monaco-yaml-problems .problem-text {
+    margin-left: 0.5rem;
+  }
+  
+  #monaco-yaml-editor-box #monaco-yaml-problems .problem .codicon-warning {
+    color: var(--warning-color);
+  }
+  
+  #monaco-yaml-editor-box #monaco-yaml-problems .problem .codicon-error {
+    color: var(--error-color);
+  }
+  
+  #monaco-yaml-editor-box::-webkit-scrollbar, #monaco-yaml-editor-box *::-webkit-scrollbar {
+    box-shadow: 1px 0 0 0 var(--scrollbar-color) inset;
+    width: 14px;
+  }
+  
+  #monaco-yaml-editor-box::-webkit-scrollbar-thumb, #monaco-yaml-editor-box *::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-color);
+  }

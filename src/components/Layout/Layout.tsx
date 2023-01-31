@@ -5,13 +5,14 @@ import Controls from "../Controls/Controls";
 import SplitPane from "react-split-pane";
 import "./Resizer.css";
 import GeneralAlert from "../GeneralAlert/GeneralAlert";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import TabGroup from "../TabGroup/TabGroup";
 import SyntaxTestStep from "../TestStep/SyntaxTestStep";
 import SchemaTestStep from "../TestStep/SchemaTestStep";
 import JsonTestStep from "../TestStep/JsonTestStep";
 import LoadTestStep from "../TestStep/LoadTestStep";
 import ResultsTestStep from "../TestStep/ResultsTestStep";
+import AppContext from "../AppContext";
 
 function getWindowDimensions() {
   const { innerWidth: width, innerHeight: height } = window;
@@ -41,9 +42,14 @@ export function useWindowDimensions() {
 export default function Layout() {
   const [splitPaneWidth, setSplitPaneWidth] = useState<number>();
   const { height, width } = useWindowDimensions();
+  const { modifiedRule, setModifiedRule, isRuleModifiable } = useContext(
+    AppContext
+  );
 
   return (
     <>
+      {/* 
+      // @ts-expect-error */}
       <SplitPane
         ref={(newRef: any) =>
           setSplitPaneWidth(newRef ? newRef.pane1.offsetWidth : 0)
@@ -70,7 +76,16 @@ export default function Layout() {
           <TabGroup
             parentHeight={height}
             tabPanels={[
-              { label: "Edit", children: <YamlEditor /> },
+              {
+                label: "Edit",
+                children: (
+                  <YamlEditor
+                    value={modifiedRule}
+                    onChange={setModifiedRule}
+                    schemaUri="/schema/CORE-base.json"
+                  />
+                ),
+              },
               {
                 label: "Test",
                 children: (

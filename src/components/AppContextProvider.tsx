@@ -6,11 +6,7 @@ import { AlertState } from "./GeneralAlert/GeneralAlert";
 import { SchemasSettings, setDiagnosticsOptions } from "monaco-yaml";
 import { IUser } from "../types/IUser";
 
-const AppContextProvider: React.FC = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
+const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [dataService] = useState<DataService>(() => new DataService());
   const [ruleTemplate, setRuleTemplate] = useState<string>("");
   const [appError, setAppError] = useState<IAppError>();

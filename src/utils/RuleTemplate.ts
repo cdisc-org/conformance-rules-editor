@@ -1,7 +1,8 @@
 import { jsonToYAML } from "./json_yaml";
-import { isEqual, mergeWith } from "lodash";
-import eachDeep from "deepdash-es/eachDeep";
+import lodash, { isEqual, mergeWith } from "lodash-es";
+import deepdash from "deepdash-es";
 import { IIterateeContext } from "deepdash-es/IIterateeContext";
+const _ = deepdash(lodash);
 
 interface IJSONSchema {
   $ref?: string;
@@ -70,7 +71,7 @@ export class RuleTemplate {
    * Any cycles are replaced by: `{ "...": "" }`
    */
   private resolveRefs(subschema) {
-    const cyclical = eachDeep(
+    const cyclical = _.eachDeep(
       subschema,
       (value, key, parent, context) => {
         if (
@@ -83,7 +84,7 @@ export class RuleTemplate {
       },
       {}
     );
-    const acyclical = eachDeep(
+    const acyclical = _.eachDeep(
       cyclical,
       (value, key, parent, context) => {
         if (context.isCircular) {
@@ -159,7 +160,7 @@ export class RuleTemplate {
    *
    */
   private mergeCompositions(subschema: IJSONSchema) {
-    return eachDeep(
+    return _.eachDeep(
       subschema,
       (value, key, parent, context) => {
         if (
@@ -304,7 +305,7 @@ export class RuleTemplate {
    * @returns a json template representation of the schema
    */
   private template(subschema: IJSONSchema) {
-    return eachDeep(
+    return _.eachDeep(
       subschema,
       (value, key, parent, context) => {
         if (!context.afterIterate && typeof value === "object") {

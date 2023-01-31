@@ -45,7 +45,10 @@ export default function ResultsTestStep() {
           (currentDomainResult === null
             ? 1
             : currentDomainResult.reduce<number>(
-                (aggregateRecordResult: number, currentRecordResult: {}) =>
+                (
+                  aggregateRecordResult: number,
+                  currentRecordResult: { errors: [] }
+                ) =>
                   aggregateRecordResult +
                   (testResultHasErrors(currentRecordResult)
                     ? "errors" in currentRecordResult
@@ -63,7 +66,10 @@ export default function ResultsTestStep() {
           aggregateDomainResult +
           (Array.isArray(currentDomainResult)
             ? currentDomainResult.reduce<number>(
-                (aggregateRecordResult: number, currentRecordResult: {}) =>
+                (
+                  aggregateRecordResult: number,
+                  currentRecordResult: { errors: [] }
+                ) =>
                   aggregateRecordResult +
                   (currentRecordResult["executionStatus"] === "success" &&
                   "errors" in currentRecordResult

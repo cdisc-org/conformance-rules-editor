@@ -9,7 +9,7 @@ import ExplorerHead, {
   headCells,
   HeadCell,
 } from "../ExplorerHead/ExplorerHead";
-import { debounce } from "lodash";
+import { debounce } from "lodash-es";
 import { IRule } from "../../types/IRule";
 import { IRules } from "../../types/IRules";
 import { IQuery } from "../../types/IQuery";

@@ -115,19 +115,13 @@ export class DataService {
     }).then((response) => response.json());
   };
 
-  public set_rule_published = async (
-    ruleId: string,
-    isPublished: boolean
-  ): Promise<boolean> => {
-    return fetch(`/api/rules/${ruleId}`, {
+  public publish_rule = async (ruleId: string): Promise<IRule> => {
+    return fetch(`/api/rules/publish/${ruleId}`, {
       method: "PATCH",
       headers: {
         Accept: "application/json",
       },
-      body: JSON.stringify({ isPublished: isPublished }),
-    })
-      .then((response) => response.json())
-      .then((responseJson: IRule) => responseJson.isPublished);
+    }).then((response) => response.json());
   };
 
   public post_rule = async (body: string): Promise<string> => {

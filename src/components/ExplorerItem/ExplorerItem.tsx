@@ -21,10 +21,11 @@ export default function ExplorerItem(ruleItem: IRule) {
             <TableCell>{resolvePath(rule, "Core.Id")}</TableCell>
             <TableCell>{resolvePath(rule, "Rule Type")}</TableCell>
             <TableCell>{ruleItem.creator.name}</TableCell>
-            <TableCell>{ruleItem.id}</TableCell>
-            <TableCell>{ruleItem.isPublished.toString()}</TableCell>
+            <TableCell>{resolvePath(rule, "Core.Status")}</TableCell>
+            <TableCell>{resolvePath(rule, "Authorities.Standards.References.Rule Identifier.Id")}</TableCell>
             <TableCell>{(new Date(ruleItem.created)).toLocaleString('en-US')}</TableCell>
             <TableCell>{(new Date(ruleItem.changed)).toLocaleString('en-US')}</TableCell>
+            <TableCell>{ruleItem.id}</TableCell>
         </TableRow>
     );
 }

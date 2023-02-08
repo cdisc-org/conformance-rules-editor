@@ -97,9 +97,13 @@ const getUsersByName = async (name: string): Promise<IUser[]> => {
 };
 
 const getUserPermissions = async (user: IUser): Promise<IUser> => {
-  var link = `/users/${user.id}/memberOf?$count=true&$filter=id eq '${process.env["CORE_AUTHOR_GROUP"]}'`;
-  const response = await client.api(link).get();
-  user.permissions = response.value && response.value.length === 1;
+  if ("CORE_AUTHOR_GROUP" in process.env) {
+    var link = `/users/${user.id}/memberOf?$count=true&$filter=id eq '${process.env["CORE_AUTHOR_GROUP"]}'`;
+    const response = await client.api(link).get();
+    user.permissions = response.value && response.value.length === 1;
+  } else {
+    user.permissions = true;
+  }
   return user;
 };
 

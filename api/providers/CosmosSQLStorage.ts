@@ -147,6 +147,22 @@ const getRules = async (query: IQuery): Promise<IRules> => {
   }
 };
 
+const maxCoreId = async (): Promise<string> => {
+  const query = `
+    SELECT VALUE root
+    FROM (
+    SELECT MAX(rules.json.Core.Id) ?? "CORE-000000"
+    AS CoreId
+    FROM rules
+    WHERE rules.json.Core.Id 
+    LIKE "CORE-______"
+    ) root
+  `;
+  return (await dbContainer.items.query(query).fetchNext()).resources[0][
+    "CoreId"
+  ];
+};
+
 const patchRule = async (id: string, rule: IRule): Promise<IRule> => {
   const date = new Date().toJSON();
   try {
@@ -166,16 +182,7 @@ const patchRule = async (id: string, rule: IRule): Promise<IRule> => {
             {
               op: "replace" as const,
               path: "/json",
-              value: spacesToUnderscores(yamlToJSON(rule.content)),
-            },
-          ]
-        : []),
-      ...("isPublished" in rule
-        ? [
-            {
-              op: "replace" as const,
-              path: "/isPublished",
-              value: rule.isPublished,
+              value: spacesToUnderscores(yamlToJSON(rule.content) ?? {}),
             },
           ]
         : []),
@@ -194,7 +201,6 @@ const postRule = async (content: string, creatorId: string): Promise<IRule> => {
     content,
     created: date,
     creator: { id: creatorId },
-    isPublished: false,
     json: spacesToUnderscores(yamlToJSON(content) ?? {}),
   };
   const rule = (await dbContainer.items.create(toCreate)).resource;
@@ -205,6 +211,7 @@ export default {
   deleteRule,
   getRule,
   getRules,
+  maxCoreId,
   patchRule,
   postRule,
 };

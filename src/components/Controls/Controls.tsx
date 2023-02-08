@@ -90,7 +90,9 @@ export default function Controls() {
         <Tooltip title="New Rule">
           <span>
             <IconButton
-              disabled={isRuleDirty() || !isRuleSelected()}
+              disabled={
+                isRuleDirty() || !isRuleSelected() || !isRuleModifiable()
+              }
               onClick={newRule}
               color="primary"
             >
@@ -102,7 +104,7 @@ export default function Controls() {
         <Tooltip title="Save Rule">
           <span>
             <IconButton
-              disabled={!isRuleDirty()}
+              disabled={!isRuleDirty() || !isRuleModifiable()}
               onClick={saveRule}
               color="primary"
             >
@@ -138,7 +140,9 @@ export default function Controls() {
         <Tooltip title={published ? "Unpublish Rule" : "Publish Rule"}>
           <span>
             <ToggleButton
-              disabled={isRuleDirty() || !isRuleSelected()}
+              disabled={
+                isRuleDirty() || !isRuleSelected() || !isRuleModifiable()
+              }
               selected={published && !isRuleDirty() && isRuleSelected()}
               onChange={toggleRulePublished}
               value="published"

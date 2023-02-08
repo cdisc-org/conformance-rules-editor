@@ -96,7 +96,15 @@ const getUsersByName = async (name: string): Promise<IUser[]> => {
   return users;
 };
 
+const getUserPermissions = async (user: IUser): Promise<IUser> => {
+  var link = `/users/${user.id}/memberOf?$count=true&$filter=id eq '${process.env["CORE_AUTHOR_GROUP"]}'`;
+  const response = await client.api(link).get();
+  user.permissions = response.value && response.value.length === 1;
+  return user;
+};
+
 export default {
   getUsersByIds,
   getUsersByName,
+  getUserPermissions,
 };

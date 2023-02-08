@@ -77,10 +77,9 @@ const AppContextProvider: React.FC = ({
 
   const isRuleModifiable = useCallback(
     () =>
-      !isRuleSelected() ||
-      (user && creator && user.id === creator.id) ||
+      (user && user.permissions) ||
       (user && user.company && user.company.toUpperCase() === "CDISC"),
-    [user, creator, isRuleSelected]
+    [user]
   );
 
   const appContext = {

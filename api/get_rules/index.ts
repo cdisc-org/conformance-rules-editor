@@ -6,7 +6,9 @@ import handle_response from "../utils/handle_response";
 
 async function usernameQueryToUserid(query: IQuery) {
   // convert the storage query select variable from creator name to creator id
-  query.select.splice(query.select.indexOf("creator.name"), 1, "creator.id");
+  query.select = query.select.map((col) =>
+    col === "creator.name" ? "creator.id" : col
+  );
   // For any storage query filters that search for user names using "contains", convert the storage query filters to userid filters using "in"
   const creatorNameFilters = query.filters.filter(
     (filter) => filter.name === "creator.name" && filter.operator === "contains"

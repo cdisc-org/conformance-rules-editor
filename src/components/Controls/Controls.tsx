@@ -1,13 +1,14 @@
 import { useContext, useState } from "react";
 import AppContext from "../AppContext";
 import PromptDialog from "../PromptDialog/PromptDialog";
-import { IconButton, ToggleButton, Toolbar, Tooltip } from "@mui/material";
+import { IconButton, Toolbar, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import SaveIcon from "@mui/icons-material/Save";
 import RestoreIcon from "@mui/icons-material/Restore";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PublishIcon from "@mui/icons-material/Publish";
 import QuickSearchToolbar from "../QuickSearchToolbar/QuickSearchToolbar";
+import jsYaml from "js-yaml";
 
 export default function Controls() {
   const [discardDialog, setDiscardDialog] = useState<boolean>(false);
@@ -26,8 +27,6 @@ export default function Controls() {
     isRuleDirty,
     setAlertState,
     isRuleModifiable,
-    published,
-    setPublished,
   } = useContext(AppContext);
 
   const newRule = () => {
@@ -51,15 +50,6 @@ export default function Controls() {
     setAlertState({ message: "Saved successfully", severity: "success" });
   };
 
-  const toggleRulePublished = () => {
-    dataService
-      .set_rule_published(selectedRule, !published)
-      .then((isPublished: boolean) => {
-        setPublished(isPublished);
-        setDirtyExplorerList(true);
-      });
-  };
-
   const discardChanges = () => {
     setModifiedRule(unmodifiedRule);
   };
@@ -75,6 +65,25 @@ export default function Controls() {
       });
     } else {
       setAlertState({ message: "Rule not deleted", severity: "error" });
+    }
+  };
+
+  const publishRule = async () => {
+    try {
+      jsYaml.load(modifiedRule);
+      const rule = await dataService.publish_rule(selectedRule);
+      setModifiedRule(rule.content);
+      setUnmodifiedRule(rule.content);
+      setDirtyExplorerList(true);
+      setAlertState({
+        message: "Published successfully",
+        severity: "success",
+      });
+    } catch (yamlException) {
+      setAlertState({
+        message: `Rule not published: ${yamlException.message}`,
+        severity: "error",
+      });
     }
   };
 
@@ -135,17 +144,15 @@ export default function Controls() {
           </span>
         </Tooltip>
 
-        <Tooltip title={published ? "Unpublish Rule" : "Publish Rule"}>
+        <Tooltip title={"Publish Rule"}>
           <span>
-            <ToggleButton
+            <IconButton
               disabled={isRuleDirty() || !isRuleSelected()}
-              selected={published && !isRuleDirty() && isRuleSelected()}
-              onChange={toggleRulePublished}
-              value="published"
+              onClick={publishRule}
               color="primary"
             >
               <PublishIcon />
-            </ToggleButton>
+            </IconButton>
           </span>
         </Tooltip>
 

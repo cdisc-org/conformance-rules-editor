@@ -871,6 +871,7 @@
     "Executability": {
       "enum": [
         "Fully Executable",
+        "Partially Executable",
         "Partially Executable - Possible Overreporting",
         "Partially Executable - Possible Underreporting"
       ],

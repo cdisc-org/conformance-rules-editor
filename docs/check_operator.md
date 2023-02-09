@@ -2,11 +2,6 @@
 
 ## Relational
 
-- ### is_true
-- ### is_false
-
-Boolean
-
 - ### equal_to
 - ### not_equal_to
 - ### equal_to_case_insensitive
@@ -427,6 +422,23 @@ Check:
 ```
 
 This operator is technically compatible with COVALn. There is no similar rule for it.
+
+- ### variable_metadata_equal_to
+- ### variable_metadata_not_equal_to
+
+Could be useful, for example, in checking variable permissibility in conjunction with the variable_permissibilities operator:
+
+```yaml
+Check:
+  all:
+    - operator: variable_metadata_equal_to
+      value: Exp
+      metadata: $permissibility
+    - operator: not_exists
+Operations:
+  - id: $permissibility
+    operator: variable_permissibilities
+```
 
 ## Relationship & Set
 

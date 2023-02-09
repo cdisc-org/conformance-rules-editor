@@ -36,7 +36,7 @@
 
 // Users
 [Users|id]
-[User|id;name]
+[User|id;name;company;write_allowed]
 
 // RELATIONSHIPS
 

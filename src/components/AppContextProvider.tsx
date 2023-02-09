@@ -76,7 +76,7 @@ const AppContextProvider: React.FC = ({
 
   const isRuleModifiable = useCallback(
     () =>
-      (user && user.permissions) ||
+      (user && user.write_allowed) ||
       (user && user.company && user.company.toUpperCase() === "CDISC"),
     [user]
   );

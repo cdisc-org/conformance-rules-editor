@@ -54,7 +54,7 @@ export class DataService {
       company: me.clientPrincipal.claims.find(
         (claim) => claim.typ === "extension_CompanyName"
       )?.val,
-      permissions: permissions.permissions,
+      write_allowed: permissions.write_allowed,
     };
   };
 

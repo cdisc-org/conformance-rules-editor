@@ -100,9 +100,9 @@ const getUserPermissions = async (user: IUser): Promise<IUser> => {
   if ("CORE_AUTHOR_GROUP" in process.env) {
     var link = `/users/${user.id}/memberOf?$count=true&$filter=id eq '${process.env["CORE_AUTHOR_GROUP"]}'`;
     const response = await client.api(link).get();
-    user.permissions = response.value && response.value.length === 1;
+    user.write_allowed = response.value && response.value.length === 1;
   } else {
-    user.permissions = true;
+    user.write_allowed = true;
   }
   return user;
 };

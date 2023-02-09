@@ -140,6 +140,9 @@
           ],
           "type": "string"
         },
+        "metadata": {
+          "$ref": "#/$defs/OperationId"
+        },
         "name": {
           "anyOf": [
             {
@@ -943,7 +946,6 @@
               "max",
               "max_date",
               "mean",
-              "metadata_column",
               "min",
               "min_date",
               "record_count",

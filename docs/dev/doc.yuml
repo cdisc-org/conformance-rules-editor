@@ -19,7 +19,7 @@
 [Base Storage Provider|Get-Rules();Get-Rule();Post-Rule();Patch-Rule();Delete-Rule();Max-CoreId();{bg:orange}]
 [Drupal Storage{bg:orange}]
 [Cosmos SQL Storage{bg:orange}]
-[Base Users Provider|Get-Users-By-Ids();Get-Users-By-Name();{bg:orange}]
+[Base Users Provider|Get-Users-By-Ids();Get-Users-By-Name();Get-User-Permissions();{bg:orange}]
 [MS Graph Users{bg:orange}]
 
 // Azure SWA
@@ -36,7 +36,7 @@
 
 // Users
 [Users|id]
-[User|id;name]
+[User|id;name;company;write_allowed]
 
 // RELATIONSHIPS
 

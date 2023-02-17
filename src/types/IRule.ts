@@ -6,6 +6,5 @@ export interface IRule {
   created?: string;
   creator?: IUser;
   id?: string;
-  isPublished?: boolean;
   json?: object;
 }

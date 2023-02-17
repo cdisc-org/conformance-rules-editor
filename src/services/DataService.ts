@@ -34,21 +34,28 @@ export class DataService {
   };
 
   public get_user = async (): Promise<IUser> => {
-    return await this.get_me()
-      .then(function (response) {
-        return response.json();
-      })
-      .then(function (responseJson) {
-        return {
-          id: responseJson.clientPrincipal.userId,
-          name: responseJson.clientPrincipal.claims.find(
-            (claim) => claim.typ === "name"
-          )?.val,
-          company: responseJson.clientPrincipal.claims.find(
-            (claim) => claim.typ === "extension_CompanyName"
-          )?.val,
-        };
-      });
+    const mePromise = this.get_me().then(function (response) {
+      return response.json();
+    });
+    const permissionsPromise = fetch(`/api/permissions`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    }).then((response) => response.json());
+    const [me, permissions] = await Promise.all([
+      mePromise,
+      permissionsPromise,
+    ]);
+    return {
+      id: me.clientPrincipal.userId,
+      name: me.clientPrincipal.claims.find((claim) => claim.typ === "name")
+        ?.val,
+      company: me.clientPrincipal.claims.find(
+        (claim) => claim.typ === "extension_CompanyName"
+      )?.val,
+      write_allowed: permissions.write_allowed,
+    };
   };
 
   rulesAbortController = new AbortController();
@@ -115,19 +122,13 @@ export class DataService {
     }).then((response) => response.json());
   };
 
-  public set_rule_published = async (
-    ruleId: string,
-    isPublished: boolean
-  ): Promise<boolean> => {
-    return fetch(`/api/rules/${ruleId}`, {
+  public publish_rule = async (ruleId: string): Promise<IRule> => {
+    return fetch(`/api/rules/publish/${ruleId}`, {
       method: "PATCH",
       headers: {
         Accept: "application/json",
       },
-      body: JSON.stringify({ isPublished: isPublished }),
-    })
-      .then((response) => response.json())
-      .then((responseJson: IRule) => responseJson.isPublished);
+    }).then((response) => response.json());
   };
 
   public post_rule = async (body: string): Promise<string> => {

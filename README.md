@@ -25,6 +25,7 @@ https://cdisc-org.github.io/conformance-rules-editor/
          "SWA_TENANT_ID": "<Static Web App Tenant ID>",
          "SWA_CLIENT_ID": "<Static Web App Client ID>",
          "SWA_CLIENT_SECRET": "<Static Web App Client Secret>",
+         "CORE_AUTHOR_GROUP": "<User Group ID for write permissions>"
        }
    }
    ```

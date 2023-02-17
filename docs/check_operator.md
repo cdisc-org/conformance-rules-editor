@@ -163,6 +163,10 @@ Regular Expression value matching
 
 - ### starts_with
 - ### ends_with
+- ### prefix_equal_to
+- ### prefix_not_equal_to
+- ### suffix_equal_to
+- ### suffix_not_equal_to
 
 Substring matching
 
@@ -419,6 +423,23 @@ Check:
 
 This operator is technically compatible with COVALn. There is no similar rule for it.
 
+- ### variable_metadata_equal_to
+- ### variable_metadata_not_equal_to
+
+Could be useful, for example, in checking variable permissibility in conjunction with the variable_permissibilities operator:
+
+```yaml
+Check:
+  all:
+    - operator: variable_metadata_equal_to
+      value: Exp
+      metadata: $permissibility
+    - operator: not_exists
+Operations:
+  - id: $permissibility
+    operator: variable_permissibilities
+```
+
 ## Relationship & Set
 
 - ### is_contained_by
@@ -638,6 +659,10 @@ Ensures that a value of a variable in one record is equal to the value of anothe
 
 - ### is_ordered_set
 - ### is_not_ordered_set
+- ### is_ordered_by
+- ### is_not_ordered_by
+- ### target_is_not_sorted_by
+- ### target_is_sorted_by
 
 This can be used to check that --SEQ variables are ordered.
 
@@ -664,6 +689,9 @@ This can be used to check that --SEQ variables are ordered.
 
 - ### has_same_values
 - ### has_different_values
+
+- ### value_has_multiple_references
+- ### value_does_not_have_multiple_references
 
 ## Codelist
 

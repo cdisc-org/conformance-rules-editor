@@ -46,7 +46,6 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
     false
   );
   const [creator, setCreator] = useState<IUser>(null);
-  const [published, setPublished] = useState<boolean>(null);
 
   const clearError = () => (appError ? setAppError(null) : undefined);
 
@@ -73,10 +72,9 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
 
   const isRuleModifiable = useCallback(
     () =>
-      !isRuleSelected() ||
-      (user && creator && user.id === creator.id) ||
+      (user && user.write_allowed) ||
       (user && user.company && user.company.toUpperCase() === "CDISC"),
-    [user, creator, isRuleSelected]
+    [user]
   );
 
   const appContext = {
@@ -119,8 +117,6 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
     setTestStepExpanded,
     creator,
     setCreator,
-    published,
-    setPublished,
     isRuleModifiable,
   };
 

@@ -38,7 +38,6 @@ export default function ExplorerList() {
     setModifiedRule,
     setUnmodifiedRule,
     setCreator,
-    setPublished,
   } = useContext(AppContext);
   const [rulesList, setRulesList] = useState([]);
   const [wantsMoreRules, setWantsMoreRules] = useState<boolean>(false);
@@ -172,7 +171,6 @@ export default function ExplorerList() {
     if (isRuleSelected()) {
       dataService.get_rule(selectedRule).then((responseJson: IRule) => {
         setCreator(responseJson.creator);
-        setPublished(responseJson.isPublished);
         setUnmodifiedRule(responseJson.content);
         setModifiedRule(responseJson.content);
       });
@@ -184,7 +182,6 @@ export default function ExplorerList() {
     setModifiedRule,
     setUnmodifiedRule,
     setCreator,
-    setPublished,
   ]);
 
   useEffect(() => {

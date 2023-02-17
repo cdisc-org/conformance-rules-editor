@@ -24,6 +24,28 @@ Operations:
 
 Calculates the number of days between the DTC and RFSTDTC. Logic: https://github.com/cdisc-org/cdisc-rules-engine/blob/main/cdisc_rules_engine/operations/day_data_validator.py
 
+## extract_metadata
+
+## get_column_order_from_dataset
+
+> Returns list of dataset columns
+
+## get_column_order_from_library
+
+> Fetches column order for a given domain from the CDISC library. The lists with column names are sorted in accordance to "ordinal" key of library metadata.
+
+```yaml
+Rule Type: Variable Metadata Check
+Check:
+  all:
+    - name: variable_name
+      operator: is_not_contained_by
+      value: $model_variables
+Operations:
+  - id: $model_variables
+    operator: get_column_order_from_library
+```
+
 ## max
 
 ## max_date
@@ -68,6 +90,18 @@ Operations:
       - USUBJID
 ```
 
+## record_count
+
+## valid_meddra_code_references
+
+## valid_meddra_code_term_pairs
+
+## valid_meddra_term_references
+
+## valid_whodrug_references
+
+## variable_count
+
 ## variable_exists
 
 > Flag an error if MIDS is in the dataset currently being evaluated and the TM domain is not present in the study
@@ -86,3 +120,11 @@ Operations:
     name: MIDS
     operator: variable_exists
 ```
+
+## variable_names
+
+## variable_permissibilities
+
+## variable_value_count
+
+## whodrug_code_hierarchy

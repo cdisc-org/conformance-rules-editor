@@ -3,8 +3,8 @@ import { DataService, ISchema } from "../services/DataService";
 import AppContext, { IAppError, Status, IResults, Steps } from "./AppContext";
 import { TOrder } from "../types/TOrder";
 import { AlertState } from "./GeneralAlert/GeneralAlert";
-import { SchemasSettings, setDiagnosticsOptions } from "monaco-yaml";
 import { IUser } from "../types/IUser";
+import { SchemasSettings, setDiagnosticsOptions } from "monaco-yaml";
 
 const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [dataService] = useState<DataService>(() => new DataService());

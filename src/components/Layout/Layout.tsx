@@ -2,7 +2,7 @@ import YamlEditor from "../YamlEditor/YamlEditor";
 import ExplorerList from "../ExplorerList/ExplorerList";
 import Stack from "@mui/material/Stack";
 import Controls from "../Controls/Controls";
-import SplitPane from "react-split-pane";
+import { SplitPane } from "react-multi-split-pane";
 import "./Resizer.css";
 import GeneralAlert from "../GeneralAlert/GeneralAlert";
 import { useEffect, useState } from "react";
@@ -39,22 +39,11 @@ export function useWindowDimensions() {
 }
 
 export default function Layout() {
-  const [splitPaneWidth, setSplitPaneWidth] = useState<number>();
-  const { height, width } = useWindowDimensions();
+  const { height } = useWindowDimensions();
 
   return (
     <>
-      {/* 
-      // @ts-expect-error */}
-      <SplitPane
-        ref={(newRef: any) =>
-          setSplitPaneWidth(newRef ? newRef.pane1.offsetWidth : 0)
-        }
-        split="vertical"
-        defaultSize={"40%"}
-        allowResize={true}
-        onDragFinished={(size: number) => setSplitPaneWidth(size)}
-      >
+      <SplitPane split="vertical" defaultSizes={[2, 3]}>
         <Stack sx={{ maxHeight: "100%", overflow: "auto" }}>
           <Controls />
           <ExplorerList />
@@ -62,11 +51,7 @@ export default function Layout() {
         <Stack
           sx={{
             height: "100%",
-            ...(splitPaneWidth
-              ? {
-                  width: `${width - splitPaneWidth}px`,
-                }
-              : {}),
+            width: "100%",
           }}
         >
           <TabGroup

@@ -8,7 +8,7 @@ https://cdisc-org.github.io/conformance-rules-editor/
 
 ### Install dependencies
 
-1. Install frontend dependencies - From the root directory, run the command: `npm install --legacy-peer-deps`
+1. Install frontend dependencies - From the root directory, run the command: `npm install`
 2. Install api dependencies - From the ./api directory, run the command: `npm install`
 3. Install static web app node libraries by running the following commands:
    ```

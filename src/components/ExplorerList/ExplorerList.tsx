@@ -36,6 +36,7 @@ export default function ExplorerList() {
     selectedRule,
     isRuleSelected,
     setModifiedRule,
+    setMonacoInputValue,
     setUnmodifiedRule,
     setCreator,
   } = useContext(AppContext);
@@ -173,6 +174,7 @@ export default function ExplorerList() {
         setCreator(responseJson.creator);
         setUnmodifiedRule(responseJson.content);
         setModifiedRule(responseJson.content);
+        setMonacoInputValue({ value: responseJson.content });
       });
     }
   }, [
@@ -180,6 +182,7 @@ export default function ExplorerList() {
     dataService,
     isRuleSelected,
     setModifiedRule,
+    setMonacoInputValue,
     setUnmodifiedRule,
     setCreator,
   ]);

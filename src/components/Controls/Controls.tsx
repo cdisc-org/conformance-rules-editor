@@ -23,6 +23,7 @@ export default function Controls() {
     setUnmodifiedRule,
     modifiedRule,
     setModifiedRule,
+    setMonacoInputValue,
     setDirtyExplorerList,
     isRuleDirty,
     setAlertState,
@@ -33,6 +34,7 @@ export default function Controls() {
     setSelectedRule(null);
     setUnmodifiedRule(ruleTemplate);
     setModifiedRule(ruleTemplate);
+    setMonacoInputValue({ value: ruleTemplate });
   };
 
   const saveRule = async () => {
@@ -40,6 +42,7 @@ export default function Controls() {
       //Patchrule
       const rule = await dataService.patch_rule(selectedRule, modifiedRule);
       setModifiedRule(rule.content);
+      setMonacoInputValue({ value: rule.content });
       setUnmodifiedRule(rule.content);
     } else {
       //Postrule
@@ -52,6 +55,7 @@ export default function Controls() {
 
   const discardChanges = () => {
     setModifiedRule(unmodifiedRule);
+    setMonacoInputValue({ value: unmodifiedRule });
   };
 
   const deleteRule = async () => {
@@ -73,6 +77,7 @@ export default function Controls() {
       jsYaml.load(modifiedRule);
       const rule = await dataService.publish_rule(selectedRule);
       setModifiedRule(rule.content);
+      setMonacoInputValue({ value: rule.content });
       setUnmodifiedRule(rule.content);
       setDirtyExplorerList(true);
       setAlertState({

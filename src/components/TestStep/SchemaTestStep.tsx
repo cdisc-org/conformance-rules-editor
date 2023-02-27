@@ -1,7 +1,7 @@
 import { useEffect, useContext } from "react";
 import AppContext, { Status, Steps } from "../AppContext";
 import yaml from "js-yaml";
-import Ajv from "ajv";
+import Ajv from "ajv/dist/2020";
 import TestStep from "./TestStep";
 import { ISchema } from "../../services/DataService";
 

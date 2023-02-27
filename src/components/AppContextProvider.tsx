@@ -6,11 +6,7 @@ import { AlertState } from "./GeneralAlert/GeneralAlert";
 import { SchemasSettings, setDiagnosticsOptions } from "monaco-yaml";
 import { IUser } from "../types/IUser";
 
-const AppContextProvider: React.FC = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
+const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [dataService] = useState<DataService>(() => new DataService());
   const [ruleTemplate, setRuleTemplate] = useState<string>("");
   const [appError, setAppError] = useState<IAppError>();
@@ -50,6 +46,9 @@ const AppContextProvider: React.FC = ({
     false
   );
   const [creator, setCreator] = useState<IUser>(null);
+  const [monacoInputValue, setMonacoInputValue] = useState<{ value: string }>({
+    value: null,
+  });
 
   const clearError = () => (appError ? setAppError(null) : undefined);
 
@@ -66,13 +65,14 @@ const AppContextProvider: React.FC = ({
     }
   };
 
-  const isRuleSelected = useCallback(() => selectedRule !== null, [
-    selectedRule,
-  ]);
-  const isRuleDirty = useCallback(() => unmodifiedRule !== modifiedRule, [
-    unmodifiedRule,
-    modifiedRule,
-  ]);
+  const isRuleSelected = useCallback(
+    () => selectedRule !== null,
+    [selectedRule]
+  );
+  const isRuleDirty = useCallback(
+    () => unmodifiedRule !== modifiedRule,
+    [unmodifiedRule, modifiedRule]
+  );
 
   const isRuleModifiable = useCallback(
     () =>
@@ -122,6 +122,8 @@ const AppContextProvider: React.FC = ({
     creator,
     setCreator,
     isRuleModifiable,
+    monacoInputValue,
+    setMonacoInputValue,
   };
 
   useEffect(() => {
@@ -164,6 +166,7 @@ const AppContextProvider: React.FC = ({
       setRuleTemplate(template);
       setUnmodifiedRule(template);
       setModifiedRule(template);
+      setMonacoInputValue({ value: template });
     });
   }, [dataService]);
 

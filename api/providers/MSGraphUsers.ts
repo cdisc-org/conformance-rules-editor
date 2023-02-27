@@ -99,8 +99,12 @@ const getUsersByName = async (name: string): Promise<IUser[]> => {
 const getUserPermissions = async (user: IUser): Promise<IUser> => {
   if ("CORE_AUTHOR_GROUP" in process.env) {
     var link = `/users/${user.id}/memberOf?$count=true&$filter=id eq '${process.env["CORE_AUTHOR_GROUP"]}'`;
-    const response = await client.api(link).get();
-    user.write_allowed = response.value && response.value.length === 1;
+    try {
+      const response = await client.api(link).get();
+      user.write_allowed = response.value && response.value.length === 1;
+    } catch (exception) {
+      user.write_allowed = false;
+    }
   } else {
     user.write_allowed = true;
   }

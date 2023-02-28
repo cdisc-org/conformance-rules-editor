@@ -849,21 +849,33 @@
       "$ref": "#/$defs/Boolean"
     },
     "Core": {
-      "additionalProperties": false,
       "properties": {
-        "Id": {
-          "pattern": "^CORE-\\d{6}$",
-          "type": "string"
-        },
         "Version": {
           "const": "1"
-        },
-        "Status": {
-          "enum": ["Draft", "Published"],
-          "type": "string"
         }
       },
-      "required": ["Id", "Status", "Version"],
+      "oneOf": [
+        {
+          "properties": {
+            "Status": {
+              "const": "Draft"
+            }
+          }
+        },
+        {
+          "properties": {
+            "Id": {
+              "pattern": "^CORE-\\d{6}$",
+              "type": "string"
+            },
+            "Status": {
+              "const": "Published"
+            }
+          },
+          "required": ["Id"]
+        }
+      ],
+      "required": ["Status", "Version"],
       "type": "object"
     },
     "Description": {

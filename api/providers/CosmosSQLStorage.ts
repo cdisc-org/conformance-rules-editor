@@ -140,7 +140,7 @@ function buildJoinsAndFilters(query: IQuery) {
   for (const filter of query.filters) {
     const subqueryNames = splitSubqueryNames(filter.name);
     for (const [subqueryIndex, subqueryName] of subqueryNames
-      .filter((_, subqueryIndex) => subqueryIndex < subqueryNames.length - 1)
+      .slice(0, -1)
       .entries()) {
       joins = `${joins} JOIN ${rulesAlias}${aliasIndex + 1} IN ${rulesAlias}${
         subqueryIndex === 0 ? "1" : aliasIndex
@@ -150,7 +150,7 @@ function buildJoinsAndFilters(query: IQuery) {
     const filterParam = operations[filter.operator](
       subqueryNames[subqueryNames.length - 1],
       filter.value,
-      `${rulesAlias}${aliasIndex}`
+      `${rulesAlias}${subqueryNames.length === 1 ? "1" : aliasIndex}`
     );
     filters = `${filters}${filters === "" ? " WHERE" : " AND"} ${
       filterParam.filter

@@ -122,7 +122,7 @@ export default function ExplorerList() {
       const params = {
         orderBy: orderBy,
         order: order,
-        select: headCells.map((headCell: HeadCell) => headCell.queryParam),
+        select: headCells.map((headCell: HeadCell) => headCell.selectParam),
         filters: Object.entries(searchText)
           .filter(
             ([_, filterValue]: [string, string]) =>

@@ -2,6 +2,7 @@ import { CosmosClient, SqlParameter } from "@azure/cosmos";
 import { IQuery } from "../types/IQuery";
 import { IRule } from "../types/IRule";
 import { IRules } from "../types/IRules";
+import { ruleArrays } from "../utils/Consts";
 import {
   yamlToJSON,
   buildJSON,
@@ -13,6 +14,13 @@ import {
   paramName,
   jsonName,
 } from "../utils/json_yaml";
+
+interface Operation {
+  (name: string, value: any, collectionAlias: string): {
+    filter: string;
+    parameters: SqlParameter[];
+  };
+}
 
 const dbContainer = new CosmosClient({
   endpoint: `https://${process.env["COSMOS_BASE_URL"]}`,
@@ -40,15 +48,15 @@ const getRule = async (id: string): Promise<IRule> => {
 
 const rulesAlias = "Rules";
 
-function containsOperation(
-  name: string,
-  value: string | number
-): {
-  filter: string;
-  parameters: SqlParameter[];
-} {
+const containsOperation: Operation = (
+  name,
+  value: string | number,
+  collectionAlias
+) => {
   return {
-    filter: `CONTAINS(${rulesAlias}${sqlName(name)}, ${paramName(name)}, true)`,
+    filter: `CONTAINS(${collectionAlias}${sqlName(name)}, ${paramName(
+      name
+    )}, true)`,
     parameters: [
       {
         name: paramName(name),
@@ -56,17 +64,15 @@ function containsOperation(
       },
     ],
   };
-}
+};
 
-function inOperation(
-  name: string,
-  value: string[] | number[]
-): {
-  filter: string;
-  parameters: SqlParameter[];
-} {
+const inOperation: Operation = (
+  name,
+  value: string[] | number[],
+  collectionAlias
+) => {
   return {
-    filter: `${rulesAlias}${sqlName(name)} IN (${[...value.keys()]
+    filter: `${collectionAlias}${sqlName(name)} IN (${[...value.keys()]
       .map((index: number) => `${paramName(name)}${index}`)
       .join(",")})`,
     parameters: value.map((param, index) => ({
@@ -74,62 +80,124 @@ function inOperation(
       value: param,
     })),
   };
-}
+};
 
-const getRules = async (query: IQuery): Promise<IRules> => {
-  const parameters: SqlParameter[] = [];
-
-  // select
+function buildSelect(query: IQuery) {
   const select = {};
   for (const selectItem of query.select.map((column) => jsonName(column))) {
-    buildJSON(select, selectItem, `${rulesAlias}${dotsToSquares(selectItem)}`);
+    buildJSON(select, selectItem, `${rulesAlias}1${dotsToSquares(selectItem)}`);
   }
+  return select;
+}
 
-  // filter
+function splitSubqueryNames(name: string) {
+  /**
+   * Creates a array containing a new element every time an array is encountered.
+   * For example,
+   * converts: "json.Authorities.Standards.References.Rule Identifier.Id"
+   * to: [
+   *    "json.Authorities",
+   *    "Standards",
+   *    "References",
+   *    "Rule Identifier.Id"
+   * ]
+   */
+  return name.split(".").reduce(
+    (previousValue: string[], currentValue: string) => {
+      const previousName = previousValue[previousValue.length - 1];
+      previousValue[previousValue.length - 1] = `${previousName}${
+        previousName === "" ? "" : "."
+      }${currentValue}`;
+      if (ruleArrays.has(previousValue.join("."))) {
+        previousValue.push("");
+      }
+      return previousValue;
+    },
+    [""]
+  );
+}
+
+function buildJoinsAndFilters(query: IQuery) {
+  /**
+   * Handles joins and filters for nested arrays. For example:
+   *  SELECT Rules1.json
+   *  FROM Rules1
+   *  JOIN Rules2 IN Rules1["json"]["Authorities"]
+   *  JOIN Rules3 IN Rules2["Standards"]
+   *  JOIN Rules4 IN Rules3["References"]
+   *  WHERE CONTAINS(Rules4["Rule_Identifier"]["Id"], "CG0", true)
+   */
   const operations: {
-    [operator: string]: (
-      name: string,
-      value: any
-    ) => {
-      filter: string;
-      parameters: SqlParameter[];
-    };
+    [operator: string]: Operation;
   } = {
     contains: containsOperation,
     in: inOperation,
   };
+  const filterParams: SqlParameter[] = [];
+  var joins = "";
+  var aliasIndex = 1;
   var filters = "";
   for (const filter of query.filters) {
-    const filterParam = operations[filter.operator](filter.name, filter.value);
+    const subqueryNames = splitSubqueryNames(filter.name);
+    for (const [subqueryIndex, subqueryName] of subqueryNames
+      .filter((_, subqueryIndex) => subqueryIndex < subqueryNames.length - 1)
+      .entries()) {
+      joins = `${joins} JOIN ${rulesAlias}${aliasIndex + 1} IN ${rulesAlias}${
+        subqueryIndex === 0 ? "1" : aliasIndex
+      }${sqlName(subqueryName)}`;
+      aliasIndex = aliasIndex + 1;
+    }
+    const filterParam = operations[filter.operator](
+      subqueryNames[subqueryNames.length - 1],
+      filter.value,
+      `${rulesAlias}${aliasIndex}`
+    );
     filters = `${filters}${filters === "" ? " WHERE" : " AND"} ${
       filterParam.filter
     }`;
-    parameters.push(...filterParam.parameters);
+    filterParams.push(...filterParam.parameters);
   }
+  return { joins, filters, filterParams };
+}
 
-  //sort order
-  const orderBy = query.orderBy
-    ? ` ORDER BY ${rulesAlias}${sqlName(query.orderBy)} ${
+function buildOrderBy(query: IQuery) {
+  return query.orderBy
+    ? ` ORDER BY ${rulesAlias}1${sqlName(query.orderBy)} ${
         query.order === "desc" ? "DESC" : "ASC"
       }`
     : "";
+}
 
-  //offset
+function buildOffset(query: IQuery) {
   const offset = query.offset == null ? 0 : query.offset;
-  parameters.push({ name: "@offset", value: offset });
+  return { offset, offsetParam: { name: "@offset", value: offset } };
+}
 
-  //limit
+function buildLimit(query: IQuery) {
   const limit = query.limit == null ? 50 : query.limit;
-  parameters.push({ name: "@limit", value: limit });
+  return {
+    limit,
+    limitParam: {
+      name: "@limit",
+      value: query.limit == null ? 50 : query.limit,
+    },
+  };
+}
+
+const getRules = async (query: IQuery): Promise<IRules> => {
+  const select = buildSelect(query);
+  const { joins, filters, filterParams } = buildJoinsAndFilters(query);
+  const orderBy = buildOrderBy(query);
+  const { offset, offsetParam } = buildOffset(query);
+  const { limit, limitParam } = buildLimit(query);
 
   const querySpec = {
-    parameters,
-    query: `SELECT ${jsonToQuery(
+    parameters: [...filterParams, offsetParam, limitParam],
+    query: `SELECT DISTINCT ${jsonToQuery(
       select
-    )} FROM ${rulesAlias}${filters}${orderBy} OFFSET @offset LIMIT @limit`,
+    )} FROM ${rulesAlias}1${joins}${filters}${orderBy} OFFSET @offset LIMIT @limit`,
   };
 
-  //request
   try {
     const results = await dbContainer.items.query(querySpec).fetchAll();
     const resp = {

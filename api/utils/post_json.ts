@@ -22,12 +22,13 @@ export default async (
 
   const res = await fetch(url, init);
 
-  if (res.status === 200) {
+  if (res.status === 200 || res.status === 400) {
     const text = await res.text();
     try {
       context.res = {
         status: res.status,
         body: JSON.parse(text),
+        headers: { "Content-Type": "application/json" },
       };
     } catch (jsonParseException) {
       context.res = {

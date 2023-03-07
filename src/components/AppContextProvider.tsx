@@ -65,12 +65,14 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const isRuleSelected = useCallback(
-    () => selectedRule !== null,
-    [selectedRule]
-  );
+  const isRuleSelected = useCallback(() => selectedRule !== null, [
+    selectedRule,
+  ]);
+
   const isRuleDirty = useCallback(
-    () => unmodifiedRule !== modifiedRule,
+    () =>
+      unmodifiedRule.replaceAll("\r\n", "\n") !==
+      modifiedRule.replaceAll("\r\n", "\n"),
     [unmodifiedRule, modifiedRule]
   );
 

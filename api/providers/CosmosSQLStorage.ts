@@ -83,6 +83,28 @@ const inOperation: Operation = (
 };
 
 function buildSelect(query: IQuery) {
+  /**
+   * For example,
+   *
+   * SELECT {
+   *   json: {
+   *     Authorities: "Rules1[\"json\"][\"Authorities\"]",
+   *     Core: {
+   *       Id: "Rules1[\"json\"][\"Core\"][\"Id\"]",
+   *       Status: "Rules1[\"json\"][\"Core\"][\"Status\"]",
+   *     },
+   *   },
+   *   creator: {
+   *     id: "Rules1[\"creator\"][\"id\"]",
+   *   },
+   *   created: "Rules1[\"created\"]",
+   *   changed: "Rules1[\"changed\"]",
+   *   id: "Rules1[\"id\"]",
+   * }
+   *
+   * Note that we need to select from the root of the document,
+   * which has the first alias (Rules1) in the FROM clause
+   */
   const select = {};
   for (const selectItem of query.select.map((column) => jsonName(column))) {
     buildJSON(select, selectItem, `${rulesAlias}1${dotsToSquares(selectItem)}`);
@@ -92,7 +114,7 @@ function buildSelect(query: IQuery) {
 
 function splitSubqueryNames(name: string) {
   /**
-   * Creates a array containing a new element every time an array is encountered.
+   * Creates an array containing a new element every time an array is encountered.
    * For example,
    * converts: "json.Authorities.Standards.References.Rule Identifier.Id"
    * to: [
@@ -101,6 +123,8 @@ function splitSubqueryNames(name: string) {
    *    "References",
    *    "Rule Identifier.Id"
    * ]
+   *
+   * Useful because will need a new self JOIN clause every time a nested array is encountered.
    */
   return name.split(".").reduce(
     (previousValue: string[], currentValue: string) => {
@@ -119,13 +143,17 @@ function splitSubqueryNames(name: string) {
 
 function buildJoinsAndFilters(query: IQuery) {
   /**
-   * Handles joins and filters for nested arrays. For example:
-   *  SELECT Rules1.json
-   *  FROM Rules1
-   *  JOIN Rules2 IN Rules1["json"]["Authorities"]
-   *  JOIN Rules3 IN Rules2["Standards"]
-   *  JOIN Rules4 IN Rules3["References"]
-   *  WHERE CONTAINS(Rules4["Rule_Identifier"]["Id"], "CG0", true)
+   * Handles self JOINS and filters for nested arrays. For example:
+   *
+   * SELECT Rules1.json
+   * FROM Rules1
+   * JOIN Rules2 IN Rules1["json"]["Authorities"]
+   * JOIN Rules3 IN Rules2["Standards"]
+   * JOIN Rules4 IN Rules3["References"]
+   * WHERE CONTAINS(Rules4["Rule_Identifier"]["Id"], "CG0", true)
+   *
+   * Refer to:
+   * https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/query/join#self-joining-multiple-items
    */
   const operations: {
     [operator: string]: Operation;

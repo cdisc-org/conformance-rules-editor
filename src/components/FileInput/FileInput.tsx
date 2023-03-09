@@ -1,13 +1,14 @@
 import { Button } from "@mui/material";
 
 interface Props {
+  accept: string;
   id: string;
   label: string;
   setFile: (file: File) => void;
 }
 
 export default function FileInput(props: Props) {
-  const { id, label, setFile } = props;
+  const { accept, id, label, setFile } = props;
 
   const handleFileSelected = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -27,6 +28,7 @@ export default function FileInput(props: Props) {
     <Button variant="contained" component="label">
       {label}
       <input
+        accept={accept}
         key={id}
         type="file"
         onChange={handleFileSelected}

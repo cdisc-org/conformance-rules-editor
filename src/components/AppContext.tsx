@@ -16,6 +16,18 @@ export enum Status {
   Fail,
 }
 
+export enum DetailsType {
+  file,
+  json,
+  text,
+  xml,
+}
+
+export interface IResultsDetails {
+  detailsType: DetailsType;
+  details: any;
+}
+
 export interface IResults {
   status: Status;
   errorCount?: number;
@@ -23,14 +35,15 @@ export interface IResults {
   positiveCount?: number;
   scopeSkipCount?: number;
   varSkipCount?: number;
-  details: any[];
+  details: IResultsDetails[];
 }
 
 export enum Steps {
   Syntax,
   Schema,
   JSON,
-  Load,
+  LoadDatasets,
+  LoadDefineXML,
   Test,
 }
 
@@ -65,8 +78,10 @@ export interface IAppContext {
   setSchemaCheck: (schemaCheck: IResults) => void;
   jsonCheck: IResults;
   setJsonCheck: (jsonCheck: IResults) => void;
-  loadCheck: IResults;
-  setLoadCheck: (loadCheck: IResults) => void;
+  loadDatasetsCheck: IResults;
+  setLoadDatasetsCheck: (loadDatasetsCheck: IResults) => void;
+  loadDefineXMLCheck: IResults;
+  setLoadDefineXMLCheck: (loadDefineXMLCheck: IResults) => void;
   testCheck: IResults;
   setTestCheck: (testCheck: IResults) => void;
   testStepExpanded: Steps | false;
@@ -129,11 +144,18 @@ export const defaultAppContext: IAppContext = {
   setSearchText: () => {
     /* Placeholder */
   },
-  loadCheck: {
+  loadDatasetsCheck: {
     status: Status.Pending,
     details: [],
   },
-  setLoadCheck: () => {
+  setLoadDatasetsCheck: () => {
+    /* Placeholder */
+  },
+  loadDefineXMLCheck: {
+    status: Status.Pending,
+    details: [],
+  },
+  setLoadDefineXMLCheck: () => {
     /* Placeholder */
   },
   syntaxCheck: {

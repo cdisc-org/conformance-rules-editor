@@ -10,8 +10,9 @@ import TabGroup from "../TabGroup/TabGroup";
 import SyntaxTestStep from "../TestStep/SyntaxTestStep";
 import SchemaTestStep from "../TestStep/SchemaTestStep";
 import JsonTestStep from "../TestStep/JsonTestStep";
-import LoadTestStep from "../TestStep/LoadTestStep";
+import LoadDatasetsTestStep from "../TestStep/LoadDatasetsTestStep";
 import ResultsTestStep from "../TestStep/ResultsTestStep";
+import LoadDefineXMLTestStep from "../TestStep/LoadDefineXMLTestStep";
 
 function getWindowDimensions() {
   const { innerWidth: width, innerHeight: height } = window;
@@ -65,7 +66,8 @@ export default function Layout() {
                     <SyntaxTestStep />
                     <SchemaTestStep />
                     <JsonTestStep />
-                    <LoadTestStep />
+                    <LoadDefineXMLTestStep />
+                    <LoadDatasetsTestStep />
                     <ResultsTestStep />
                   </>
                 ),

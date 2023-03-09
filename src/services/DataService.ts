@@ -193,7 +193,11 @@ export class DataService {
     return new RuleTemplate(schema).schemaToTemplate();
   };
 
-  public execute_rule = async (rule: object, datasets: IDataset[]) => {
+  public execute_rule = async (
+    rule: object,
+    datasets: IDataset[],
+    defineXML?: string
+  ) => {
     return await fetch(`/api/rules/execute`, {
       method: "POST",
       headers: {
@@ -202,6 +206,7 @@ export class DataService {
       body: JSON.stringify({
         rule: rule,
         datasets: datasets,
+        ...(defineXML ? { defineXML: defineXML } : {}),
       }),
     }).then(async function (response: Response) {
       if (response.status === 200) {

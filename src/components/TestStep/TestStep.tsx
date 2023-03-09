@@ -7,8 +7,15 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CancelIcon from "@mui/icons-material/Cancel";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import AccessTimeFilledIcon from "@mui/icons-material/AccessTimeFilled";
-import AppContext, { Status, IResults, Steps } from "../AppContext";
+import AppContext, {
+  Status,
+  IResults,
+  Steps,
+  DetailsType,
+  IResultsDetails,
+} from "../AppContext";
 import JsonViewer from "../JsonViewer/JsonViewer";
+import XMLViewer from "../XMLViewer/XMLViewer";
 import ResultCount from "./ResultCount";
 
 const iconWidth = 30;
@@ -25,6 +32,32 @@ const statusIcons = new Map<Status, ReactElement>([
   [Status.Pass, <CheckCircleIcon color="success" />],
   [Status.Fail, <CancelIcon color="error" />],
 ]);
+
+const createDetails = (
+  { detailsType, details }: IResultsDetails,
+  index: number
+) => {
+  switch (detailsType) {
+    case DetailsType.file:
+      return (
+        <div key={index}>
+          <p>Filename: {details.name}</p>
+          <p>Filetype: {details.type}</p>
+          <p>Size in bytes: {details.size}</p>
+          <p>
+            Last modified date:{" "}
+            {new Date(details.lastModified).toLocaleString("en-US")}
+          </p>
+        </div>
+      );
+    case DetailsType.json:
+      return <JsonViewer key={index} src={details} height="50vh" />;
+    case DetailsType.text:
+      return <Typography key={index}>{details}</Typography>;
+    case DetailsType.xml:
+      return <XMLViewer key={index} value={details} height="50vh" />;
+  }
+};
 
 export default function TestStep(props: Props) {
   const { title, step, results, children } = props;
@@ -78,23 +111,7 @@ export default function TestStep(props: Props) {
       </AccordionSummary>
       <AccordionDetails>
         {children}
-        {results.details.map((detail, index: number) =>
-          typeof detail === "string" ? (
-            <Typography key={index}>{detail}</Typography>
-          ) : detail instanceof File ? (
-            <div key={index}>
-              <p>Filename: {detail.name}</p>
-              <p>Filetype: {detail.type}</p>
-              <p>Size in bytes: {detail.size}</p>
-              <p>
-                Last modified date:{" "}
-                {new Date(detail.lastModified).toLocaleString("en-US")}
-              </p>
-            </div>
-          ) : (
-            <JsonViewer key={index} src={detail} height="50vh" />
-          )
-        )}
+        {results.details.map(createDetails)}
       </AccordionDetails>
     </Accordion>
   );

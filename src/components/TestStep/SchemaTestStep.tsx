@@ -1,5 +1,5 @@
 import { useEffect, useContext } from "react";
-import AppContext, { Status, Steps } from "../AppContext";
+import AppContext, { DetailsType, Status, Steps } from "../AppContext";
 import yaml from "js-yaml";
 import Ajv from "ajv/dist/2020";
 import TestStep from "./TestStep";
@@ -38,11 +38,18 @@ export default function SchemaTestStep() {
               valid
                 ? {
                     status: Status.Pass,
-                    details: ["Pass"],
+                    details: [
+                      { detailsType: DetailsType.text, details: "Pass" },
+                    ],
                   }
                 : {
                     status: Status.Fail,
-                    details: [validate.errors],
+                    details: [
+                      {
+                        detailsType: DetailsType.json,
+                        details: validate.errors,
+                      },
+                    ],
                   }
             );
           }
@@ -50,14 +57,18 @@ export default function SchemaTestStep() {
       } else {
         setSchemaCheck({
           status: Status.Fail,
-          details: ["Fail Syntax Check"],
+          details: [
+            { detailsType: DetailsType.text, details: "Fail Syntax Check" },
+          ],
         });
       }
     } catch (e) {
       if (isSubscribed) {
         setSchemaCheck({
           status: Status.Fail,
-          details: ["Fail Syntax Check"],
+          details: [
+            { detailsType: DetailsType.text, details: "Fail Syntax Check" },
+          ],
         });
       }
     }

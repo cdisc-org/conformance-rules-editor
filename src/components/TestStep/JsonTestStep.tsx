@@ -1,6 +1,6 @@
 import { useEffect, useContext } from "react";
 import { spacesToUnderscores, yamlToJSON } from "../../utils/json_yaml";
-import AppContext, { Status, Steps } from "../AppContext";
+import AppContext, { DetailsType, Status, Steps } from "../AppContext";
 import TestStep from "./TestStep";
 
 export default function JsonTestStep() {
@@ -12,7 +12,7 @@ export default function JsonTestStep() {
     const json = spacesToUnderscores(yamlToJSON(modifiedRule));
     setJsonCheck({
       status: Status.Pass,
-      details: [json],
+      details: [{ detailsType: DetailsType.json, details: json }],
     });
   }, [modifiedRule, dataService, setJsonCheck]);
 

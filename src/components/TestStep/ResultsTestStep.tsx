@@ -126,19 +126,21 @@ export default function ResultsTestStep() {
         0
       );
 
+    const executionPayload = () => ({
+      rule: jsonCheck.details[0].details,
+      datasets: loadDatasetsCheck.details[1].details,
+      ...(loadDefineXMLCheck.status === Status.Pass
+        ? { defineXML: loadDefineXMLCheck.details[1].details }
+        : {}),
+    });
+
     let isSubscribed = true;
     if (
       jsonCheck.status === Status.Pass &&
       loadDatasetsCheck.status === Status.Pass
     ) {
       dataService
-        .execute_rule(
-          jsonCheck.details[0].details,
-          loadDatasetsCheck.details[1].details,
-          loadDefineXMLCheck.status === Status.Pass
-            ? loadDefineXMLCheck.details[1].details
-            : undefined
-        )
+        .execute_rule(executionPayload())
         .then((response) => {
           if (isSubscribed) {
             setTestCheck({
@@ -157,13 +159,7 @@ export default function ResultsTestStep() {
                 },
                 {
                   detailsType: DetailsType.json,
-                  details: {
-                    rule: jsonCheck.details[0].details,
-                    datasets: loadDatasetsCheck.details[1].details,
-                    ...(loadDefineXMLCheck.status === Status.Pass
-                      ? { defineXML: loadDefineXMLCheck.details[1].details }
-                      : {}),
-                  },
+                  details: executionPayload(),
                 },
                 {
                   detailsType: DetailsType.text,
@@ -192,13 +188,7 @@ export default function ResultsTestStep() {
                 },
                 {
                   detailsType: DetailsType.json,
-                  details: {
-                    rule: jsonCheck.details[0].details,
-                    datasets: loadDatasetsCheck.details[1].details,
-                    ...(loadDefineXMLCheck.status === Status.Pass
-                      ? { defineXML: loadDefineXMLCheck.details[1].details }
-                      : {}),
-                  },
+                  details: executionPayload(),
                 },
                 {
                   detailsType: DetailsType.text,

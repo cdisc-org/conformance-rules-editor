@@ -196,7 +196,7 @@ export class DataService {
   public execute_rule = async (payload: {
     rule: object;
     datasets: IDataset[];
-    defineXML?: string;
+    define_xml?: string;
   }) => {
     return await fetch(`/api/rules/execute`, {
       method: "POST",

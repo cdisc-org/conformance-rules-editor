@@ -130,7 +130,7 @@ export default function ResultsTestStep() {
       rule: jsonCheck.details[0].details,
       datasets: loadDatasetsCheck.details[1].details,
       ...(loadDefineXMLCheck.status === Status.Pass
-        ? { defineXML: loadDefineXMLCheck.details[1].details }
+        ? { define_xml: loadDefineXMLCheck.details[1].details }
         : {}),
     });
 

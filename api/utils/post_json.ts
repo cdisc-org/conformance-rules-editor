@@ -7,7 +7,6 @@ export default async (
   requestInfo: RequestInfo,
   token?: String
 ) => {
-  const url = `https://${requestInfo}`;
   const init = {
     method: "POST",
     headers: {
@@ -20,7 +19,7 @@ export default async (
     body: JSON.stringify(req.body),
   };
 
-  const res = await fetch(url, init);
+  const res = await fetch(requestInfo, init);
 
   if (res.status === 200 || res.status === 400) {
     const text = await res.text();

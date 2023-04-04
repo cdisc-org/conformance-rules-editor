@@ -1,11 +1,12 @@
 import { useEffect, useContext } from "react";
-import AppContext, { Status, Steps } from "../AppContext";
+import AppContext, { DetailsType, Status, Steps } from "../AppContext";
 import TestStep from "./TestStep";
 
 export default function ResultsTestStep() {
   const {
     dataService,
-    loadCheck,
+    loadDatasetsCheck,
+    loadDefineXMLCheck,
     jsonCheck,
     testCheck,
     setTestCheck,
@@ -125,10 +126,21 @@ export default function ResultsTestStep() {
         0
       );
 
+    const executionPayload = () => ({
+      rule: jsonCheck.details[0].details,
+      datasets: loadDatasetsCheck.details[1].details,
+      ...(loadDefineXMLCheck.status === Status.Pass
+        ? { define_xml: loadDefineXMLCheck.details[1].details }
+        : {}),
+    });
+
     let isSubscribed = true;
-    if (jsonCheck.status === Status.Pass && loadCheck.status === Status.Pass) {
+    if (
+      jsonCheck.status === Status.Pass &&
+      loadDatasetsCheck.status === Status.Pass
+    ) {
       dataService
-        .execute_rule(jsonCheck.details[0], loadCheck.details[1])
+        .execute_rule(executionPayload())
         .then((response) => {
           if (isSubscribed) {
             setTestCheck({
@@ -141,13 +153,25 @@ export default function ResultsTestStep() {
               scopeSkipCount: testResultsScopeSkipCount(response),
               varSkipCount: testResultsVarSkipCount(response),
               details: [
-                "Request",
                 {
-                  rule: jsonCheck.details[0],
-                  datasets: loadCheck.details[1],
+                  detailsType: DetailsType.text,
+                  details: "Request",
                 },
-                "Results",
-                response,
+                {
+                  detailsType: DetailsType.json,
+                  details: executionPayload(),
+                },
+                {
+                  detailsType: DetailsType.text,
+                  details: "Results",
+                },
+                {
+                  detailsType:
+                    typeof response === "string"
+                      ? DetailsType.text
+                      : DetailsType.json,
+                  details: response,
+                },
               ],
             });
           }
@@ -158,13 +182,22 @@ export default function ResultsTestStep() {
               status: Status.Fail,
               errorCount: 1,
               details: [
-                "Request",
                 {
-                  rule: jsonCheck.details[0],
-                  datasets: loadCheck.details[1],
+                  detailsType: DetailsType.text,
+                  details: "Request",
                 },
-                exception.message,
-                await exception.details,
+                {
+                  detailsType: DetailsType.json,
+                  details: executionPayload(),
+                },
+                {
+                  detailsType: DetailsType.text,
+                  details: exception.message,
+                },
+                {
+                  detailsType: DetailsType.text,
+                  details: await exception.details,
+                },
               ],
             });
           }
@@ -173,14 +206,24 @@ export default function ResultsTestStep() {
       setTestCheck({
         status: Status.Pending,
         details: [
-          "Waiting for a valid JSON executable rule and/or loaded test data.",
+          {
+            detailsType: DetailsType.text,
+            details:
+              "Waiting for a valid JSON executable rule and/or loaded test data.",
+          },
         ],
       });
     }
     return () => {
       isSubscribed = false;
     };
-  }, [jsonCheck, loadCheck, dataService, setTestCheck]);
+  }, [
+    jsonCheck,
+    loadDatasetsCheck,
+    loadDefineXMLCheck,
+    dataService,
+    setTestCheck,
+  ]);
 
   return <TestStep title={"Results"} step={Steps.Test} results={testCheck} />;
 }

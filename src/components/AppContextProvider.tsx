@@ -1,6 +1,12 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { DataService, ISchema } from "../services/DataService";
-import AppContext, { IAppError, Status, IResults, Steps } from "./AppContext";
+import AppContext, {
+  IAppError,
+  Status,
+  IResults,
+  Steps,
+  DetailsType,
+} from "./AppContext";
 import { TOrder } from "../types/TOrder";
 import { AlertState } from "./GeneralAlert/GeneralAlert";
 import { SchemasSettings, setDiagnosticsOptions } from "monaco-yaml";
@@ -32,14 +38,22 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
     status: Status.Pending,
     details: [],
   });
-  const [loadCheck, setLoadCheck] = useState<IResults>({
+  const [loadDatasetsCheck, setLoadDatasetsCheck] = useState<IResults>({
+    status: Status.Pending,
+    details: [],
+  });
+  const [loadDefineXMLCheck, setLoadDefineXMLCheck] = useState<IResults>({
     status: Status.Pending,
     details: [],
   });
   const [testCheck, setTestCheck] = useState<IResults>({
     status: Status.Pending,
     details: [
-      "Waiting for a valid JSON executable rule and/or loaded test data.",
+      {
+        detailsType: DetailsType.text,
+        details:
+          "Waiting for a valid JSON executable rule and/or loaded test data.",
+      },
     ],
   });
   const [testStepExpanded, setTestStepExpanded] = useState<Steps | false>(
@@ -115,8 +129,10 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
     setSchemaCheck,
     jsonCheck,
     setJsonCheck,
-    loadCheck,
-    setLoadCheck,
+    loadDatasetsCheck,
+    setLoadDatasetsCheck,
+    loadDefineXMLCheck,
+    setLoadDefineXMLCheck,
     testCheck,
     setTestCheck,
     testStepExpanded,
@@ -137,7 +153,14 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
   }, [dataService, setUser]);
 
   useEffect(() => {
-    setLoadCheck({
+    setLoadDatasetsCheck({
+      status: Status.Pending,
+      details: [],
+    });
+  }, [selectedRule]);
+
+  useEffect(() => {
+    setLoadDefineXMLCheck({
       status: Status.Pending,
       details: [],
     });

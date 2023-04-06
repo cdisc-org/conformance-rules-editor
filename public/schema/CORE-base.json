@@ -173,7 +173,8 @@
                 "variable_label",
                 "variable_name",
                 "variable_order",
-                "variable_size"
+                "variable_size",
+		"variable_format"
               ],
               "type": "string"
             }
@@ -196,6 +197,7 @@
             "date_not_equal_to",
             "does_not_contain",
             "does_not_contain_case_insensitive",
+	    "does_not_equal_string_part",
             "does_not_have_next_corresponding_record",
             "does_not_reference_correct_codelist",
             "does_not_use_valid_codelist_terms",
@@ -949,16 +951,23 @@
           "operator": {
             "enum": [
               "distinct",
-              "dy",
+              "domain_label",
+	      "dy",
               "extract_metadata",
+	      "expected_variables",
               "get_column_order_from_dataset",
               "get_column_order_from_library",
+	      "get_model_column_order",
+	      "get_parent_model_column_order",
               "max",
               "max_date",
               "mean",
               "min",
               "min_date",
+	      "permissible_variables",	
               "record_count",
+	      "required_variables",
+	      "study_domains",
               "valid_meddra_code_references",
               "valid_meddra_code_term_pairs",
               "valid_meddra_term_references",

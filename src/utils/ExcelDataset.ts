@@ -1,5 +1,11 @@
 import { read, utils, WorkBook, WorkSheet } from "xlsx";
 
+export interface IDatasets {
+  datasets: IDataset[];
+  standard?: IStandard;
+  codelists?: string[];
+}
+
 export interface IDataset {
   filename: string;
   name?: string;
@@ -10,6 +16,11 @@ export interface IDataset {
   records?: {};
 }
 
+export interface IStandard {
+  product: string;
+  version: string;
+}
+
 export interface IVariable {
   name: string;
   label?: string;
@@ -18,6 +29,7 @@ export interface IVariable {
 }
 
 const datasetsSheetName: string = "Datasets";
+const librarySheetName: string = "Library";
 
 const readFile = async (file: File): Promise<string | ArrayBuffer> => {
   return new Promise((resolve) => {
@@ -111,13 +123,10 @@ const getDomainName = (rows: {}[], sheetName: string): string => {
       sheetName.toUpperCase().replace(".XPT", "");
 };
 
-export const excelToJsonDatasets = async (file: File): Promise<IDataset[]> => {
-  const workbook: WorkBook = read(await readFile(file), {
-    type: "binary",
-  });
-
-  const datasets: IDataset[] = getDatasets(workbook);
-
+const mergeDatasetRecords = (
+  workbook: WorkBook,
+  datasets: IDataset[]
+): void => {
   for (const [sheetName, sheet] of Object.entries(
     workbook.Sheets
   ).filter(([sheetName, sheet]: [string, WorkSheet]) =>
@@ -136,5 +145,43 @@ export const excelToJsonDatasets = async (file: File): Promise<IDataset[]> => {
     dataset.variables = getVariables(cols, rows);
     dataset.records = getRecords(dataset.variables, rows);
   }
-  return datasets;
+};
+
+const getLibrary = (workbook: WorkBook): IStandard[] => {
+  if (!(librarySheetName in workbook.Sheets)) {
+    return [];
+  }
+  const libraryRows: {}[] = utils.sheet_to_json<{}>(
+    workbook.Sheets[librarySheetName]
+  );
+  return libraryRows.map<IStandard>((row: {}) => ({
+    ...(row["Product"] && { product: row["Product"] }),
+    ...(row["Version"] && { version: row["Version"] }),
+  }));
+};
+
+const isCT = (standard: IStandard): boolean => standard.product.endsWith("ct");
+
+const getStandard = (library: IStandard[]): IStandard =>
+  library.find((standard) => !isCT(standard));
+
+const getCodelists = (library: IStandard[]): string[] =>
+  library
+    .filter(isCT)
+    .map((standard) => `${standard.product}-${standard.version}`);
+
+export const excelToJsonDatasets = async (file: File): Promise<IDatasets> => {
+  const workbook: WorkBook = read(await readFile(file), {
+    type: "binary",
+  });
+  const datasets: IDataset[] = getDatasets(workbook);
+  mergeDatasetRecords(workbook, datasets);
+  const library = getLibrary(workbook);
+  const standard = getStandard(library);
+  const codelists = getCodelists(library);
+  return {
+    datasets: datasets,
+    ...(standard && { standard }),
+    ...(codelists && { codelists }),
+  };
 };

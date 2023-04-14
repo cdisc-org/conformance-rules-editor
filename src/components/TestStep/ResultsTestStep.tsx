@@ -127,8 +127,11 @@ export default function ResultsTestStep() {
       );
 
     const executionPayload = () => ({
+      /* rule */
       rule: jsonCheck.details[0].details,
-      datasets: loadDatasetsCheck.details[1].details,
+      /* datasets, standard, codelists */
+      ...loadDatasetsCheck.details[1].details,
+      /* define_xml */
       ...(loadDefineXMLCheck.status === Status.Pass
         ? { define_xml: loadDefineXMLCheck.details[1].details }
         : {}),

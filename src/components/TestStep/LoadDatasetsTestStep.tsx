@@ -12,7 +12,7 @@ export default function LoadDatasetsTestStep() {
 
   useEffect(() => {
     const loadExcel = async () => {
-      const data: IDataset[] = await excelToJsonDatasets(file);
+      const data = await excelToJsonDatasets(file);
       setLoadDatasetsCheck({
         status: Status.Pass,
         details: [

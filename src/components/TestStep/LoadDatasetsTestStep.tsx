@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import AppContext, { DetailsType, Status, Steps } from "../AppContext";
-import { excelToJsonDatasets, IDataset } from "../../utils/ExcelDataset";
+import { excelToJsonDatasets } from "../../utils/ExcelDataset";
 import TestStep from "./TestStep";
 import FileInput from "../FileInput/FileInput";
 
@@ -12,7 +12,7 @@ export default function LoadDatasetsTestStep() {
 
   useEffect(() => {
     const loadExcel = async () => {
-      const data: IDataset[] = await excelToJsonDatasets(file);
+      const data = await excelToJsonDatasets(file);
       setLoadDatasetsCheck({
         status: Status.Pass,
         details: [

@@ -6,6 +6,8 @@
 - ### not_equal_to
 - ### equal_to_case_insensitive
 - ### not_equal_to_case_insensitive
+- ### does_not_equal_string_part
+- ### equals_string_part
 
 Value comparison. Works for both string and number.
 
@@ -78,6 +80,15 @@ Value comparison
 - name: "TSVAL"
   operator: "greater_than_or_equal_to"
   value: 1
+```
+
+> RDOMAIN equals characters 5 and 6 of the dataset name
+
+```yaml
+- name: "--OCCUR"
+  operator: "equals_string_part"
+  value: "dataset_name"
+  regex: ".{4}(..).*" 
 ```
 
 - ### empty
@@ -167,6 +178,10 @@ Regular Expression value matching
 - ### prefix_not_equal_to
 - ### suffix_equal_to
 - ### suffix_not_equal_to
+- ### prefix_is_contained_by
+- ### prefix_is_not_contained_by
+- ### suffix_is_contained_by
+- ### suffix_is_not_contained_by
 
 Substring matching
 

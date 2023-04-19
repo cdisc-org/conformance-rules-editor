@@ -24,6 +24,14 @@ Operations:
 
 Calculates the number of days between the DTC and RFSTDTC. Logic: https://github.com/cdisc-org/cdisc-rules-engine/blob/main/cdisc_rules_engine/operations/day_data_validator.py
 
+## domain_label
+
+> Returns the label for the domain the operation is executing on.
+
+## expected_variables
+
+> Returns the expected variables for the domain in the current standard.
+
 ## extract_metadata
 
 ## get_column_order_from_dataset
@@ -45,6 +53,14 @@ Operations:
   - id: $model_variables
     operator: get_column_order_from_library
 ```
+
+## get_model_column_order
+
+> Fetches column order for a given model class from the CDISC library. The lists with column names are sorted in accordance to "ordinal" key of library metadata.
+
+## get_parent_model_column_order
+
+> Fetches column order for a given parent model class from the CDISC library. The lists with column names are sorted in accordance to "ordinal" key of library metadata.
 
 ## max
 
@@ -90,7 +106,19 @@ Operations:
       - USUBJID
 ```
 
+## permissible_variables
+
+> Returns the permissible variables for a given domain and standard
+
 ## record_count
+
+## required_variables
+
+> Returns the required variables for a given domain and standard
+
+## study_domains
+
+> Returns a list of the domains in the study
 
 ## valid_meddra_code_references
 

@@ -382,7 +382,7 @@
                               "type": "string"
                             }
                           },
-                          "required": ["Document", "Section", "Cited Guidance"],
+                          "required": ["Document", "Cited Guidance"],
                           "type": "object"
                         },
                         "type": "array"
@@ -690,6 +690,39 @@
                     "References": {
                       "items": {
                         "properties": {
+                          "Citations": {
+                            "items": {
+                              "oneOf": [
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "Cited Guidance": {
+                                      "pattern": "^(\\d{1,3}(\\.\\d+)?|CG\\d{4})(, (\\d{1,3}(\\.\\d+)?|CG\\d{4}))*$",
+                                      "type": "string"
+                                    },
+                                    "Document": {
+                                      "const": "CDISC"
+                                    }
+                                  }
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "Cited Guidance": {
+                                      "pattern": "^(eCTD \\d{4}|FDAB\\d{3}|TCG \\d(\\.\\d){2,3})(, (eCTD \\d{4}|FDAB\\d{3}|TCG \\d(\\.\\d){2,3}))*$",
+                                      "type": "string"
+                                    },
+                                    "Document": {
+                                      "const": "FDA"
+                                    }
+                                  }
+                                }
+                              ],
+                              "required": ["Document", "Cited Guidance"],
+                              "type": "object"
+                            },
+                            "type": "array"
+                          },
                           "Criteria": {
                             "properties": {
                               "Type": {
@@ -705,14 +738,14 @@
                           "Rule Identifier": {
                             "properties": {
                               "Id": {
-                                "pattern": "^eCTD \\d{4}|FDAB\\d{3}|TCG \\d(\\.\\d){2,3}$",
+                                "pattern": "^(CT|SD|SE)\\d{4}[A-Z]?$",
                                 "type": "string"
                               }
                             },
                             "type": "object"
                           },
                           "Version": {
-                            "enum": ["1.5 March 2021"]
+                            "enum": ["1.6"]
                           }
                         },
                         "type": "object"
@@ -739,7 +772,29 @@
                           "const": "SENDIG"
                         },
                         "Version": {
-                          "enum": ["3.0", "3.1"]
+                          "enum": ["3.0", "3.1", "3.1.1"]
+                        }
+                      },
+                      "type": "object"
+                    },
+                    {
+                      "properties": {
+                        "Name": {
+                          "const": "SENDIG-AR"
+                        },
+                        "Version": {
+                          "enum": ["1.0"]
+                        }
+                      },
+                      "type": "object"
+                    },
+                    {
+                      "properties": {
+                        "Name": {
+                          "const": "SENDIG-DART"
+                        },
+                        "Version": {
+                          "enum": ["1.1"]
                         }
                       },
                       "type": "object"

@@ -20,11 +20,17 @@ Dependency: Define-XML
 
 Dependency: Define-XML
 
-## Define-XML
+## Define Item Group Metadata Check
 
 Dependency: Define-XML
 
-> No more than one //Study/GlobalVariables must be provided.
+Check Define-XML variable metadata
+
+## Define Item Metadata Check
+
+Dependency: Define-XML
+
+Check Define-XML dataset metadata
 
 ## Domain Presence Check
 

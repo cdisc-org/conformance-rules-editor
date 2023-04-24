@@ -120,6 +120,12 @@ Operations:
 
 > Returns a list of the domains in the study
 
+## valid_codelist_dates
+
+> Returns the valid codelist dates for a given standard
+> Ex:
+> Given a list of codelists: `[sdtmct-2023-10-26, sdtmct-2023-12-13, adamct-2023-12-13, cdashct-2023-05-19]` and standard: `sdtmig`, the operation will return `["2023-10-26", "2023-12-13"]`
+
 ## valid_meddra_code_references
 
 ## valid_meddra_code_term_pairs
@@ -148,6 +154,10 @@ Operations:
     name: MIDS
     operator: variable_exists
 ```
+
+## variable_is_null
+
+> True if variable is missing or if all values within a variable are null or empty string
 
 ## variable_names
 

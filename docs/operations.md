@@ -22,7 +22,11 @@ Operations:
 
 ## dy
 
-Calculates the number of days between the DTC and RFSTDTC. Logic: https://github.com/cdisc-org/cdisc-rules-engine/blob/main/cdisc_rules_engine/operations/day_data_validator.py
+> Calculates the number of days between the DTC and RFSTDTC. Logic: https://github.com/cdisc-org/cdisc-rules-engine/blob/main/cdisc_rules_engine/operations/day_data_validator.py
+
+## domain_is_custom
+
+> Checks whether the domain is in the set of domains within the provided standard
 
 ## domain_label
 

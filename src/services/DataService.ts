@@ -160,8 +160,8 @@ export class DataService {
       {
         standard: "base",
         id: "https://cdisc.org/CORE-base.json",
-        uri: "file:///CORE-base.json",
-        url: "schema/CORE-base.json",
+        uri: `${window.location.href}api/schema`,
+        url: "/api/schema",
       },
     ];
     const responses: Response[] = await Promise.all(
@@ -169,7 +169,6 @@ export class DataService {
         (schema: ISchema): Promise<Response> =>
           fetch(schema.url, {
             headers: {
-              "Content-Type": "application/json",
               Accept: "application/json",
             },
           })

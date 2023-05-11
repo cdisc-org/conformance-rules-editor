@@ -6,6 +6,10 @@ https://cdisc-org.github.io/conformance-rules-editor/
 
 ## Environment Setup
 
+### Install Node
+
+Install Node.js version **16**: https://nodejs.org/en/download/releases
+
 ### Install dependencies
 
 1. Install frontend dependencies - From the root directory, run the command: `npm install`
@@ -25,7 +29,8 @@ https://cdisc-org.github.io/conformance-rules-editor/
          "SWA_TENANT_ID": "<Static Web App Tenant ID>",
          "SWA_CLIENT_ID": "<Static Web App Client ID>",
          "SWA_CLIENT_SECRET": "<Static Web App Client Secret>",
-         "CORE_AUTHOR_GROUP": "<User Group ID for write permissions>"
+         "CORE_AUTHOR_GROUP": "<User Group ID for write permissions>",
+         "RULE_SCHEMA_URL": "https://raw.githubusercontent.com/cdisc-org/cdisc-rules-engine/main/resources/schema/CORE-base.json"
        }
    }
    ```

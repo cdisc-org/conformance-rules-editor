@@ -18,7 +18,7 @@ Intellisense is informed by a schema in JSON format. The editor also uses it to 
 
 Links to the schema:
 
-- Base Schema: https://rule-editor.cdisc.org/api/schema
+- Base Schema: https://github.com/cdisc-org/cdisc-rules-engine/blob/main/resources/schema/CORE-base.json
 
 Reference: [JSON schema as a standard](https://json-schema.org)
 

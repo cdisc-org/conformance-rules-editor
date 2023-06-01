@@ -7,8 +7,11 @@ import SaveIcon from "@mui/icons-material/Save";
 import RestoreIcon from "@mui/icons-material/Restore";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PublishIcon from "@mui/icons-material/Publish";
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import QuickSearchToolbar from "../QuickSearchToolbar/QuickSearchToolbar";
 import jsYaml from "js-yaml";
+import JSZip from "jszip";
+import { saveAs } from "file-saver";
 
 export default function Controls() {
   const [discardDialog, setDiscardDialog] = useState<boolean>(false);
@@ -28,6 +31,12 @@ export default function Controls() {
     isRuleDirty,
     setAlertState,
     isRuleModifiable,
+    syntaxCheck,
+    schemaCheck,
+    jsonCheck,
+    loadDefineXMLCheck,
+    loadDatasetsCheck,
+    testCheck,
   } = useContext(AppContext);
 
   const newRule = () => {
@@ -90,6 +99,41 @@ export default function Controls() {
         severity: "error",
       });
     }
+  };
+
+  const exportArtifacts = async () => {
+    const zip = new JSZip();
+    zip.file("Rule.yml", modifiedRule);
+    zip.file(
+      "Rule_spaces.json",
+      JSON.stringify(syntaxCheck.details[0].details, null, 4)
+    );
+    zip.file(
+      "Schema_Validation.json",
+      JSON.stringify(schemaCheck.details[0].details, null, 4)
+    );
+    zip.file(
+      "Rule_underscores.json",
+      JSON.stringify(jsonCheck.details[0].details, null, 4)
+    );
+    zip.file("Define.xml", loadDefineXMLCheck.details[1]?.details ?? "");
+    zip.file("Datasets.xlsx", loadDatasetsCheck.details[0]?.details ?? "");
+    zip.file(
+      "Datasets.json",
+      JSON.stringify(loadDatasetsCheck.details[1]?.details ?? "", null, 4)
+    );
+    zip.file(
+      "Request.json",
+      JSON.stringify(testCheck.details[1]?.details ?? "", null, 4)
+    );
+    zip.file(
+      "Results.json",
+      JSON.stringify(testCheck.details[3]?.details ?? "", null, 4)
+    );
+
+    zip.generateAsync({ type: "blob" }).then((content) => {
+      saveAs(content, "Rule.zip");
+    });
   };
 
   return (
@@ -161,6 +205,14 @@ export default function Controls() {
               color="primary"
             >
               <PublishIcon />
+            </IconButton>
+          </span>
+        </Tooltip>
+
+        <Tooltip title={"Export Artifacts"}>
+          <span>
+            <IconButton onClick={exportArtifacts} color="primary">
+              <FileDownloadIcon />
             </IconButton>
           </span>
         </Tooltip>

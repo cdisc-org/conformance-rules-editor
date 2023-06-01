@@ -91,7 +91,7 @@ Alternatively, you can run the launch components individually.
 
 ### Using the commandline
 
-Run: `$Env:BROWSER='none'; swa start http://localhost:3000 --api-location ./api --run 'npm start'`
+Run: `$Env:BROWSER='none'; npm run --prefix ./api build; swa start http://localhost:3000 --api-location ./api --run 'npm start'`
 
 Navigate to: http://localhost:4280/
 

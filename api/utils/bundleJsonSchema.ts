@@ -25,7 +25,7 @@ export default async (baseURL: string): Promise<{}> => {
       delete defs["value"]["$schema"];
       resolvedRefs["$defs"][id] = defs["value"];
       transformRefs(resolvedRefs, (value: string) =>
-        value === id ? `"#/$defs/${id}"` : value
+        value === id ? `#/$defs/${id}` : value
       );
       transformRefs(resolvedRefs, (value: string) =>
         value.startsWith(`${id}#`)

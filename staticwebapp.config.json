@@ -1,6 +1,11 @@
 {
   "routes": [
     {
+      "route": "/api/schema",
+      "methods": ["GET"],
+      "allowedRoles": ["anonymous"]
+    },
+    {
       "route": "/api/*",
       "methods": ["PUT", "POST", "PATCH", "DELETE", "GET"],
       "allowedRoles": ["authenticated"]

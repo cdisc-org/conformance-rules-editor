@@ -34,7 +34,7 @@ export default function YamlEditor() {
   };
 
   useEffect(() => {
-    model.setValue(monacoInputValue.value);
+    model.setValue(monacoInputValue.value ?? "");
   }, [model, monacoInputValue]);
 
   return (

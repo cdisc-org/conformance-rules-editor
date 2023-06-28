@@ -28,6 +28,7 @@ export default function SchemaTestStep() {
               allowUnionTypes: true,
               schemas: schemas.map((schema: ISchema): {} => schema.json),
             });
+            ajv.addKeyword("markdownDescription");
             const validate = ajv.getSchema(
               schemas.filter(
                 (schema: ISchema): boolean => schema.standard === "base"

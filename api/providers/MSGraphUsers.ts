@@ -8,24 +8,27 @@ import { TokenCredentialAuthenticationProvider } from "@microsoft/microsoft-grap
 import { ClientSecretCredential } from "@azure/identity";
 import "isomorphic-fetch";
 import { IUser } from "../types/IUser";
-
-const authProvider = new TokenCredentialAuthenticationProvider(
-  new ClientSecretCredential(
-    process.env["SWA_TENANT_ID"],
-    process.env["SWA_CLIENT_ID"],
-    process.env["SWA_CLIENT_SECRET"]
-  ),
-  {
-    scopes: ["https://graph.microsoft.com/.default"],
-  }
-);
-
-const client = Client.initWithMiddleware({
-  debugLogging: true,
-  authProvider,
-});
+import { IUsers } from "../types/IUsers";
 
 const maxChildClauses = 15;
+
+const getClient = (): Client => {
+  const authProvider = new TokenCredentialAuthenticationProvider(
+    new ClientSecretCredential(
+      process.env["SWA_TENANT_ID"],
+      process.env["SWA_CLIENT_ID"],
+      process.env["SWA_CLIENT_SECRET"]
+    ),
+    {
+      scopes: ["https://graph.microsoft.com/.default"],
+    }
+  );
+
+  return Client.initWithMiddleware({
+    debugLogging: true,
+    authProvider,
+  });
+};
 
 const chunkify = <ListType>(
   list: ListType[],
@@ -56,7 +59,7 @@ const getUsersByIds = async (
     }))
   ).getContent();
   const responses = [
-    ...new BatchResponseContent(await client.api("/$batch").post(requests))
+    ...new BatchResponseContent(await getClient().api("/$batch").post(requests))
       .getResponses()
       .values(),
   ];
@@ -85,7 +88,7 @@ const getUsersByName = async (name: string): Promise<IUser[]> => {
     nextLink;
     nextLink = response["@odata.nextLink"]
   ) {
-    response = await client.api(nextLink).get();
+    response = await getClient().api(nextLink).get();
     users.push(
       ...response.value.map((user) => ({
         id: user.id,
@@ -100,7 +103,7 @@ const getUserPermissions = async (user: IUser): Promise<IUser> => {
   if ("CORE_AUTHOR_GROUP" in process.env) {
     var link = `/users/${user.id}/memberOf?$count=true&$filter=id eq '${process.env["CORE_AUTHOR_GROUP"]}'`;
     try {
-      const response = await client.api(link).get();
+      const response = await getClient().api(link).get();
       user.write_allowed = response.value && response.value.length === 1;
     } catch (exception) {
       user.write_allowed = false;
@@ -115,4 +118,4 @@ export default {
   getUsersByIds,
   getUsersByName,
   getUserPermissions,
-};
+} as IUsers;

@@ -20,6 +20,7 @@ Install Node.js version **16**: https://nodejs.org/en/download/releases
    ```
 4. Using VSCODE, install the "Azure Functions" extension.
 5. Create a local.settings.json in the API folder to support local development of the API. It should contain the following values which provide information for the staticwebapp config and the Microsoft Graph API for Users' name resolution:
+
    ```
    {
        "IsEncrypted": false,
@@ -34,6 +35,13 @@ Install Node.js version **16**: https://nodejs.org/en/download/releases
        }
    }
    ```
+
+   By default, the Rules Editor will use the `MSGraph` Users Provider. If you do not have a SWA tenant, you can omit the `SWA_TENANT_ID`, `SWA_CLIENT_ID`, `SWA_CLIENT_SECRET`, and `CORE_AUTHOR_GROUP` variables. Instead, you can use the following:
+
+   ```
+   "USERS_PROVIDER": "Dummy",
+   ```
+
 6. Storage - There is a base Storage abstraction which allows for any storage implementation. Currently there are 2 storage implementations. Using one of these implementations requires the additional env variables to be added to the local.settings.json file
 
    - CosmosDB (SQL)

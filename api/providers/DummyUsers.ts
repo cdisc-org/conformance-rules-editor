@@ -1,6 +1,8 @@
 import { IUser } from "../types/IUser";
 import { IUsers } from "../types/IUsers";
 
+const DUMMY_USER = "dummyuser";
+
 const getUsersByIds = async (
   ids: string[]
 ): Promise<{ [id: string]: IUser }> => {
@@ -8,7 +10,7 @@ const getUsersByIds = async (
     return {};
   }
   const usersList = ids.map((id: string) => ({
-    [id]: { id: id, name: "dummyuser" },
+    [id]: { id: id, name: DUMMY_USER },
   }));
   const usersObject = Object.assign({}, ...usersList);
   return new Promise((resolve, reject) => {
@@ -17,7 +19,7 @@ const getUsersByIds = async (
 };
 
 const getUsersByName = async (name: string): Promise<IUser[]> => {
-  const users: IUser[] = [{ id: "dummyuser", name: "dummyuser" }];
+  const users: IUser[] = [{ id: DUMMY_USER, name: DUMMY_USER }];
   return new Promise((resolve, reject) => {
     resolve(users);
   });

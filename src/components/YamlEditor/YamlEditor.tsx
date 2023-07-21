@@ -28,25 +28,19 @@ export default function YamlEditor() {
   } = useContext(AppContext);
 
   const [model] = useState(MonacoEditor.createModel("", "yaml"));
-  const [editor, setEditor] = useState<MonacoEditor.IStandaloneCodeEditor>(
-    null
-  );
 
-  const editorDidMount = (
-    mountedEditor: MonacoEditor.IStandaloneCodeEditor
-  ) => {
-    mountedEditor.addAction({
+  const editorDidMount = (editor: MonacoEditor.IStandaloneCodeEditor) => {
+    editor.addAction({
       id: "fold-level-1",
       label: "Fold Level 1",
       contextMenuGroupId: "navigation",
       contextMenuOrder: 1,
       run: () => {
-        mountedEditor.setPosition({ lineNumber: 1, column: 1 });
-        mountedEditor.trigger("", "editor.foldLevel1", null);
-        mountedEditor.trigger("", "editor.fold", null);
+        editor.setPosition({ lineNumber: 1, column: 1 });
+        editor.trigger("", "editor.foldLevel1", null);
+        editor.trigger("", "editor.fold", null);
       },
     });
-    setEditor(mountedEditor);
     setMonacoInputValue({ value: modifiedRule });
   };
 

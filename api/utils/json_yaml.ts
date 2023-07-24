@@ -1,3 +1,4 @@
+import { parseDocument, YAMLMap, YAMLSeq } from "yaml";
 import jsYaml from "js-yaml";
 
 export const jsonToYAML = (body) => {
@@ -108,3 +109,22 @@ function replaceKeyNames(json, pattern, replacement) {
     }
   });
 }
+
+const sortDeep = (node) => {
+  if (node instanceof YAMLMap) {
+    node.items.sort((a, b) => a.key.value.localeCompare(b.key.value));
+    node.items.forEach((i) => sortDeep(i.value));
+  } else if (node instanceof YAMLSeq) {
+    node.items.forEach(sortDeep);
+  }
+};
+
+export const formatYAML = (raw: string): string => {
+  try {
+    const doc = parseDocument(raw);
+    sortDeep(doc.contents);
+    return doc.toString();
+  } catch (yamlException) {
+    return raw;
+  }
+};

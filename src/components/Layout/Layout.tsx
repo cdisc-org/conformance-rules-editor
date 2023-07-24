@@ -58,9 +58,10 @@ export default function Layout() {
           <TabGroup
             parentHeight={height}
             tabPanels={[
-              { label: "Edit", children: <YamlEditor /> },
+              { label: "Edit", persist: true, children: <YamlEditor /> },
               {
                 label: "Test",
+                persist: false,
                 children: (
                   <>
                     <SyntaxTestStep />

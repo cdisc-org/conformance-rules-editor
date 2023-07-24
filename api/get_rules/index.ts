@@ -29,7 +29,10 @@ async function addUsernames(rules: IRule[]) {
     ...new Set(rules.map((rule) => rule.creator.id)),
   ]);
   for (const rule of rules) {
-    rule.creator = users[rule.creator.id];
+    rule.creator = users[rule.creator.id] ?? {
+      id: rule.creator.id,
+      name: null,
+    };
   }
 }
 

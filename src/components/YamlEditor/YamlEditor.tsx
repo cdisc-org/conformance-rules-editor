@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
-import Editor from "react-monaco-editor";
+import ReactMonacoEditor from "react-monaco-editor";
 import AppContext from "../AppContext";
-import { editor } from "monaco-editor";
+import { editor as MonacoEditor } from "monaco-editor";
 
 window.MonacoEnvironment = {
   getWorker(moduleId, label) {
@@ -27,9 +27,20 @@ export default function YamlEditor() {
     setMonacoInputValue,
   } = useContext(AppContext);
 
-  const [model] = useState(editor.createModel("", "yaml"));
+  const [model] = useState(MonacoEditor.createModel("", "yaml"));
 
-  const editorDidMount = () => {
+  const editorDidMount = (editor: MonacoEditor.IStandaloneCodeEditor) => {
+    editor.addAction({
+      id: "fold-level-1",
+      label: "Fold Level 1",
+      contextMenuGroupId: "navigation",
+      contextMenuOrder: 1,
+      run: () => {
+        editor.setPosition({ lineNumber: 1, column: 1 });
+        editor.trigger("", "editor.foldLevel1", null);
+        editor.trigger("", "editor.fold", null);
+      },
+    });
     setMonacoInputValue({ value: modifiedRule });
   };
 
@@ -38,7 +49,7 @@ export default function YamlEditor() {
   }, [model, monacoInputValue]);
 
   return (
-    <Editor
+    <ReactMonacoEditor
       language="yaml"
       value={monacoInputValue.value}
       onChange={setModifiedRule}
@@ -50,6 +61,8 @@ export default function YamlEditor() {
         readOnly: !isRuleModifiable(),
         tabSize: 2,
         model: model,
+        formatOnPaste: true,
+        formatOnType: true,
       }}
     />
   );

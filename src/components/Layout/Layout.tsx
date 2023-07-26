@@ -1,3 +1,4 @@
+import DiffEditor from "../YamlEditor/DiffEditor";
 import YamlEditor from "../YamlEditor/YamlEditor";
 import ExplorerList from "../ExplorerList/ExplorerList";
 import Stack from "@mui/material/Stack";
@@ -74,6 +75,7 @@ export default function Layout() {
                 ),
                 scrollBars: true,
               },
+              { label: "Diff", persist: true, children: <DiffEditor /> },
             ]}
           />
         </Stack>

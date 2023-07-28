@@ -89,13 +89,6 @@ export interface IAppContext {
   creator: IUser;
   setCreator: (creator: IUser) => void;
   isRuleModifiable: () => boolean;
-  /**
-   * Need to hold object with string instead of just a string
-   * so that we can invalidate Monaco Editor during discard
-   * even though initial value doesn't change
-   * */
-  monacoInputValue: { value: string };
-  setMonacoInputValue: (monacoInputValue: { value: string }) => void;
 }
 
 export const defaultAppContext: IAppContext = {
@@ -195,10 +188,6 @@ export const defaultAppContext: IAppContext = {
     /* Placeholder */
   },
   isRuleModifiable: () => false,
-  monacoInputValue: null,
-  setMonacoInputValue: () => {
-    /* Placeholder */
-  },
 };
 
 const AppContext = React.createContext<IAppContext>(defaultAppContext);

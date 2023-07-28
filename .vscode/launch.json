@@ -15,7 +15,9 @@
       "command": "npm start",
       "request": "launch",
       "type": "node-terminal",
-      "env": { "BROWSER": "NONE" },
+      "env": {
+        "BROWSER": "NONE"
+      },
       "presentation": {
         "group": "2"
       }
@@ -35,7 +37,7 @@
       "request": "launch",
       "type": "chrome",
       "url": "http://localhost:4280",
-      "webRoot": "${workspaceFolder}",
+      "webRoot": "${workspaceFolder}/src",
       "presentation": {
         "group": "2"
       }
@@ -45,7 +47,7 @@
       "request": "launch",
       "type": "msedge",
       "url": "http://localhost:4280",
-      "webRoot": "${workspaceFolder}",
+      "webRoot": "${workspaceFolder}/src",
       "presentation": {
         "group": "2"
       }

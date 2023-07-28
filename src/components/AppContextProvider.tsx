@@ -60,9 +60,6 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
     false
   );
   const [creator, setCreator] = useState<IUser>(null);
-  const [monacoInputValue, setMonacoInputValue] = useState<{ value: string }>({
-    value: null,
-  });
 
   const clearError = () => (appError ? setAppError(null) : undefined);
 
@@ -140,8 +137,6 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
     creator,
     setCreator,
     isRuleModifiable,
-    monacoInputValue,
-    setMonacoInputValue,
   };
 
   useEffect(() => {
@@ -191,7 +186,6 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
       setRuleTemplate(template);
       setUnmodifiedRule(template);
       setModifiedRule(template);
-      setMonacoInputValue({ value: template });
     });
   }, [dataService]);
 

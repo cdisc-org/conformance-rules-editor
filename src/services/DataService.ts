@@ -18,9 +18,15 @@ function responseHasJson(response: Response) {
   return contentType && contentType.includes("application/json");
 }
 
-function DataServiceError(response: Response) {
+async function responseToString(response: Response): Promise<string> {
+  return responseHasJson(response)
+    ? JSON.stringify(await response.json())
+    : response.text();
+}
+
+function DataServiceError(response: Response, details: string) {
   this.message = `Results - Fail: ${response.status} - ${response.statusText}`;
-  this.details = responseHasJson(response) ? response.json() : response.text();
+  this.details = details;
 }
 
 export class DataService {
@@ -207,7 +213,7 @@ export class DataService {
       if (response.status === 200) {
         return response.json();
       } else {
-        throw new DataServiceError(response);
+        throw new DataServiceError(response, await responseToString(response));
       }
     });
   };

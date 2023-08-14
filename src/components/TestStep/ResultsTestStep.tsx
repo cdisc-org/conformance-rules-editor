@@ -198,8 +198,8 @@ export default function ResultsTestStep() {
                   details: exception.message,
                 },
                 {
-                  detailsType: DetailsType.text,
-                  details: await exception.details,
+                  detailsType: exception.detailsType,
+                  details: exception.details,
                 },
               ],
             });

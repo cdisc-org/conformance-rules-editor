@@ -1,7 +1,6 @@
 import { parseDocument } from "yaml";
 import { STORAGE_PROVIDER } from "../providers/BaseStorage";
 import handle_response from "../utils/handle_response";
-import { coreIDPattern } from "../utils/Consts";
 
 const next_core_id = async () =>
   `CORE-${(parseInt((await STORAGE_PROVIDER.maxCoreId()).slice(-6)) + 1)
@@ -16,7 +15,7 @@ export default async (context, req) => {
       doc.set("Core", doc.createNode({}));
     }
     const core: any = doc.get("Core");
-    if (!coreIDPattern.test(core.get("Id") ?? "")) {
+    if (!/^CORE-\d{6}$/.test(core.get("Id") ?? "")) {
       core.set("Id", await next_core_id());
     }
     core.set("Status", "Published");

@@ -5,5 +5,3 @@ export const ruleArrays = new Set([
   "json.Authorities.Standards.References.Citations",
   "json.Authorities.Standards.References.Related Rules",
 ]);
-
-export const coreIDPattern = /^CORE-\d{6}$/;

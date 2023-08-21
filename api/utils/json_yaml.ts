@@ -1,6 +1,5 @@
 import { parseDocument, YAMLMap, YAMLSeq } from "yaml";
 import jsYaml from "js-yaml";
-import { coreIDPattern } from "../utils/Consts";
 
 export const jsonToYAML = (body) => {
   try {
@@ -36,32 +35,6 @@ export const resolvePath = (
   isValidYaml(object)
     ? [...new Set(path.split(".").reduce(pathReducer, [object]))].join(", ")
     : defaultValue;
-
-export const resolveYAMLPath = (
-  yaml: string,
-  path: string[],
-  defaultValue = `<Missing '${path}'>`
-) => {
-  try {
-    return parseDocument(yaml).getIn(path).toString() ?? defaultValue;
-  } catch (yamlException) {
-    return defaultValue;
-  }
-};
-
-export const replaceYAMLPath = (
-  yaml: string,
-  path: string[],
-  replacement: any
-) => {
-  try {
-    const doc = parseDocument(yaml);
-    doc.setIn(path, replacement);
-    return doc.toString();
-  } catch (yamlException) {
-    return yaml;
-  }
-};
 
 export const buildJSON = (object, path, value) => {
   const split = path.split(".");
@@ -154,20 +127,4 @@ export const formatYAML = (raw: string): string => {
   } catch (yamlException) {
     return raw;
   }
-};
-
-/**
- * remove current core id if it:
- * - matches the core id pattern
- * - does not match the previous saved core id
- * */
-export const removeInvalidCoreid = (
-  ruleAfterPatch: string,
-  ruleBeforePatch = ""
-) => {
-  const idAfterPatch = resolveYAMLPath(ruleAfterPatch, ["Core", "Id"], "");
-  const idBeforePatch = resolveYAMLPath(ruleBeforePatch, ["Core", "Id"], "");
-  return coreIDPattern.test(idAfterPatch) && idAfterPatch !== idBeforePatch
-    ? replaceYAMLPath(ruleAfterPatch, ["Core", "Id"], "")
-    : ruleAfterPatch;
 };

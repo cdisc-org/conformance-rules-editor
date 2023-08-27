@@ -6,7 +6,7 @@
       "direction": "in",
       "name": "req",
       "methods": ["get"],
-      "route": "rules/{id}"
+      "route": "rules/{id}/{version?}"
     },
     {
       "type": "http",

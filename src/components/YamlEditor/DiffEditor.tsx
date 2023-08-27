@@ -1,19 +1,44 @@
-import { useContext, useState } from "react";
+import { Dispatch, SetStateAction, useContext, useState } from "react";
 import { MonacoDiffEditor } from "react-monaco-editor";
 import AppContext from "../AppContext";
 import { FormControl, Grid, InputLabel, MenuItem, Select } from "@mui/material";
+import { IHistory } from "../../types/IHistory";
 
 const VersionSelector = ({
   name,
   children,
   value,
-  onChange,
+  setter,
 }: {
   name: string;
-  children: string[];
+  children: IHistory[];
   value: string;
-  onChange: React.Dispatch<React.SetStateAction<string>>;
+  setter: Dispatch<SetStateAction<IHistory>>;
 }) => {
+  const { dataService, unmodifiedRule } = useContext(AppContext);
+  const childrenAsObject = children.reduce(
+    (previousValue, currentValue) => ({
+      ...previousValue,
+      [currentValue.changed]: currentValue,
+    }),
+    {}
+  );
+  const onChange = (
+    version: string,
+    setter: Dispatch<SetStateAction<IHistory>>
+  ) => {
+    const child = childrenAsObject[version];
+    if (child.content) {
+      setter(child);
+    } else {
+      dataService
+        .get_rule(unmodifiedRule.id, child.changed)
+        .then((responseJson: IHistory) => {
+          setter(responseJson);
+        });
+    }
+  };
+
   return (
     <Grid item>
       <FormControl variant="standard">
@@ -23,11 +48,15 @@ const VersionSelector = ({
           id={`${name}-select`}
           value={value}
           label={`${name}`}
-          onChange={(event) => onChange(event.target.value as string)}
+          onChange={(event) => onChange(event.target.value as string, setter)}
         >
           {children.map((child) => (
-            <MenuItem key={`${name}-${child}`} value={child}>
-              {child}
+            <MenuItem key={`${name}-${child.changed}`} value={child.changed}>
+              {`${
+                isNaN(Date.parse(child.changed))
+                  ? child.changed
+                  : new Date(child.changed).toLocaleString("en-US")
+              } - ${child.creator.name}`}
             </MenuItem>
           ))}
         </Select>
@@ -37,21 +66,20 @@ const VersionSelector = ({
 };
 
 export default function YamlEditor() {
-  const { modifiedRule, setModifiedRule, unmodifiedRule } = useContext(
+  const { modifiedRule, setModifiedRule, unmodifiedRule, user } = useContext(
     AppContext
   );
 
-  const CURRENT_MODIFIED = "Current Modified";
-  const LATEST_SAVED = "Latest Saved";
-
-  const [base, setBase] = useState<string>(LATEST_SAVED);
-  const [compare, setCompare] = useState<string>(CURRENT_MODIFIED);
-
-  const versionNames = [CURRENT_MODIFIED, LATEST_SAVED];
-  const versions = {
-    [CURRENT_MODIFIED]: () => modifiedRule,
-    [LATEST_SAVED]: () => unmodifiedRule,
+  const CURRENT_MODIFIED = {
+    changed: "Current Modified",
+    creator: user ? user : { id: "", name: "" },
+    content: modifiedRule,
   };
+  const [base, setBase] = useState<IHistory>(
+    unmodifiedRule.history.length ? unmodifiedRule.history[0] : CURRENT_MODIFIED
+  );
+  const [compare, setCompare] = useState<IHistory>(CURRENT_MODIFIED);
+  const versions = [CURRENT_MODIFIED, ...unmodifiedRule.history];
 
   return (
     <>
@@ -61,17 +89,21 @@ export default function YamlEditor() {
         justifyContent="space-around"
         alignItems="center"
       >
-        <VersionSelector name="Base" value={base} onChange={setBase}>
-          {versionNames}
+        <VersionSelector name="Base" value={base.changed} setter={setBase}>
+          {versions}
         </VersionSelector>
-        <VersionSelector name="Compare" value={compare} onChange={setCompare}>
-          {versionNames}
+        <VersionSelector
+          name="Compare"
+          value={compare.changed}
+          setter={setCompare}
+        >
+          {versions}
         </VersionSelector>
       </Grid>
       <MonacoDiffEditor
         language="yaml"
-        original={versions[base]()}
-        value={versions[compare]()}
+        original={base.content}
+        value={compare.content}
         onChange={setModifiedRule}
         theme="vs-dark"
         options={{

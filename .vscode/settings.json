@@ -1,0 +1,4 @@
+{
+  "sql-formatter.dialect": "n1ql",
+  "sql-formatter.uppercase": true
+}

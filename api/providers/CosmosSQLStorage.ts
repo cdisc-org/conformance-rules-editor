@@ -41,9 +41,42 @@ const deleteRule = async (
   };
 };
 
-const getRule = async (id: string): Promise<IRule> => {
-  const rule = (await dbContainer.item(id, id).read()).resource;
-  return rule;
+const _getRule = async (id: string, version?: string): Promise<IRule> => {
+  const query = version
+    ? `
+  SELECT
+    VALUE History
+  FROM
+    Rule
+  JOIN
+    History in Rule["history"]
+  WHERE
+    Rule ["id"] = "${id}"
+  AND
+    History ["changed"] = "${version}"
+  `
+    : `
+  SELECT
+    VALUE {
+      content: Rule ["content"],
+      creator: Rule ["creator"],
+      history: ARRAY(
+        SELECT
+          VALUE {
+            changed: History ["changed"],
+            creator: History ["creator"]
+          }
+        FROM
+          History IN Rule ["history"]
+      ),
+      id: Rule ["id"]
+    }
+  FROM
+    Rule
+  WHERE
+    Rule ["id"] = "${id}"
+  `;
+  return (await dbContainer.items.query(query).fetchNext()).resources[0];
 };
 
 const rulesAlias = "Rules";
@@ -282,6 +315,15 @@ const patchRule = async (id: string, rule: IRule): Promise<IRule> => {
             },
           ]
         : []),
+      {
+        op: "add" as const,
+        path: "/history/0",
+        value: {
+          changed: date,
+          ...("content" in rule ? { content: rule.content } : {}),
+          creator: { id: rule.creator.id },
+        },
+      },
     ];
     const ruleFromCosmos = await dbContainer.item(id, id).patch(toPatch);
     return ruleFromCosmos.resource;
@@ -298,6 +340,7 @@ const postRule = async (content: string, creatorId: string): Promise<IRule> => {
     created: date,
     creator: { id: creatorId },
     json: spacesToUnderscores(yamlToJSON(content) ?? {}),
+    history: [{ changed: date, content, creator: { id: creatorId } }],
   };
   const rule = (await dbContainer.items.create(toCreate)).resource;
   return rule;
@@ -305,7 +348,7 @@ const postRule = async (content: string, creatorId: string): Promise<IRule> => {
 
 export default {
   deleteRule,
-  getRule,
+  _getRule,
   getRules,
   maxCoreId,
   patchRule,

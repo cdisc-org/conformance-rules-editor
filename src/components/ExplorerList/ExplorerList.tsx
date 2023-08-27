@@ -171,7 +171,7 @@ export default function ExplorerList() {
     if (isRuleSelected()) {
       dataService.get_rule(selectedRule).then((responseJson: IRule) => {
         setCreator(responseJson.creator);
-        setUnmodifiedRule(responseJson.content);
+        setUnmodifiedRule(responseJson);
         setModifiedRule(responseJson.content);
       });
     }

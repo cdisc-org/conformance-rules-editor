@@ -11,13 +11,17 @@ import { TOrder } from "../types/TOrder";
 import { AlertState } from "./GeneralAlert/GeneralAlert";
 import { SchemasSettings, setDiagnosticsOptions } from "monaco-yaml";
 import { IUser } from "../types/IUser";
+import { IRule } from "../types/IRule";
 
 const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [dataService] = useState<DataService>(() => new DataService());
   const [ruleTemplate, setRuleTemplate] = useState<string>("");
   const [appError, setAppError] = useState<IAppError>();
   const [selectedRule, setSelectedRule] = useState<string>(null);
-  const [unmodifiedRule, setUnmodifiedRule] = useState<string>("");
+  const [unmodifiedRule, setUnmodifiedRule] = useState<IRule>({
+    content: "",
+    history: [],
+  });
   const [modifiedRule, setModifiedRule] = useState<string>("");
   /* False, because it will be set to true by the initial filter and sort values */
   const [dirtyExplorerList, setDirtyExplorerList] = useState<boolean>(false);
@@ -82,7 +86,7 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
 
   const isRuleDirty = useCallback(
     () =>
-      unmodifiedRule.replaceAll("\r\n", "\n") !==
+      unmodifiedRule.content.replaceAll("\r\n", "\n") !==
       modifiedRule.replaceAll("\r\n", "\n"),
     [unmodifiedRule, modifiedRule]
   );
@@ -184,7 +188,7 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     dataService.get_rule_template().then((template) => {
       setRuleTemplate(template);
-      setUnmodifiedRule(template);
+      setUnmodifiedRule({ content: template, history: [] });
       setModifiedRule(template);
     });
   }, [dataService]);

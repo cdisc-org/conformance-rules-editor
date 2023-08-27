@@ -1,4 +1,5 @@
 import { DetailsType, IResultsDetails } from "../components/AppContext";
+import { IHistory } from "../types/IHistory";
 import { IQuery } from "../types/IQuery";
 import { IRule } from "../types/IRule";
 import { IRules } from "../types/IRules";
@@ -115,8 +116,11 @@ export class DataService {
     ).then((response: Response) => response.json());
   };
 
-  public get_rule = async (ruleId: string): Promise<IRule> => {
-    return fetch(`/api/rules/${ruleId}`, {
+  public get_rule = async (
+    ruleId: string,
+    version?: string
+  ): Promise<IRule | IHistory> => {
+    return fetch(`/api/rules/${ruleId}${version ? `/${version}` : ""}`, {
       method: "GET",
       headers: {
         Accept: "application/json",
@@ -133,7 +137,10 @@ export class DataService {
       headers: {
         Accept: "application/json",
       },
-      body: JSON.stringify({ content: content }),
+      body: JSON.stringify({
+        content: content,
+        creator: await this.get_user(),
+      }),
     }).then((response) => response.json());
   };
 

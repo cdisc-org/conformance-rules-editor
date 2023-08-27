@@ -1,3 +1,4 @@
+import { IHistory } from "./IHistory";
 import { IUser } from "./IUser";
 
 export interface IRule {
@@ -5,6 +6,7 @@ export interface IRule {
   content?: string;
   created?: string;
   creator?: IUser;
+  history?: IHistory[];
   id?: string;
   json?: object;
 }

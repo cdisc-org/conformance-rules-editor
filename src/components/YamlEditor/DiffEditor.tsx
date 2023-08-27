@@ -1,4 +1,10 @@
-import { Dispatch, SetStateAction, useContext, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { MonacoDiffEditor } from "react-monaco-editor";
 import AppContext from "../AppContext";
 import { FormControl, Grid, InputLabel, MenuItem, Select } from "@mui/material";
@@ -9,32 +15,29 @@ const VersionSelector = ({
   children,
   value,
   setter,
+  versionsAsObject,
 }: {
   name: string;
   children: IHistory[];
   value: string;
   setter: Dispatch<SetStateAction<IHistory>>;
+  versionsAsObject: { [changed: string]: IHistory };
 }) => {
   const { dataService, unmodifiedRule } = useContext(AppContext);
-  const childrenAsObject = children.reduce(
-    (previousValue, currentValue) => ({
-      ...previousValue,
-      [currentValue.changed]: currentValue,
-    }),
-    {}
-  );
+
   const onChange = (
     version: string,
     setter: Dispatch<SetStateAction<IHistory>>
   ) => {
-    const child = childrenAsObject[version];
+    const child = versionsAsObject[version];
     if (child.content) {
       setter(child);
     } else {
       dataService
         .get_rule(unmodifiedRule.id, child.changed)
         .then((responseJson: IHistory) => {
-          setter(responseJson);
+          child.content = responseJson.content;
+          setter(child);
         });
     }
   };
@@ -66,20 +69,41 @@ const VersionSelector = ({
 };
 
 export default function YamlEditor() {
-  const { modifiedRule, setModifiedRule, unmodifiedRule, user } = useContext(
-    AppContext
-  );
+  const {
+    dataService,
+    modifiedRule,
+    setModifiedRule,
+    unmodifiedRule,
+    user,
+  } = useContext(AppContext);
 
   const CURRENT_MODIFIED = {
     changed: "Current Modified",
     creator: user ? user : { id: "", name: "" },
     content: modifiedRule,
   };
-  const [base, setBase] = useState<IHistory>(
-    unmodifiedRule.history.length ? unmodifiedRule.history[0] : CURRENT_MODIFIED
-  );
+  const [base, setBase] = useState<IHistory>(CURRENT_MODIFIED);
   const [compare, setCompare] = useState<IHistory>(CURRENT_MODIFIED);
   const versions = [CURRENT_MODIFIED, ...unmodifiedRule.history];
+  const versionsAsObject = versions.reduce(
+    (previousValue, currentValue) => ({
+      ...previousValue,
+      [currentValue.changed]: currentValue,
+    }),
+    {}
+  );
+
+  useEffect(() => {
+    if (unmodifiedRule.history.length) {
+      dataService
+        .get_rule(unmodifiedRule.id, unmodifiedRule.history[0].changed)
+        .then((responseJson: IHistory) => {
+          unmodifiedRule.history[0].content = responseJson.content;
+          setBase(unmodifiedRule.history[0]);
+        });
+    }
+    setCompare(CURRENT_MODIFIED);
+  }, [unmodifiedRule]);
 
   return (
     <>
@@ -89,21 +113,27 @@ export default function YamlEditor() {
         justifyContent="space-around"
         alignItems="center"
       >
-        <VersionSelector name="Base" value={base.changed} setter={setBase}>
+        <VersionSelector
+          name="Base"
+          value={base.changed}
+          setter={setBase}
+          versionsAsObject={versionsAsObject}
+        >
           {versions}
         </VersionSelector>
         <VersionSelector
           name="Compare"
           value={compare.changed}
           setter={setCompare}
+          versionsAsObject={versionsAsObject}
         >
           {versions}
         </VersionSelector>
       </Grid>
       <MonacoDiffEditor
         language="yaml"
-        original={base.content}
-        value={compare.content}
+        original={versionsAsObject[base.changed]?.content ?? ""}
+        value={versionsAsObject[compare.changed]?.content ?? ""}
         onChange={setModifiedRule}
         theme="vs-dark"
         options={{

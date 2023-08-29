@@ -3,44 +3,43 @@ import {
   SetStateAction,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 import { MonacoDiffEditor } from "react-monaco-editor";
 import AppContext from "../AppContext";
 import { FormControl, Grid, InputLabel, MenuItem, Select } from "@mui/material";
 import { IHistory } from "../../types/IHistory";
+import { DataService } from "../../services/DataService";
+import { IRule } from "../../types/IRule";
+
+const fetchRuleVersion = async (
+  unmodifiedRule: IRule,
+  version: IHistory,
+  dataService: DataService,
+  setter: Dispatch<SetStateAction<IHistory>>
+) => {
+  if (version.content) {
+    setter(version);
+  } else {
+    const rule = await dataService.get_rule(unmodifiedRule.id, version.changed);
+    version.content = rule.content;
+    setter(version);
+  }
+};
 
 const VersionSelector = ({
   name,
   children,
   value,
   setter,
-  versionsAsObject,
 }: {
   name: string;
-  children: IHistory[];
+  children: Map<string, IHistory>;
   value: string;
   setter: Dispatch<SetStateAction<IHistory>>;
-  versionsAsObject: { [changed: string]: IHistory };
 }) => {
   const { dataService, unmodifiedRule } = useContext(AppContext);
-
-  const onChange = (
-    version: string,
-    setter: Dispatch<SetStateAction<IHistory>>
-  ) => {
-    const child = versionsAsObject[version];
-    if (child.content) {
-      setter(child);
-    } else {
-      dataService
-        .get_rule(unmodifiedRule.id, child.changed)
-        .then((responseJson: IHistory) => {
-          child.content = responseJson.content;
-          setter(child);
-        });
-    }
-  };
 
   return (
     <Grid item>
@@ -51,9 +50,16 @@ const VersionSelector = ({
           id={`${name}-select`}
           value={value}
           label={`${name}`}
-          onChange={(event) => onChange(event.target.value as string, setter)}
+          onChange={(event) =>
+            fetchRuleVersion(
+              unmodifiedRule,
+              children.get(event.target.value),
+              dataService,
+              setter
+            )
+          }
         >
-          {children.map((child) => (
+          {[...children.values()].map((child) => (
             <MenuItem key={`${name}-${child.changed}`} value={child.changed}>
               {`${
                 isNaN(Date.parse(child.changed))
@@ -77,33 +83,39 @@ export default function YamlEditor() {
     user,
   } = useContext(AppContext);
 
-  const CURRENT_MODIFIED = {
-    changed: "Current Modified",
-    creator: user ? user : { id: "", name: "" },
-    content: modifiedRule,
-  };
+  const CURRENT_MODIFIED = useMemo(
+    () => ({
+      changed: "Current Modified",
+      creator: user ? user : { id: "", name: "" },
+      content: modifiedRule,
+    }),
+    [user, modifiedRule]
+  );
+  useEffect(() => {
+    setBase(CURRENT_MODIFIED);
+    setCompare(CURRENT_MODIFIED);
+    setVersions(
+      new Map(
+        [CURRENT_MODIFIED, ...unmodifiedRule.history].map((history) => [
+          history.changed,
+          history,
+        ])
+      )
+    );
+    if (unmodifiedRule.history.length) {
+      fetchRuleVersion(
+        unmodifiedRule,
+        unmodifiedRule.history[0],
+        dataService,
+        setBase
+      );
+    }
+  }, [CURRENT_MODIFIED, dataService, unmodifiedRule]);
   const [base, setBase] = useState<IHistory>(CURRENT_MODIFIED);
   const [compare, setCompare] = useState<IHistory>(CURRENT_MODIFIED);
-  const versions = [CURRENT_MODIFIED, ...unmodifiedRule.history];
-  const versionsAsObject = versions.reduce(
-    (previousValue, currentValue) => ({
-      ...previousValue,
-      [currentValue.changed]: currentValue,
-    }),
-    {}
+  const [versions, setVersions] = useState<Map<string, IHistory>>(
+    new Map([[CURRENT_MODIFIED.changed, CURRENT_MODIFIED]])
   );
-
-  useEffect(() => {
-    if (unmodifiedRule.history.length) {
-      dataService
-        .get_rule(unmodifiedRule.id, unmodifiedRule.history[0].changed)
-        .then((responseJson: IHistory) => {
-          unmodifiedRule.history[0].content = responseJson.content;
-          setBase(unmodifiedRule.history[0]);
-        });
-    }
-    setCompare(CURRENT_MODIFIED);
-  }, [unmodifiedRule]);
 
   return (
     <>
@@ -113,27 +125,21 @@ export default function YamlEditor() {
         justifyContent="space-around"
         alignItems="center"
       >
-        <VersionSelector
-          name="Base"
-          value={base.changed}
-          setter={setBase}
-          versionsAsObject={versionsAsObject}
-        >
+        <VersionSelector name="Base" value={base.changed} setter={setBase}>
           {versions}
         </VersionSelector>
         <VersionSelector
           name="Compare"
           value={compare.changed}
           setter={setCompare}
-          versionsAsObject={versionsAsObject}
         >
           {versions}
         </VersionSelector>
       </Grid>
       <MonacoDiffEditor
         language="yaml"
-        original={versionsAsObject[base.changed]?.content ?? ""}
-        value={versionsAsObject[compare.changed]?.content ?? ""}
+        original={versions.get(base.changed)?.content ?? ""}
+        value={versions.get(compare.changed)?.content ?? ""}
         onChange={setModifiedRule}
         theme="vs-dark"
         options={{

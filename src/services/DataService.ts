@@ -1,5 +1,4 @@
 import { DetailsType, IResultsDetails } from "../components/AppContext";
-import { IHistory } from "../types/IHistory";
 import { IQuery } from "../types/IQuery";
 import { IRule } from "../types/IRule";
 import { IRules } from "../types/IRules";
@@ -119,7 +118,7 @@ export class DataService {
   public get_rule = async (
     ruleId: string,
     version?: string
-  ): Promise<IRule | IHistory> => {
+  ): Promise<IRule> => {
     return fetch(`/api/rules/${ruleId}${version ? `/${version}` : ""}`, {
       method: "GET",
       headers: {

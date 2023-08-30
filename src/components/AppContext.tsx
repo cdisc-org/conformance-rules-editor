@@ -130,7 +130,7 @@ export const defaultAppContext: IAppContext = {
   setOrder: () => {
     /* Placeholder */
   },
-  orderBy: "changed",
+  orderBy: "created",
   setOrderBy: () => {
     /* Placeholder */
   },

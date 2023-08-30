@@ -1,12 +1,11 @@
-import { IHistory } from "./IHistory";
 import { IUser } from "./IUser";
 
 export interface IRule {
-  changed?: string;
   content?: string;
   created?: string;
   creator?: IUser;
-  history?: IHistory[];
+  history?: IRule[];
   id?: string;
   json?: object;
+  latestId?: string;
 }

@@ -28,7 +28,7 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [alertState, setAlertState] = useState<AlertState>(null);
   const [user, setUser] = useState<IUser>(null);
   const [order, setOrder] = useState<TOrder>("desc");
-  const [orderBy, setOrderBy] = useState<string>("changed");
+  const [orderBy, setOrderBy] = useState<string>("created");
   const [searchText, setSearchText] = useState<{ [key: string]: string }>({});
   const [syntaxCheck, setSyntaxCheck] = useState<IResults>({
     status: Status.Pending,

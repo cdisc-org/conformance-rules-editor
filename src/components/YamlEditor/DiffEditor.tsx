@@ -9,20 +9,19 @@ import {
 import { MonacoDiffEditor } from "react-monaco-editor";
 import AppContext from "../AppContext";
 import { FormControl, Grid, InputLabel, MenuItem, Select } from "@mui/material";
-import { IHistory } from "../../types/IHistory";
 import { DataService } from "../../services/DataService";
 import { IRule } from "../../types/IRule";
 
 const fetchRuleVersion = async (
   unmodifiedRule: IRule,
-  version: IHistory,
+  version: IRule,
   dataService: DataService,
-  setter: Dispatch<SetStateAction<IHistory>>
+  setter: Dispatch<SetStateAction<IRule>>
 ) => {
   if (version.content) {
     setter(version);
   } else {
-    const rule = await dataService.get_rule(unmodifiedRule.id, version.changed);
+    const rule = await dataService.get_rule(unmodifiedRule.id, version.created);
     version.content = rule.content;
     setter(version);
   }
@@ -35,9 +34,9 @@ const VersionSelector = ({
   setter,
 }: {
   name: string;
-  children: Map<string, IHistory>;
+  children: Map<string, IRule>;
   value: string;
-  setter: Dispatch<SetStateAction<IHistory>>;
+  setter: Dispatch<SetStateAction<IRule>>;
 }) => {
   const { dataService, unmodifiedRule } = useContext(AppContext);
 
@@ -60,11 +59,11 @@ const VersionSelector = ({
           }
         >
           {[...children.values()].map((child) => (
-            <MenuItem key={`${name}-${child.changed}`} value={child.changed}>
+            <MenuItem key={`${name}-${child.created}`} value={child.created}>
               {`${
-                isNaN(Date.parse(child.changed))
-                  ? child.changed
-                  : new Date(child.changed).toLocaleString("en-US")
+                isNaN(Date.parse(child.created))
+                  ? child.created
+                  : new Date(child.created).toLocaleString("en-US")
               } - ${child.creator.name}`}
             </MenuItem>
           ))}
@@ -85,7 +84,7 @@ export default function YamlEditor() {
 
   const CURRENT_MODIFIED = useMemo(
     () => ({
-      changed: "Current Modified",
+      created: "Current Modified",
       creator: user ? user : { id: "", name: "" },
       content: modifiedRule,
     }),
@@ -97,7 +96,7 @@ export default function YamlEditor() {
     setVersions(
       new Map(
         [CURRENT_MODIFIED, ...unmodifiedRule.history].map((history) => [
-          history.changed,
+          history.created,
           history,
         ])
       )
@@ -111,10 +110,10 @@ export default function YamlEditor() {
       );
     }
   }, [CURRENT_MODIFIED, dataService, unmodifiedRule]);
-  const [base, setBase] = useState<IHistory>(CURRENT_MODIFIED);
-  const [compare, setCompare] = useState<IHistory>(CURRENT_MODIFIED);
-  const [versions, setVersions] = useState<Map<string, IHistory>>(
-    new Map([[CURRENT_MODIFIED.changed, CURRENT_MODIFIED]])
+  const [base, setBase] = useState<IRule>(CURRENT_MODIFIED);
+  const [compare, setCompare] = useState<IRule>(CURRENT_MODIFIED);
+  const [versions, setVersions] = useState<Map<string, IRule>>(
+    new Map([[CURRENT_MODIFIED.created, CURRENT_MODIFIED]])
   );
 
   return (
@@ -125,12 +124,12 @@ export default function YamlEditor() {
         justifyContent="space-around"
         alignItems="center"
       >
-        <VersionSelector name="Base" value={base.changed} setter={setBase}>
+        <VersionSelector name="Base" value={base.created} setter={setBase}>
           {versions}
         </VersionSelector>
         <VersionSelector
           name="Compare"
-          value={compare.changed}
+          value={compare.created}
           setter={setCompare}
         >
           {versions}
@@ -138,8 +137,8 @@ export default function YamlEditor() {
       </Grid>
       <MonacoDiffEditor
         language="yaml"
-        original={versions.get(base.changed)?.content ?? ""}
-        value={versions.get(compare.changed)?.content ?? ""}
+        original={versions.get(base.created)?.content ?? ""}
+        value={versions.get(compare.created)?.content ?? ""}
         onChange={setModifiedRule}
         theme="vs-dark"
         options={{

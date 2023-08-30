@@ -1,4 +1,4 @@
-import { CosmosClient, SqlParameter } from "@azure/cosmos";
+import { CosmosClient, PatchOperationType, SqlParameter } from "@azure/cosmos";
 import { IQuery } from "../types/IQuery";
 import { IRule } from "../types/IRule";
 import { IRules } from "../types/IRules";
@@ -42,41 +42,50 @@ const deleteRule = async (
 };
 
 const _getRule = async (id: string, version?: string): Promise<IRule> => {
-  const query = version
+  const ruleQuery = version
     ? `
-  SELECT
-    VALUE History
-  FROM
-    Rule
-  JOIN
-    History in Rule["history"]
-  WHERE
-    Rule ["id"] = "${id}"
-  AND
-    History ["changed"] = "${version}"
-  `
+      SELECT
+        VALUE Rule
+      FROM
+        Rule
+      WHERE
+        "${id}" in (Rule ["id"], Rule ["latestId"])
+      AND
+        Rule ["created"] = "${version}"
+      ORDER BY
+        Rule["created"] DESC
+    `
     : `
-  SELECT
-    VALUE {
-      content: Rule ["content"],
-      creator: Rule ["creator"],
-      history: ARRAY(
-        SELECT
-          VALUE {
-            changed: History ["changed"],
-            creator: History ["creator"]
-          }
-        FROM
-          History IN Rule ["history"]
-      ),
-      id: Rule ["id"]
-    }
-  FROM
-    Rule
-  WHERE
-    Rule ["id"] = "${id}"
+      SELECT
+        VALUE Rule
+      FROM
+        Rule
+      WHERE
+        "${id}" in (Rule ["id"], Rule ["latestId"])
+      ORDER BY
+        Rule["created"] DESC
+    `;
+  const rulePromise = dbContainer.items.query(ruleQuery).fetchNext();
+  const historyQuery = `
+    SELECT
+      VALUE {
+        created: Rule ["created"],
+        creator: Rule ["creator"],
+        id: Rule ["id"]
+      }
+    FROM
+      Rule
+    WHERE
+      "${id}" in (Rule ["id"], Rule["latestId"])
+    ORDER BY
+      Rule["created"] DESC  
   `;
-  return (await dbContainer.items.query(query).fetchNext()).resources[0];
+  const historyPromise = dbContainer.items.query(historyQuery).fetchNext();
+  const rule = {
+    ...(await rulePromise).resources[0],
+    history: (await historyPromise).resources,
+  };
+  return rule;
 };
 
 const rulesAlias = "Rules";
@@ -131,7 +140,6 @@ function buildSelect(query: IQuery) {
    *     id: "Rules1[\"creator\"][\"id\"]",
    *   },
    *   created: "Rules1[\"created\"]",
-   *   changed: "Rules1[\"changed\"]",
    *   id: "Rules1[\"id\"]",
    * }
    *
@@ -197,7 +205,7 @@ function buildJoinsAndFilters(query: IQuery) {
   const filterParams: SqlParameter[] = [];
   var joins = "";
   var aliasIndex = 1;
-  var filters = "";
+  var filters = ` WHERE NOT IS_DEFINED(${rulesAlias}${aliasIndex}["latestId"])`;
   for (const filter of query.filters) {
     const subqueryNames = splitSubqueryNames(filter.name);
     for (const [subqueryIndex, subqueryName] of subqueryNames
@@ -293,14 +301,23 @@ const maxCoreId = async (): Promise<string> => {
 };
 
 const patchRule = async (id: string, rule: IRule): Promise<IRule> => {
+  const previousRule = (await dbContainer.item(id, id).read()).resource;
+  previousRule.latestId = id;
+  delete previousRule.id;
+  dbContainer.items.create(previousRule);
   const date = new Date().toJSON();
   try {
     const toPatch = [
-      { op: "replace" as const, path: "/changed", value: date },
+      { op: PatchOperationType.replace, path: "/created", value: date },
+      {
+        op: PatchOperationType.replace,
+        path: "/creator",
+        value: { id: rule.creator.id },
+      },
       ...("content" in rule
         ? [
             {
-              op: "replace" as const,
+              op: PatchOperationType.replace,
               path: "/content",
               value: rule.content,
             },
@@ -309,21 +326,12 @@ const patchRule = async (id: string, rule: IRule): Promise<IRule> => {
       ...("content" in rule
         ? [
             {
-              op: "replace" as const,
+              op: PatchOperationType.replace,
               path: "/json",
               value: spacesToUnderscores(yamlToJSON(rule.content) ?? {}),
             },
           ]
         : []),
-      {
-        op: "add" as const,
-        path: "/history/0",
-        value: {
-          changed: date,
-          ...("content" in rule ? { content: rule.content } : {}),
-          creator: { id: rule.creator.id },
-        },
-      },
     ];
     const ruleFromCosmos = await dbContainer.item(id, id).patch(toPatch);
     return ruleFromCosmos.resource;
@@ -335,12 +343,10 @@ const patchRule = async (id: string, rule: IRule): Promise<IRule> => {
 const postRule = async (content: string, creatorId: string): Promise<IRule> => {
   const date = new Date().toJSON();
   const toCreate = {
-    changed: date,
     content,
     created: date,
     creator: { id: creatorId },
     json: spacesToUnderscores(yamlToJSON(content) ?? {}),
-    history: [{ changed: date, content, creator: { id: creatorId } }],
   };
   const rule = (await dbContainer.items.create(toCreate)).resource;
   return rule;

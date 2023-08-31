@@ -65,7 +65,10 @@ const _getRule = async (id: string, version?: string): Promise<IRule> => {
       ORDER BY
         Rule["created"] DESC
     `;
-  const rulePromise = dbContainer.items.query(ruleQuery).fetchNext();
+  return (await dbContainer.items.query(ruleQuery).fetchNext()).resources[0];
+};
+
+const _getHistory = async (id: string): Promise<IRule[]> => {
   const historyQuery = `
     SELECT
       VALUE {
@@ -80,10 +83,15 @@ const _getRule = async (id: string, version?: string): Promise<IRule> => {
     ORDER BY
       Rule["created"] DESC  
   `;
-  const historyPromise = dbContainer.items.query(historyQuery).fetchNext();
+  return (await dbContainer.items.query(historyQuery).fetchNext()).resources;
+};
+
+const getRule = async (id: string, version?: string): Promise<IRule> => {
+  const rulePromise = _getRule(id, version);
+  const historyPromise = _getHistory(id);
   const rule = {
-    ...(await rulePromise).resources[0],
-    history: (await historyPromise).resources,
+    ...(await rulePromise),
+    history: await historyPromise,
   };
   return rule;
 };
@@ -333,8 +341,9 @@ const patchRule = async (id: string, rule: IRule): Promise<IRule> => {
           ]
         : []),
     ];
-    const ruleFromCosmos = await dbContainer.item(id, id).patch(toPatch);
-    return ruleFromCosmos.resource;
+    const rulePromise = dbContainer.item(id, id).patch(toPatch);
+    const historyPromise = _getHistory(id);
+    return { ...(await rulePromise).resource, history: await historyPromise };
   } catch (error) {
     console.error(error);
   }
@@ -349,12 +358,17 @@ const postRule = async (content: string, creatorId: string): Promise<IRule> => {
     json: spacesToUnderscores(yamlToJSON(content) ?? {}),
   };
   const rule = (await dbContainer.items.create(toCreate)).resource;
-  return rule;
+  return {
+    ...rule,
+    history: [
+      { created: rule["created"], creator: rule["creator"], id: rule["id"] },
+    ],
+  };
 };
 
 export default {
   deleteRule,
-  _getRule,
+  getRule,
   getRules,
   maxCoreId,
   patchRule,

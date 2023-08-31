@@ -1,4 +1,5 @@
 import { STORAGE_PROVIDER } from "../providers/BaseStorage";
+import { addUsernamesToRule } from "../providers/BaseUsers";
 import handle_response from "../utils/handle_response";
 import { formatYAML, removeInvalidCoreid } from "../utils/json_yaml";
 
@@ -9,7 +10,14 @@ export default async (context, req) => {
       (await STORAGE_PROVIDER.getRule(context.bindingData.id)).content
     )
   );
-  await handle_response(context, async () => ({
-    body: await STORAGE_PROVIDER.patchRule(context.bindingData.id, req.body),
-  }));
+  await handle_response(context, async () => {
+    const rule = await STORAGE_PROVIDER.patchRule(
+      context.bindingData.id,
+      req.body
+    );
+    await addUsernamesToRule(rule);
+    return {
+      body: rule,
+    };
+  });
 };

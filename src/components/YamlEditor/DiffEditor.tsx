@@ -8,7 +8,17 @@ import {
 } from "react";
 import { MonacoDiffEditor } from "react-monaco-editor";
 import AppContext from "../AppContext";
-import { FormControl, Grid, InputLabel, MenuItem, Select } from "@mui/material";
+import {
+  FormControl,
+  Grid,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
+  Stack,
+  Tooltip,
+} from "@mui/material";
+import RestoreIcon from "@mui/icons-material/Restore";
 import { DataService } from "../../services/DataService";
 import { IRule } from "../../types/IRule";
 
@@ -76,6 +86,7 @@ const VersionSelector = ({
 export default function YamlEditor() {
   const {
     dataService,
+    isRuleDirty,
     modifiedRule,
     setModifiedRule,
     unmodifiedRule,
@@ -116,6 +127,10 @@ export default function YamlEditor() {
     new Map([[CURRENT_MODIFIED.created, CURRENT_MODIFIED]])
   );
 
+  const restoreVersion = () => {
+    setModifiedRule(base.content);
+  };
+
   return (
     <>
       <Grid
@@ -124,9 +139,22 @@ export default function YamlEditor() {
         justifyContent="space-around"
         alignItems="center"
       >
-        <VersionSelector name="Base" value={base.created} setter={setBase}>
-          {versions}
-        </VersionSelector>
+        <Stack direction="row" spacing={1}>
+          <Tooltip title="Restore Version">
+            <span>
+              <IconButton
+                disabled={isRuleDirty()}
+                onClick={restoreVersion}
+                color="primary"
+              >
+                <RestoreIcon />
+              </IconButton>
+            </span>
+          </Tooltip>
+          <VersionSelector name="Base" value={base.created} setter={setBase}>
+            {versions}
+          </VersionSelector>
+        </Stack>
         <VersionSelector
           name="Compare"
           value={compare.created}
@@ -137,8 +165,8 @@ export default function YamlEditor() {
       </Grid>
       <MonacoDiffEditor
         language="yaml"
-        original={versions.get(base.created)?.content ?? ""}
-        value={versions.get(compare.created)?.content ?? ""}
+        original={base.content ?? ""}
+        value={compare.content ?? ""}
         onChange={setModifiedRule}
         theme="vs-dark"
         options={{

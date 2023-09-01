@@ -4,7 +4,8 @@ import { IRules } from "./IRules";
 
 export interface IStorage {
   deleteRule: (
-    id: string
+    id: string,
+    creatorId: string
   ) => Promise<{
     status: number;
     body?: string;

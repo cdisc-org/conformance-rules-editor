@@ -30,17 +30,6 @@ const dbContainer = new CosmosClient({
   .database(process.env["COSMOS_DATABASE"])
   .container(process.env["COSMOS_CONTAINER"]);
 
-const deleteRule = async (
-  id: string
-): Promise<{
-  status: number;
-}> => {
-  const res = await dbContainer.item(id, id).delete();
-  return {
-    status: res.statusCode,
-  };
-};
-
 const _getRule = async (id: string, version?: string): Promise<IRule> => {
   const ruleQuery = version
     ? `
@@ -84,6 +73,36 @@ const _getHistory = async (id: string): Promise<IRule[]> => {
       Rule["created"] DESC  
   `;
   return (await dbContainer.items.query(historyQuery).fetchNext()).resources;
+};
+
+const deleteRule = async (
+  id: string,
+  creatorId: string
+): Promise<{
+  status: number;
+}> => {
+  const previousRule = (await dbContainer.item(id, id).read()).resource;
+  previousRule.latestId = id;
+  delete previousRule.id;
+  dbContainer.items.create(previousRule);
+  const date = new Date().toJSON();
+  try {
+    const toPatch = [
+      { op: PatchOperationType.replace, path: "/created", value: date },
+      {
+        op: PatchOperationType.replace,
+        path: "/creator",
+        value: { id: creatorId },
+      },
+      { op: PatchOperationType.set, path: "/latestId", value: "" },
+    ];
+    const rule = await dbContainer.item(id, id).patch(toPatch);
+    return {
+      status: rule.statusCode,
+    };
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 const getRule = async (id: string, version?: string): Promise<IRule> => {

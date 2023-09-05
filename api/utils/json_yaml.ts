@@ -171,3 +171,10 @@ export const removeInvalidCoreid = (
     ? replaceYAMLPath(ruleAfterPatch, ["Core", "Id"], "")
     : ruleAfterPatch;
 };
+
+export const unpublish = (rule: string) => {
+  const publishStatus = resolveYAMLPath(rule, ["Core", "Status"], "");
+  return publishStatus === "Published"
+    ? replaceYAMLPath(rule, ["Core", "Status"], "")
+    : rule;
+};

@@ -11,10 +11,10 @@ export default async (context, req) => {
     )
   );
   await handle_response(context, async () => {
-    const rule = await STORAGE_PROVIDER.patchRule(
-      context.bindingData.id,
-      req.body
-    );
+    const rule = await STORAGE_PROVIDER.patchRule({
+      ...req.body,
+      id: context.bindingData.id,
+    });
     await addUsernamesToRule(rule);
     return {
       body: rule,

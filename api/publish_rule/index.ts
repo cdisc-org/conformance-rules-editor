@@ -2,6 +2,7 @@ import { parseDocument } from "yaml";
 import { STORAGE_PROVIDER } from "../providers/BaseStorage";
 import handle_response from "../utils/handle_response";
 import { coreIDPattern } from "../utils/Consts";
+import { addUsernamesToRule } from "../providers/BaseUsers";
 
 const next_core_id = async () =>
   `CORE-${(parseInt((await STORAGE_PROVIDER.maxCoreId()).slice(-6)) + 1)
@@ -22,8 +23,10 @@ export default async (context, req) => {
     core.set("Status", "Published");
     rule.json = doc.toJSON();
     rule.content = doc.toString();
+    const publishedRule = await STORAGE_PROVIDER.patchRule(rule);
+    await addUsernamesToRule(publishedRule);
     return {
-      body: await STORAGE_PROVIDER.patchRule(context.bindingData.id, rule),
+      body: publishedRule,
     };
   });
 };

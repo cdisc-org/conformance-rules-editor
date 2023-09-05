@@ -4,8 +4,7 @@ import { IRules } from "./IRules";
 
 export interface IStorage {
   deleteRule: (
-    id: string,
-    creatorId: string
+    rule: IRule
   ) => Promise<{
     status: number;
     body?: string;
@@ -13,6 +12,6 @@ export interface IStorage {
   getRule: (id: string, version?: string) => Promise<IRule>;
   getRules: (query: IQuery) => Promise<IRules>;
   maxCoreId: () => Promise<string>;
-  patchRule: (id: string, rule: IRule) => Promise<IRule>;
+  patchRule: (rule: IRule) => Promise<IRule>;
   postRule: (content: string, creatorId: string) => Promise<IRule>;
 }

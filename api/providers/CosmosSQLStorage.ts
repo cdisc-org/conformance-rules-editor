@@ -1,4 +1,9 @@
-import { CosmosClient, PatchOperationType, SqlParameter } from "@azure/cosmos";
+import {
+  CosmosClient,
+  ItemResponse,
+  PatchOperationType,
+  SqlParameter,
+} from "@azure/cosmos";
 import { IQuery } from "../types/IQuery";
 import { IRule } from "../types/IRule";
 import { IRules } from "../types/IRules";
@@ -75,30 +80,59 @@ const _getHistory = async (id: string): Promise<IRule[]> => {
   return (await dbContainer.items.query(historyQuery).fetchNext()).resources;
 };
 
+const _patchRule = async (
+  rule: IRule,
+  patch = []
+): Promise<ItemResponse<IRule>> => {
+  /* Backup previous rule into new rule*/
+  const previousRule = (await dbContainer.item(rule.id, rule.id).read())
+    .resource;
+  previousRule.latestId = rule.id;
+  delete previousRule.id;
+  dbContainer.items.create(previousRule);
+  /* Patch existing rule */
+  const date = new Date().toJSON();
+  const toPatch = [
+    { op: PatchOperationType.replace, path: "/created", value: date },
+    {
+      op: PatchOperationType.replace,
+      path: "/creator",
+      value: { id: rule.creator.id },
+    },
+    ...("content" in rule
+      ? [
+          {
+            op: PatchOperationType.replace,
+            path: "/content",
+            value: rule.content,
+          },
+        ]
+      : []),
+    ...("content" in rule
+      ? [
+          {
+            op: PatchOperationType.replace,
+            path: "/json",
+            value: spacesToUnderscores(yamlToJSON(rule.content) ?? {}),
+          },
+        ]
+      : []),
+    ...patch,
+  ];
+  return dbContainer.item(rule.id, rule.id).patch(toPatch);
+};
+
 const deleteRule = async (
-  id: string,
-  creatorId: string
+  rule: IRule
 ): Promise<{
   status: number;
 }> => {
-  const previousRule = (await dbContainer.item(id, id).read()).resource;
-  previousRule.latestId = id;
-  delete previousRule.id;
-  dbContainer.items.create(previousRule);
-  const date = new Date().toJSON();
   try {
-    const toPatch = [
-      { op: PatchOperationType.replace, path: "/created", value: date },
-      {
-        op: PatchOperationType.replace,
-        path: "/creator",
-        value: { id: creatorId },
-      },
+    const newRule = await _patchRule(rule, [
       { op: PatchOperationType.set, path: "/latestId", value: "" },
-    ];
-    const rule = await dbContainer.item(id, id).patch(toPatch);
+    ]);
     return {
-      status: rule.statusCode,
+      status: newRule.statusCode,
     };
   } catch (error) {
     console.error(error);
@@ -327,41 +361,10 @@ const maxCoreId = async (): Promise<string> => {
   ];
 };
 
-const patchRule = async (id: string, rule: IRule): Promise<IRule> => {
-  const previousRule = (await dbContainer.item(id, id).read()).resource;
-  previousRule.latestId = id;
-  delete previousRule.id;
-  dbContainer.items.create(previousRule);
-  const date = new Date().toJSON();
+const patchRule = async (rule: IRule): Promise<IRule> => {
   try {
-    const toPatch = [
-      { op: PatchOperationType.replace, path: "/created", value: date },
-      {
-        op: PatchOperationType.replace,
-        path: "/creator",
-        value: { id: rule.creator.id },
-      },
-      ...("content" in rule
-        ? [
-            {
-              op: PatchOperationType.replace,
-              path: "/content",
-              value: rule.content,
-            },
-          ]
-        : []),
-      ...("content" in rule
-        ? [
-            {
-              op: PatchOperationType.replace,
-              path: "/json",
-              value: spacesToUnderscores(yamlToJSON(rule.content) ?? {}),
-            },
-          ]
-        : []),
-    ];
-    const rulePromise = dbContainer.item(id, id).patch(toPatch);
-    const historyPromise = _getHistory(id);
+    const rulePromise = _patchRule(rule);
+    const historyPromise = _getHistory(rule.id);
     return { ...(await rulePromise).resource, history: await historyPromise };
   } catch (error) {
     console.error(error);

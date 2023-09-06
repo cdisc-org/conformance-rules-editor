@@ -172,6 +172,22 @@ export const removeInvalidCoreid = (
     : ruleAfterPatch;
 };
 
+export const publish = async (
+  rule: string,
+  nextCoreId: () => Promise<string>
+) => {
+  const doc = parseDocument(rule);
+  if (!doc.has("Core")) {
+    doc.set("Core", doc.createNode({}));
+  }
+  const core: any = doc.get("Core");
+  if (!coreIDPattern.test(core.get("Id") ?? "")) {
+    core.set("Id", await nextCoreId());
+  }
+  core.set("Status", "Published");
+  return doc.toString();
+};
+
 export const unpublish = (rule: string) => {
   const publishStatus = resolveYAMLPath(rule, ["Core", "Status"], "");
   return publishStatus === "Published"

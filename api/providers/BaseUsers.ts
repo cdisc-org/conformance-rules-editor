@@ -51,8 +51,8 @@ export async function addUsernamesToRule(rule: IRule) {
     ...new Set(histories.map((history) => history.creator.id)),
   ]);
   for (const history of histories) {
-    history.creator = users[rule.creator.id] ?? {
-      id: rule.creator.id,
+    history.creator = users[history.creator.id] ?? {
+      id: history.creator.id,
       name: null,
     };
   }

@@ -18,6 +18,7 @@ import {
   sqlName,
   paramName,
   jsonName,
+  unpublish,
 } from "../utils/json_yaml";
 
 interface Operation {
@@ -85,10 +86,16 @@ const _patchRule = async (
   patch = []
 ): Promise<ItemResponse<IRule>> => {
   /* Backup previous rule into new rule*/
-  const previousRule = (await dbContainer.item(rule.id, rule.id).read())
+  const previousRule: IRule = (await dbContainer.item(rule.id, rule.id).read())
     .resource;
   previousRule.latestId = rule.id;
   delete previousRule.id;
+  if ("content" in previousRule) {
+    previousRule.content = unpublish(previousRule.content);
+    previousRule.json = spacesToUnderscores(
+      yamlToJSON(previousRule.content) ?? {}
+    );
+  }
   dbContainer.items.create(previousRule);
   /* Patch existing rule */
   const date = new Date().toJSON();
@@ -363,9 +370,9 @@ const maxCoreId = async (): Promise<string> => {
 
 const patchRule = async (rule: IRule): Promise<IRule> => {
   try {
-    const rulePromise = _patchRule(rule);
-    const historyPromise = _getHistory(rule.id);
-    return { ...(await rulePromise).resource, history: await historyPromise };
+    const patchedRule = await _patchRule(rule);
+    const history = await _getHistory(rule.id);
+    return { ...patchedRule.resource, history: history };
   } catch (error) {
     console.error(error);
   }

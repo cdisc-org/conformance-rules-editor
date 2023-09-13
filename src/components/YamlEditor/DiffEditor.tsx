@@ -140,7 +140,7 @@ export default function YamlEditor() {
         alignItems="center"
       >
         <Stack direction="row" spacing={1}>
-          <Tooltip title="Restore Version">
+          <Tooltip title="Restore Base Version">
             <span>
               <IconButton
                 disabled={isRuleDirty()}

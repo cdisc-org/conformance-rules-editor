@@ -115,11 +115,17 @@ export class DataService {
     ).then((response: Response) => response.json());
   };
 
-  public get_rule = async (
-    ruleId: string,
-    version?: string
-  ): Promise<IRule> => {
-    return fetch(`/api/rules/${ruleId}${version ? `/${version}` : ""}`, {
+  public get_history = async (ruleId: string): Promise<IRule> => {
+    return fetch(`/api/history/${ruleId}`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    }).then((response) => response.json());
+  };
+
+  public get_rule = async (ruleId: string): Promise<IRule> => {
+    return fetch(`/api/rules/${ruleId}`, {
       method: "GET",
       headers: {
         Accept: "application/json",

@@ -57,6 +57,7 @@ Install Node.js version **16**: https://nodejs.org/en/download/releases
      "COSMOS_KEY": <COSMOS_KEY>,
      "COSMOS_DATABASE": <COSMOS DB Name>,
      "COSMOS_CONTAINER": <COSMOS Container Name>,
+     "COSMOS_HISTORY_CONTAINER": <COSMOS History Container Name>
      ```
 
      Optional env variable to ignore unauthorized https connections when cosmosdb is running in a local emulator:

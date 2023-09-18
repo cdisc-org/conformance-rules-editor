@@ -7,5 +7,4 @@ export interface IRule {
   history?: IRule[];
   id?: string;
   json?: object;
-  latestId?: string;
 }

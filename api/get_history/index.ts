@@ -4,7 +4,7 @@ import handle_response from "../utils/handle_response";
 
 export default async (context, req) => {
   await handle_response(context, async () => {
-    const rule = await STORAGE_PROVIDER.getRule(context.bindingData.id);
+    const rule = await STORAGE_PROVIDER.getHistory(context.bindingData.id);
     await addUsernamesToRule(rule);
     return {
       body: rule,

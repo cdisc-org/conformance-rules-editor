@@ -9,7 +9,8 @@ export interface IStorage {
     status: number;
     body?: string;
   }>;
-  getRule: (id: string, version?: string) => Promise<IRule>;
+  getHistory: (id: string) => Promise<IRule>;
+  getRule: (id: string) => Promise<IRule>;
   getRules: (query: IQuery) => Promise<IRules>;
   maxCoreId: () => Promise<string>;
   patchRule: (rule: IRule) => Promise<IRule>;

@@ -187,10 +187,3 @@ export const publish = async (
   core.set("Status", "Published");
   return doc.toString();
 };
-
-export const unpublish = (rule: string) => {
-  const publishStatus = resolveYAMLPath(rule, ["Core", "Status"], "");
-  return publishStatus === "Published"
-    ? replaceYAMLPath(rule, ["Core", "Status"], "")
-    : rule;
-};

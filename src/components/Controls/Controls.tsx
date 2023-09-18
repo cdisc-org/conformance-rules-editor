@@ -65,7 +65,7 @@ export default function Controls() {
 
   const deleteRule = async () => {
     const res: Response = await dataService.delete_rule(selectedRule);
-    if (res.status === 200) {
+    if (res.status === 204) {
       newRule();
       setDirtyExplorerList(true);
       setAlertState({

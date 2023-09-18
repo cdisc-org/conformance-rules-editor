@@ -23,7 +23,6 @@ import { DataService } from "../../services/DataService";
 import { IRule } from "../../types/IRule";
 
 const fetchRuleVersion = async (
-  unmodifiedRule: IRule,
   version: IRule,
   dataService: DataService,
   setter: Dispatch<SetStateAction<IRule>>
@@ -31,7 +30,7 @@ const fetchRuleVersion = async (
   if (version.content) {
     setter(version);
   } else {
-    const rule = await dataService.get_rule(unmodifiedRule.id, version.created);
+    const rule = await dataService.get_history(version.id);
     version.content = rule.content;
     setter(version);
   }
@@ -48,7 +47,7 @@ const VersionSelector = ({
   value: string;
   setter: Dispatch<SetStateAction<IRule>>;
 }) => {
-  const { dataService, unmodifiedRule } = useContext(AppContext);
+  const { dataService } = useContext(AppContext);
 
   return (
     <Grid item>
@@ -61,7 +60,6 @@ const VersionSelector = ({
           label={`${name}`}
           onChange={(event) =>
             fetchRuleVersion(
-              unmodifiedRule,
               children.get(event.target.value),
               dataService,
               setter
@@ -113,12 +111,7 @@ export default function YamlEditor() {
       )
     );
     if (unmodifiedRule.history.length) {
-      fetchRuleVersion(
-        unmodifiedRule,
-        unmodifiedRule.history[0],
-        dataService,
-        setBase
-      );
+      fetchRuleVersion(unmodifiedRule.history[0], dataService, setBase);
     }
   }, [CURRENT_MODIFIED, dataService, unmodifiedRule]);
   const [base, setBase] = useState<IRule>(CURRENT_MODIFIED);

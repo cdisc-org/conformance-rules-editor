@@ -115,6 +115,15 @@ export class DataService {
     ).then((response: Response) => response.json());
   };
 
+  public get_history = async (ruleId: string): Promise<IRule> => {
+    return fetch(`/api/history/${ruleId}`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    }).then((response) => response.json());
+  };
+
   public get_rule = async (ruleId: string): Promise<IRule> => {
     return fetch(`/api/rules/${ruleId}`, {
       method: "GET",
@@ -133,7 +142,10 @@ export class DataService {
       headers: {
         Accept: "application/json",
       },
-      body: JSON.stringify({ content: content }),
+      body: JSON.stringify({
+        content: content,
+        creator: await this.get_user(),
+      }),
     }).then((response) => response.json());
   };
 

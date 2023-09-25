@@ -1,4 +1,10 @@
-import { CosmosClient, SqlParameter } from "@azure/cosmos";
+import {
+  Container,
+  CosmosClient,
+  ItemResponse,
+  PatchOperationType,
+  SqlParameter,
+} from "@azure/cosmos";
 import { IQuery } from "../types/IQuery";
 import { IRule } from "../types/IRule";
 import { IRules } from "../types/IRules";
@@ -22,27 +28,103 @@ interface Operation {
   };
 }
 
-const dbContainer = new CosmosClient({
+const database = new CosmosClient({
   endpoint: `https://${process.env["COSMOS_BASE_URL"]}`,
   key: process.env["COSMOS_KEY"],
   userAgentSuffix: "ConformanceRulesEditor",
-})
-  .database(process.env["COSMOS_DATABASE"])
-  .container(process.env["COSMOS_CONTAINER"]);
+}).database(process.env["COSMOS_DATABASE"]);
+
+const rulesContainer = database.container(process.env["COSMOS_CONTAINER"]);
+const rulesHistoryContainer = database.container(
+  process.env["COSMOS_HISTORY_CONTAINER"]
+);
+
+const _getRule = async (id: string, container: Container): Promise<IRule> => {
+  const ruleQuery = `
+      SELECT
+        VALUE Rule
+      FROM
+        Rule
+      WHERE
+        Rule ["id"] = "${id}"
+    `;
+  return (await container.items.query(ruleQuery).fetchNext()).resources[0];
+};
+
+const _patchRule = async (rule: IRule): Promise<ItemResponse<IRule>> => {
+  if ("content" in rule) {
+    rule.json = spacesToUnderscores(yamlToJSON(rule.content) ?? {});
+  }
+  rule.created = new Date().toJSON();
+  /* Backup new rule*/
+  const ruleCopy = { ...rule };
+  delete ruleCopy.id;
+  const history: IRule = (await rulesHistoryContainer.items.create(ruleCopy))
+    .resource;
+  /* Patch existing rule */
+  const toPatch = [
+    { op: PatchOperationType.replace, path: "/created", value: rule.created },
+    {
+      op: PatchOperationType.replace,
+      path: "/creator",
+      value: { id: rule.creator.id },
+    },
+    {
+      op: PatchOperationType.add,
+      path: "/history/0",
+      value: {
+        created: history["created"],
+        creator: history["creator"],
+        id: history["id"],
+      },
+    },
+    ...("content" in rule
+      ? [
+          {
+            op: PatchOperationType.replace,
+            path: "/content",
+            value: rule.content,
+          },
+        ]
+      : []),
+    ...("content" in rule
+      ? [
+          {
+            op: PatchOperationType.replace,
+            path: "/json",
+            value: rule.json,
+          },
+        ]
+      : []),
+  ];
+  return rulesContainer.item(rule.id, rule.id).patch(toPatch);
+};
 
 const deleteRule = async (
-  id: string
+  rule: IRule
 ): Promise<{
   status: number;
 }> => {
-  const res = await dbContainer.item(id, id).delete();
-  return {
-    status: res.statusCode,
-  };
+  try {
+    const id = rule.id;
+    delete rule.id;
+    (await rulesHistoryContainer.items.create(rule)).resource;
+    const res = await rulesContainer.item(id, id).delete();
+    return {
+      status: res.statusCode,
+    };
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const getHistory = async (id: string): Promise<IRule> => {
+  const rule = await _getRule(id, rulesHistoryContainer);
+  return rule;
 };
 
 const getRule = async (id: string): Promise<IRule> => {
-  const rule = (await dbContainer.item(id, id).read()).resource;
+  const rule = await _getRule(id, rulesContainer);
   return rule;
 };
 
@@ -98,7 +180,6 @@ function buildSelect(query: IQuery) {
    *     id: "Rules1[\"creator\"][\"id\"]",
    *   },
    *   created: "Rules1[\"created\"]",
-   *   changed: "Rules1[\"changed\"]",
    *   id: "Rules1[\"id\"]",
    * }
    *
@@ -227,7 +308,7 @@ const getRules = async (query: IQuery): Promise<IRules> => {
   };
 
   try {
-    const results = await dbContainer.items.query(querySpec).fetchAll();
+    const results = await rulesContainer.items.query(querySpec).fetchAll();
     const resp = {
       rules: results.resources.map((rule) => ({
         ...rule["$1"],
@@ -254,37 +335,14 @@ const maxCoreId = async (): Promise<string> => {
     LIKE "CORE-______"
     ) root
   `;
-  return (await dbContainer.items.query(query).fetchNext()).resources[0][
-    "CoreId"
-  ];
+  return (await rulesHistoryContainer.items.query(query).fetchNext())
+    .resources[0]["CoreId"];
 };
 
-const patchRule = async (id: string, rule: IRule): Promise<IRule> => {
-  const date = new Date().toJSON();
+const patchRule = async (rule: IRule): Promise<IRule> => {
   try {
-    const toPatch = [
-      { op: "replace" as const, path: "/changed", value: date },
-      ...("content" in rule
-        ? [
-            {
-              op: "replace" as const,
-              path: "/content",
-              value: rule.content,
-            },
-          ]
-        : []),
-      ...("content" in rule
-        ? [
-            {
-              op: "replace" as const,
-              path: "/json",
-              value: spacesToUnderscores(yamlToJSON(rule.content) ?? {}),
-            },
-          ]
-        : []),
-    ];
-    const ruleFromCosmos = await dbContainer.item(id, id).patch(toPatch);
-    return ruleFromCosmos.resource;
+    const patchedRule = (await _patchRule(rule)).resource;
+    return patchedRule;
   } catch (error) {
     console.error(error);
   }
@@ -293,18 +351,26 @@ const patchRule = async (id: string, rule: IRule): Promise<IRule> => {
 const postRule = async (content: string, creatorId: string): Promise<IRule> => {
   const date = new Date().toJSON();
   const toCreate = {
-    changed: date,
     content,
     created: date,
     creator: { id: creatorId },
     json: spacesToUnderscores(yamlToJSON(content) ?? {}),
   };
-  const rule = (await dbContainer.items.create(toCreate)).resource;
+  const history = (await rulesHistoryContainer.items.create(toCreate)).resource;
+  toCreate["history"] = [
+    {
+      created: history["created"],
+      creator: history["creator"],
+      id: history["id"],
+    },
+  ];
+  const rule = (await rulesContainer.items.create(toCreate)).resource;
   return rule;
 };
 
 export default {
   deleteRule,
+  getHistory,
   getRule,
   getRules,
   maxCoreId,

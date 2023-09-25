@@ -3,6 +3,7 @@ import { DataService } from "../services/DataService";
 import { AlertState } from "./GeneralAlert/GeneralAlert";
 import { TOrder } from "../types/TOrder";
 import { IUser } from "../types/IUser";
+import { IRule } from "../types/IRule";
 
 export interface IAppError {
   title: string;
@@ -55,8 +56,8 @@ export interface IAppContext {
   selectedRule: string;
   setSelectedRule: (selectedRule: string) => void;
   isRuleSelected: () => boolean;
-  unmodifiedRule: string;
-  setUnmodifiedRule: (unmodifiedRule: string) => void;
+  unmodifiedRule: IRule;
+  setUnmodifiedRule: (unmodifiedRule: IRule) => void;
   modifiedRule: string;
   setModifiedRule: (modifiedRule: string) => void;
   dirtyExplorerList: boolean;
@@ -129,7 +130,7 @@ export const defaultAppContext: IAppContext = {
   setOrder: () => {
     /* Placeholder */
   },
-  orderBy: "changed",
+  orderBy: "created",
   setOrderBy: () => {
     /* Placeholder */
   },

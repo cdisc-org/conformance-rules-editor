@@ -40,7 +40,7 @@ export default function Controls() {
 
   const newRule = () => {
     setSelectedRule(null);
-    setUnmodifiedRule(ruleTemplate);
+    setUnmodifiedRule({ content: ruleTemplate, history: [] });
     setModifiedRule(ruleTemplate);
   };
 
@@ -49,7 +49,7 @@ export default function Controls() {
       //Patchrule
       const rule = await dataService.patch_rule(selectedRule, modifiedRule);
       setModifiedRule(rule.content);
-      setUnmodifiedRule(rule.content);
+      setUnmodifiedRule(rule);
     } else {
       //Postrule
       const newSelectedRule = await dataService.post_rule(modifiedRule);
@@ -60,7 +60,7 @@ export default function Controls() {
   };
 
   const discardChanges = () => {
-    setModifiedRule(unmodifiedRule);
+    setModifiedRule(unmodifiedRule.content);
   };
 
   const deleteRule = async () => {
@@ -82,7 +82,7 @@ export default function Controls() {
       jsYaml.load(modifiedRule);
       const rule = await dataService.publish_rule(selectedRule);
       setModifiedRule(rule.content);
-      setUnmodifiedRule(rule.content);
+      setUnmodifiedRule(rule);
       setDirtyExplorerList(true);
       setAlertState({
         message: "Published successfully",

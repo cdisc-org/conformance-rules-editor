@@ -213,10 +213,10 @@ export class DataService {
   };
 
   public get_rule_template = async (): Promise<string> => {
-    const schema = (await this.get_rules_schema()).find(
-      (schema) => schema.standard === "base"
-    ).json;
-    return new RuleTemplate(schema).schemaToTemplate();
+    const template = await fetch("/rule_template.yml").then((res) =>
+      res.text()
+    );
+    return template;
   };
 
   public execute_rule = async (payload: {

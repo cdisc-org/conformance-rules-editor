@@ -4,7 +4,6 @@ import { IRule } from "../types/IRule";
 import { IRules } from "../types/IRules";
 import { IUser } from "../types/IUser";
 import { IDataset } from "../utils/ExcelDataset";
-import { RuleTemplate } from "../utils/RuleTemplate";
 
 export interface ISchema {
   standard: string;

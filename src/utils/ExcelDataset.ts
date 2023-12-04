@@ -1,4 +1,4 @@
-import { read, utils, WorkBook, WorkSheet } from "xlsx";
+import { CellObject, read, utils, WorkBook, WorkSheet } from "xlsx";
 
 export interface IDatasets {
   datasets: IDataset[];
@@ -75,6 +75,36 @@ const getVariables = (cols: string[], rows: {}[]): IVariable[] => {
   );
 };
 
+const cellTypeMappings: { [type: string]: (cell: CellObject) => void } = {
+  /* XPT Types */
+  Char: (cell) => {
+    cell.t = "s";
+    cell.v = cell.v.toString();
+  },
+  Num: (cell) => {
+    cell.t = "n";
+    cell.v = Number(cell.v);
+  },
+  /* JSON Types */
+  Boolean: (cell) => {
+    cell.t = "b";
+    /* Can't just convert in js, because "false" string is true */
+    if (cell.v.toString().toLowerCase() === "true") {
+      cell.v = true;
+    } else if (cell.v.toString().toLowerCase() === "false") {
+      cell.v = false;
+    }
+  },
+  Number: (cell) => {
+    cell.t = "n";
+    cell.v = Number(cell.v);
+  },
+  String: (cell) => {
+    cell.t = "s";
+    cell.v = cell.v.toString();
+  },
+};
+
 /* 
 Take a worksheet and for each cell in the worksheet, 
 convert the datatype to the datatype indicated by the type value in the column's header
@@ -86,15 +116,8 @@ const setDatatypes = (sheet: WorkSheet) => {
     const type = typeCell ? typeCell["v"] : null;
     for (var R = range.s.r + 4; R <= range.e.r; ++R) {
       const cell = sheet[utils.encode_cell({ c: C, r: R })];
-      if (cell) {
-        if (type === "Char") {
-          cell["t"] = "s";
-          cell["v"] = cell["v"].toString();
-        }
-        if (type === "Num") {
-          cell["t"] = "n";
-          cell["v"] = Number(cell["v"]);
-        }
+      if (cell && type in cellTypeMappings) {
+        cellTypeMappings[type](cell);
       }
     }
   }
@@ -127,10 +150,9 @@ const mergeDatasetRecords = (
   workbook: WorkBook,
   datasets: IDataset[]
 ): void => {
-  for (const [sheetName, sheet] of Object.entries(
-    workbook.Sheets
-  ).filter(([sheetName, sheet]: [string, WorkSheet]) =>
-    sheetName.toLowerCase().endsWith(".xpt")
+  for (const [sheetName, sheet] of Object.entries(workbook.Sheets).filter(
+    ([sheetName, sheet]: [string, WorkSheet]) =>
+      sheetName.toLowerCase().endsWith(".xpt")
   )) {
     const dataset = getMatchingDataset(datasets, sheetName);
     setDatatypes(sheet);

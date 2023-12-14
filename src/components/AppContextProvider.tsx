@@ -9,9 +9,10 @@ import AppContext, {
 } from "./AppContext";
 import { TOrder } from "../types/TOrder";
 import { AlertState } from "./GeneralAlert/GeneralAlert";
-import { SchemasSettings, setDiagnosticsOptions } from "monaco-yaml";
+import { configureMonacoYaml, SchemasSettings } from "monaco-yaml";
 import { IUser } from "../types/IUser";
 import { IRule } from "../types/IRule";
+import * as monaco from "monaco-editor";
 
 const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [dataService] = useState<DataService>(() => new DataService());
@@ -168,7 +169,7 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
   /* Load yaml schema for editor validation */
   useEffect(() => {
     dataService.get_rules_schema().then(function (schemas: ISchema[]) {
-      setDiagnosticsOptions({
+      configureMonacoYaml(monaco, {
         validate: true,
         enableSchemaRequest: true,
         format: true,

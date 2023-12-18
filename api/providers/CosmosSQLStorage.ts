@@ -11,14 +11,9 @@ import { IRules } from "../types/IRules";
 import { ruleArrays } from "../utils/Consts";
 import {
   yamlToJSON,
-  buildJSON,
-  dotsToSquares,
-  jsonToQuery,
   spacesToUnderscores,
-  underscoresToSpaces,
   sqlName,
   paramName,
-  jsonName,
 } from "../utils/json_yaml";
 
 interface Operation {

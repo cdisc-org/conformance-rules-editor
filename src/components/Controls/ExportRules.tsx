@@ -32,6 +32,10 @@ const columns: ColumnOption[] = [
     key: "json.Authorities.Standards.Version",
   },
   {
+    header: "Scope",
+    key: "json.Scope",
+  },
+  {
     header: "Executability",
     key: "json.Executability",
   },
@@ -95,6 +99,7 @@ export default function ExportRules() {
             header: true,
             columns: columns,
             cast: cast,
+            escape_formulas: true,
           }),
         ],
         {

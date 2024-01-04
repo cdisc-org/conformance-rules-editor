@@ -164,7 +164,7 @@ function buildSelect(query: IQuery, aliasIndex: number) {
    * For example,
    *
    * SELECT
-   *   DISTINCT ARRAY(
+   *   ARRAY(
    *     SELECT
    *       DISTINCT VALUE Rules10["Rule_Identifier"]["Id"]
    *     FROM
@@ -334,7 +334,7 @@ const getRules = async (query: IQuery): Promise<IRules> => {
 
   const querySpec = {
     parameters: [...filterParams, offsetParam, limitParam],
-    query: `SELECT DISTINCT ${select} FROM ${rulesAlias}1${joins}${filters}${orderBy} OFFSET @offset LIMIT @limit`,
+    query: `SELECT ${select} FROM ${rulesAlias}1${joins}${filters}${orderBy} OFFSET @offset LIMIT @limit`,
   };
   try {
     const results = await rulesContainer.items.query(querySpec).fetchAll();

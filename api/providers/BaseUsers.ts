@@ -33,14 +33,18 @@ export async function usernameQueryToUserid(query: IQuery) {
 
 export async function addUsernamesToRules(rules: IRule[]) {
   // Get list of all unique userids in the rules list and get matching usernames from the Users provider
-  const users = await USERS_PROVIDER.getUsersByIds([
-    ...new Set(rules.map((rule) => rule.creator.id)),
-  ]);
+  const ids = new Set<string>();
   for (const rule of rules) {
-    rule.creator = users[rule.creator.id] ?? {
-      id: rule.creator.id,
-      name: null,
-    };
+    if ("creator.id" in rule) {
+      ids.add(rule["creator.id"] as string);
+    }
+  }
+
+  const users = await USERS_PROVIDER.getUsersByIds([...ids]);
+  for (const rule of rules) {
+    if (users[rule["creator.id"]]) {
+      rule["creator.name"] = users[rule["creator.id"]].name;
+    }
   }
 }
 

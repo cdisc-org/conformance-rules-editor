@@ -12,6 +12,7 @@ import QuickSearchToolbar from "../QuickSearchToolbar/QuickSearchToolbar";
 import jsYaml from "js-yaml";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
+import ExportRules from "./ExportRules";
 
 export default function Controls() {
   const [discardDialog, setDiscardDialog] = useState<boolean>(false);
@@ -211,6 +212,8 @@ export default function Controls() {
             </IconButton>
           </span>
         </Tooltip>
+
+        <ExportRules />
 
         <QuickSearchToolbar label="Search YAML..." queryParam={"content"} />
       </Toolbar>

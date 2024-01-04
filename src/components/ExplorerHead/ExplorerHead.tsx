@@ -8,11 +8,9 @@ import QuickSearchToolbar from "../QuickSearchToolbar/QuickSearchToolbar";
 import { useContext } from "react";
 import AppContext from "../AppContext";
 import { IRule } from "../../types/IRule";
-import { resolvePath } from "../../utils/json_yaml";
 
 export interface HeadCell {
   label: string;
-  selectParam: string;
   filterParam: string;
   getValue: (rule: IRule) => string;
   sortable: boolean;
@@ -22,59 +20,51 @@ export interface HeadCell {
 export const headCells: readonly HeadCell[] = [
   {
     label: "Rule Ids",
-    selectParam: "json.Authorities",
     filterParam: "json.Authorities.Standards.References.Rule Identifier.Id",
     getValue: (rule) =>
-      resolvePath(
-        rule.json,
-        "Authorities.Standards.References.Rule Identifier.Id"
+      rule["json.Authorities.Standards.References.Rule Identifier.Id"].join(
+        ", "
       ),
     sortable: false,
     filterable: true,
   },
   {
     label: "Creator",
-    selectParam: "creator.name",
     filterParam: "creator.name",
-    getValue: (rule) => rule.creator.name,
+    getValue: (rule) => rule["creator.name"],
     sortable: false,
     filterable: true,
   },
   {
     label: "Standards",
-    selectParam: "json.Authorities",
     filterParam: "json.Authorities.Standards.Name",
-    getValue: (rule) => resolvePath(rule.json, "Authorities.Standards.Name"),
+    getValue: (rule) => rule["json.Authorities.Standards.Name"].join(", "),
     sortable: false,
     filterable: true,
   },
   {
     label: "Orgs",
-    selectParam: "json.Authorities",
     filterParam: "json.Authorities.Organization",
-    getValue: (rule) => resolvePath(rule.json, "Authorities.Organization"),
+    getValue: (rule) => rule["json.Authorities.Organization"].join(", "),
     sortable: false,
     filterable: true,
   },
   {
     label: "Core ID",
-    selectParam: "json.Core.Id",
     filterParam: "json.Core.Id",
-    getValue: (rule) => resolvePath(rule.json, "Core.Id"),
+    getValue: (rule) => rule["json.Core.Id"],
     sortable: true,
     filterable: true,
   },
   {
     label: "Status",
-    selectParam: "json.Core.Status",
     filterParam: "json.Core.Status",
-    getValue: (rule) => resolvePath(rule.json, "Core.Status"),
+    getValue: (rule) => rule["json.Core.Status"],
     sortable: true,
     filterable: true,
   },
   {
     label: "Changed Timestamp",
-    selectParam: "created",
     filterParam: "created",
     getValue: (rule) => new Date(rule.created).toLocaleString("en-US"),
     sortable: true,
@@ -82,9 +72,8 @@ export const headCells: readonly HeadCell[] = [
   },
   {
     label: "Universal ID",
-    selectParam: "id",
     filterParam: "id",
-    getValue: (rule) => rule.id,
+    getValue: (rule) => rule["id"],
     sortable: true,
     filterable: true,
   },
@@ -111,16 +100,16 @@ export default function ExplorerHead() {
               minWidth: 150,
             }}
             key={headCell.filterParam}
-            sortDirection={orderBy === headCell.selectParam ? order : false}
+            sortDirection={orderBy === headCell.filterParam ? order : false}
           >
             <TableSortLabel
-              active={orderBy === headCell.selectParam}
-              direction={orderBy === headCell.selectParam ? order : "asc"}
-              onClick={() => onRequestSort(headCell.selectParam)}
+              active={orderBy === headCell.filterParam}
+              direction={orderBy === headCell.filterParam ? order : "asc"}
+              onClick={() => onRequestSort(headCell.filterParam)}
               disabled={!headCell.sortable}
             >
               {headCell.label}
-              {orderBy === headCell.selectParam ? (
+              {orderBy === headCell.filterParam ? (
                 <Box component="span" sx={visuallyHidden}>
                   {order === "desc" ? "sorted descending" : "sorted ascending"}
                 </Box>

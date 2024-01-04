@@ -11,14 +11,9 @@ import { IRules } from "../types/IRules";
 import { ruleArrays } from "../utils/Consts";
 import {
   yamlToJSON,
-  buildJSON,
-  dotsToSquares,
-  jsonToQuery,
   spacesToUnderscores,
-  underscoresToSpaces,
   sqlName,
   paramName,
-  jsonName,
 } from "../utils/json_yaml";
 
 interface Operation {
@@ -164,33 +159,67 @@ const inOperation: Operation = (
   };
 };
 
-function buildSelect(query: IQuery) {
+function buildSelect(query: IQuery, aliasIndex: number) {
   /**
    * For example,
    *
-   * SELECT {
-   *   json: {
-   *     Authorities: "Rules1[\"json\"][\"Authorities\"]",
-   *     Core: {
-   *       Id: "Rules1[\"json\"][\"Core\"][\"Id\"]",
-   *       Status: "Rules1[\"json\"][\"Core\"][\"Status\"]",
-   *     },
-   *   },
-   *   creator: {
-   *     id: "Rules1[\"creator\"][\"id\"]",
-   *   },
-   *   created: "Rules1[\"created\"]",
-   *   id: "Rules1[\"id\"]",
-   * }
+   * SELECT
+   *   DISTINCT ARRAY(
+   *     SELECT
+   *       DISTINCT VALUE Rules10["Rule_Identifier"]["Id"]
+   *     FROM
+   *       Rules8 IN Rules1["json"]["Authorities"]
+   *       JOIN Rules9 IN Rules8["Standards"]
+   *       JOIN Rules10 IN Rules9["References"]
+   *   ) AS "json.Authorities.Standards.References.Rule Identifier.Id",
+   *   Rules1["creator"]["id"] as "creator.id",
+   *   ARRAY(
+   *     SELECT
+   *       DISTINCT VALUE Rules9["Name"]
+   *     FROM
+   *       Rules8 IN Rules1["json"]["Authorities"]
+   *       JOIN Rules9 IN Rules8["Standards"]
+   *   ) AS "json.Authorities.Standards.Name",
+   *   ARRAY(
+   *     SELECT
+   *       DISTINCT VALUE Rules8["Organization"]
+   *     FROM
+   *       Rules8 IN Rules1["json"]["Authorities"]
+   *   ) AS "json.Authorities.Organization",
+   *   Rules1["json"]["Core"]["Id"] as "json.Core.Id",
+   *   Rules1["json"]["Core"]["Status"] as "json.Core.Status",
+   *   Rules1["created"] as "created",
+   *   Rules1["id"] as "id"
    *
    * Note that we need to select from the root of the document,
    * which has the first alias (Rules1) in the FROM clause
    */
-  const select = {};
-  for (const selectItem of query.select.map((column) => jsonName(column))) {
-    buildJSON(select, selectItem, `${rulesAlias}1${dotsToSquares(selectItem)}`);
+  const select = [];
+  for (const selectItem of query.select) {
+    const subqueryNames = splitSubqueryNames(selectItem);
+    if (subqueryNames.length === 1) {
+      select.push(`${rulesAlias}1${sqlName(selectItem)} as "${selectItem}"`);
+    } else {
+      var joins = [];
+      var subqueryAliasIndex = aliasIndex;
+      for (const [subqueryIndex, subqueryName] of subqueryNames
+        .slice(0, -1)
+        .entries()) {
+        joins.push(
+          `${rulesAlias}${subqueryAliasIndex + 1} IN ${rulesAlias}${
+            subqueryIndex === 0 ? "1" : subqueryAliasIndex
+          }${sqlName(subqueryName)}`
+        );
+        subqueryAliasIndex++;
+      }
+      select.push(
+        `ARRAY(SELECT DISTINCT VALUE Rules${subqueryAliasIndex}${sqlName(
+          subqueryNames[subqueryNames.length - 1]
+        )} FROM ${joins.join(" JOIN ")}) AS "${selectItem}"`
+      );
+    }
   }
-  return select;
+  return select.join(", ");
 }
 
 function splitSubqueryNames(name: string) {
@@ -244,8 +273,8 @@ function buildJoinsAndFilters(query: IQuery) {
   };
   const filterParams: SqlParameter[] = [];
   var joins = "";
-  var aliasIndex = 1;
   var filters = "";
+  var aliasIndex = 1;
   for (const filter of query.filters) {
     const subqueryNames = splitSubqueryNames(filter.name);
     for (const [subqueryIndex, subqueryName] of subqueryNames
@@ -266,7 +295,7 @@ function buildJoinsAndFilters(query: IQuery) {
     }`;
     filterParams.push(...filterParam.parameters);
   }
-  return { joins, filters, filterParams };
+  return { joins, filters, filterParams, aliasIndex };
 }
 
 function buildOrderBy(query: IQuery) {
@@ -294,26 +323,23 @@ function buildLimit(query: IQuery) {
 }
 
 const getRules = async (query: IQuery): Promise<IRules> => {
-  const select = buildSelect(query);
-  const { joins, filters, filterParams } = buildJoinsAndFilters(query);
+  var { joins, filters, filterParams, aliasIndex } = buildJoinsAndFilters(
+    query
+  );
+  aliasIndex++;
+  const select = buildSelect(query, aliasIndex);
   const orderBy = buildOrderBy(query);
   const { offset, offsetParam } = buildOffset(query);
   const { limit, limitParam } = buildLimit(query);
 
   const querySpec = {
     parameters: [...filterParams, offsetParam, limitParam],
-    query: `SELECT DISTINCT ${jsonToQuery(
-      select
-    )} FROM ${rulesAlias}1${joins}${filters}${orderBy} OFFSET @offset LIMIT @limit`,
+    query: `SELECT DISTINCT ${select} FROM ${rulesAlias}1${joins}${filters}${orderBy} OFFSET @offset LIMIT @limit`,
   };
-
   try {
     const results = await rulesContainer.items.query(querySpec).fetchAll();
     const resp = {
-      rules: results.resources.map((rule) => ({
-        ...rule["$1"],
-        json: underscoresToSpaces(rule["$1"].json),
-      })),
+      rules: results.resources,
       ...(results.resources.length === limit && {
         next: { ...query, offset: offset + limit, limit: limit },
       }),

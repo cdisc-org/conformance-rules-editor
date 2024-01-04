@@ -34,6 +34,8 @@ jobs:
           api_location: "/api" # Api source code path - optional
           output_location: "build" # Built app content directory - optional
           ###### End of Repository/Build Configurations ######
+        env:
+          NPM_CONFIG_LEGACY_PEER_DEPS: true
 
   build_and_deploy_training_job:
     if: github.ref_name == 'main' && (github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed') || github.event_name == 'workflow_dispatch')
@@ -56,6 +58,8 @@ jobs:
           api_location: "/api" # Api source code path - optional
           output_location: "build" # Built app content directory - optional
           ###### End of Repository/Build Configurations ######
+        env:
+          NPM_CONFIG_LEGACY_PEER_DEPS: true
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'

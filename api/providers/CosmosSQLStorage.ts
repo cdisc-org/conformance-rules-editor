@@ -163,7 +163,7 @@ function buildSelect(query: IQuery, aliasIndex: number) {
   /**
    * For example,
    *
-   * SELECT
+   * SELECT DISTINCT
    *   ARRAY(
    *     SELECT
    *       DISTINCT VALUE Rules10["Rule_Identifier"]["Id"]
@@ -195,6 +195,10 @@ function buildSelect(query: IQuery, aliasIndex: number) {
    * which has the first alias (Rules1) in the FROM clause
    */
   const select = [];
+  if (!query.select.includes("id")) {
+    /* id is needed in order to maintain one result per rule item */
+    query.select.push("id");
+  }
   for (const selectItem of query.select) {
     const subqueryNames = splitSubqueryNames(selectItem);
     if (subqueryNames.length === 1) {
@@ -334,8 +338,9 @@ const getRules = async (query: IQuery): Promise<IRules> => {
 
   const querySpec = {
     parameters: [...filterParams, offsetParam, limitParam],
-    query: `SELECT ${select} FROM ${rulesAlias}1${joins}${filters}${orderBy} OFFSET @offset LIMIT @limit`,
+    query: `SELECT DISTINCT ${select} FROM ${rulesAlias}1${joins}${filters}${orderBy} OFFSET @offset LIMIT @limit`,
   };
+  console.log(querySpec);
   try {
     const results = await rulesContainer.items.query(querySpec).fetchAll();
     const resp = {

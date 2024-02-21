@@ -1,7 +1,7 @@
-import { useContext, useState } from "react";
+import { useContext, useState, MouseEvent } from "react";
 import AppContext from "../AppContext";
 import PromptDialog from "../PromptDialog/PromptDialog";
-import { IconButton, Toolbar, Tooltip } from "@mui/material";
+import { IconButton, Menu, Toolbar, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import SaveIcon from "@mui/icons-material/Save";
 import RestoreIcon from "@mui/icons-material/Restore";
@@ -10,9 +10,9 @@ import PublishIcon from "@mui/icons-material/Publish";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import QuickSearchToolbar from "../QuickSearchToolbar/QuickSearchToolbar";
 import jsYaml from "js-yaml";
-import JSZip from "jszip";
-import { saveAs } from "file-saver";
-import ExportRules from "./ExportRules";
+import ExportRulesCSV from "./ExportRulesCSV";
+import ExportArtifacts from "./ExportArtifacts";
+import ExportRulesYAML from "./ExportRulesYAML";
 
 export default function Controls() {
   const [discardDialog, setDiscardDialog] = useState<boolean>(false);
@@ -31,12 +31,6 @@ export default function Controls() {
     isRuleDirty,
     setAlertState,
     isRuleModifiable,
-    syntaxCheck,
-    schemaCheck,
-    jsonCheck,
-    loadDefineXMLCheck,
-    loadDatasetsCheck,
-    testCheck,
   } = useContext(AppContext);
 
   const newRule = () => {
@@ -97,39 +91,15 @@ export default function Controls() {
     }
   };
 
-  const exportArtifacts = async () => {
-    const zip = new JSZip();
-    zip.file("Rule.yml", modifiedRule);
-    zip.file(
-      "Rule_spaces.json",
-      JSON.stringify(syntaxCheck.details[0].details, null, 4)
-    );
-    zip.file(
-      "Schema_Validation.json",
-      JSON.stringify(schemaCheck.details[0].details, null, 4)
-    );
-    zip.file(
-      "Rule_underscores.json",
-      JSON.stringify(jsonCheck.details[0].details, null, 4)
-    );
-    zip.file("Define.xml", loadDefineXMLCheck.details[1]?.details ?? "");
-    zip.file("Datasets.xlsx", loadDatasetsCheck.details[0]?.details ?? "");
-    zip.file(
-      "Datasets.json",
-      JSON.stringify(loadDatasetsCheck.details[1]?.details ?? "", null, 4)
-    );
-    zip.file(
-      "Request.json",
-      JSON.stringify(testCheck.details[1]?.details ?? "", null, 4)
-    );
-    zip.file(
-      "Results.json",
-      JSON.stringify(testCheck.details[3]?.details ?? "", null, 4)
-    );
-
-    zip.generateAsync({ type: "blob" }).then((content) => {
-      saveAs(content, "Rule.zip");
-    });
+  const [exportAnchorEl, setExportAnchorEl] = useState<null | HTMLElement>(
+    null
+  );
+  const open = Boolean(exportAnchorEl);
+  const handleExport = (event: MouseEvent<HTMLButtonElement>) => {
+    setExportAnchorEl(event.currentTarget);
+  };
+  const handleExportClose = () => {
+    setExportAnchorEl(null);
   };
 
   return (
@@ -205,18 +175,37 @@ export default function Controls() {
           </span>
         </Tooltip>
 
-        <Tooltip title={"Export Artifacts"}>
+        <Tooltip id="export-button" title={"Export..."}>
           <span>
-            <IconButton onClick={exportArtifacts} color="primary">
+            <IconButton onClick={handleExport} color="primary">
               <FileDownloadIcon />
             </IconButton>
           </span>
         </Tooltip>
-
-        <ExportRules />
+        <Menu
+          id="export-menu"
+          anchorEl={exportAnchorEl}
+          open={open}
+          onClose={handleExportClose}
+          MenuListProps={{
+            "aria-labelledby": "export-button",
+          }}
+        >
+          <ExportArtifacts onClose={handleExportClose} />
+          <ExportRulesCSV onClose={handleExportClose} />
+          <ExportRulesYAML onClose={handleExportClose} />
+        </Menu>
 
         <QuickSearchToolbar label="Search YAML..." queryParam={"content"} />
       </Toolbar>
+
+      {/* TODO:
+      Get rid of or use ControlButton
+      Implement YAML
+      Add closing to csv and yaml
+      Better naming for these state vars
+      Move export artifacts to own file
+       */}
 
       <PromptDialog
         contentText="Discard changes?"

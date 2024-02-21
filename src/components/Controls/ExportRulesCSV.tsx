@@ -1,10 +1,9 @@
-import ControlButton from "./ControlButton";
-import ChecklistIcon from "@mui/icons-material/Checklist";
 import AppContext from "../AppContext";
 import { useContext } from "react";
 import { IFilter } from "../../types/IFilter";
 import { saveAs } from "file-saver";
 import { ColumnOption, stringify } from "csv-stringify/browser/esm/sync";
+import { MenuItem } from "@mui/material";
 
 const columns: ColumnOption[] = [
   {
@@ -50,7 +49,9 @@ const cast = {
     Array.isArray(value) ? value.join(", ") : JSON.stringify(value),
 };
 
-export default function ExportRules() {
+export default function ExportRulesCSV({
+  onClose
+}) {
   const { dataService, orderBy, order, searchText, setAlertState } = useContext(
     AppContext
   );
@@ -112,11 +113,10 @@ export default function ExportRules() {
       message: `Saved ${rules.length} Rules`,
       severity: "success",
     });
+    onClose();
   };
 
   return (
-    <ControlButton title={"Export Rules (as filtered)"} onClick={exportRules}>
-      <ChecklistIcon />
-    </ControlButton>
+    <MenuItem onClick={exportRules}>Export rules CSV (as filtered)</MenuItem>
   );
 }

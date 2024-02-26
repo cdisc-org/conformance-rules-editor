@@ -13,6 +13,7 @@ import jsYaml from "js-yaml";
 import ExportRulesCSV from "./ExportRulesCSV";
 import ExportArtifacts from "./ExportArtifacts";
 import ExportRulesYAML from "./ExportRulesYAML";
+import ControlButton from "./ControlButton";
 
 export default function Controls() {
   const [discardDialog, setDiscardDialog] = useState<boolean>(false);
@@ -111,85 +112,49 @@ export default function Controls() {
           bgcolor: "#DDEEFF",
         }}
       >
-        <Tooltip title="New Rule">
-          <span>
-            <IconButton
-              disabled={
-                isRuleDirty() || !isRuleSelected() || !isRuleModifiable()
-              }
-              onClick={newRule}
-              color="primary"
-            >
-              <AddIcon />
-            </IconButton>
-          </span>
-        </Tooltip>
-
-        <Tooltip title="Save Rule">
-          <span>
-            <IconButton
-              disabled={!isRuleDirty() || !isRuleModifiable()}
-              onClick={saveRule}
-              color="primary"
-            >
-              <SaveIcon />
-            </IconButton>
-          </span>
-        </Tooltip>
-
-        <Tooltip title="Discard Changes">
-          <span>
-            <IconButton
-              disabled={!isRuleDirty()}
-              onClick={() => setDiscardDialog(true)}
-              color="primary"
-            >
-              <RestoreIcon />
-            </IconButton>
-          </span>
-        </Tooltip>
-
-        <Tooltip title="Delete Rule">
-          <span>
-            <IconButton
-              disabled={!isRuleSelected() || !isRuleModifiable()}
-              onClick={() => setDeleteDialog(true)}
-              color="primary"
-            >
-              <DeleteIcon />
-            </IconButton>
-          </span>
-        </Tooltip>
-
-        <Tooltip title={"Publish Rule"}>
-          <span>
-            <IconButton
-              disabled={
-                isRuleDirty() || !isRuleSelected() || !isRuleModifiable()
-              }
-              onClick={publishRule}
-              color="primary"
-            >
-              <PublishIcon />
-            </IconButton>
-          </span>
-        </Tooltip>
-
-        <Tooltip id="export-button" title={"Export..."}>
-          <span>
-            <IconButton onClick={handleExport} color="primary">
-              <FileDownloadIcon />
-            </IconButton>
-          </span>
-        </Tooltip>
+        <ControlButton
+          title="New Rule"
+          disabled={isRuleDirty() || !isRuleSelected() || !isRuleModifiable()}
+          onClick={newRule}
+        >
+          <AddIcon />
+        </ControlButton>
+        <ControlButton
+          title="Save Rule"
+          disabled={!isRuleDirty() || !isRuleModifiable()}
+          onClick={saveRule}
+        >
+          <SaveIcon />
+        </ControlButton>
+        <ControlButton
+          title="Discard Changes"
+          disabled={!isRuleDirty()}
+          onClick={() => setDiscardDialog(true)}
+        >
+          <RestoreIcon />
+        </ControlButton>
+        <ControlButton
+          title="Delete Rule"
+          disabled={!isRuleSelected() || !isRuleModifiable()}
+          onClick={() => setDeleteDialog(true)}
+        >
+          <DeleteIcon />
+        </ControlButton>
+        <ControlButton
+          title={"Publish Rule"}
+          disabled={isRuleDirty() || !isRuleSelected() || !isRuleModifiable()}
+          onClick={publishRule}
+        >
+          <PublishIcon />
+        </ControlButton>
+        <ControlButton title={"Export..."} onClick={handleExport}>
+          <FileDownloadIcon />
+        </ControlButton>
         <Menu
           id="export-menu"
           anchorEl={exportAnchorEl}
           open={open}
           onClose={handleExportClose}
-          MenuListProps={{
-            "aria-labelledby": "export-button",
-          }}
         >
           <ExportArtifacts onClose={handleExportClose} />
           <ExportRulesCSV onClose={handleExportClose} />
@@ -198,14 +163,6 @@ export default function Controls() {
 
         <QuickSearchToolbar label="Search YAML..." queryParam={"content"} />
       </Toolbar>
-
-      {/* TODO:
-      Get rid of or use ControlButton
-      Implement YAML
-      Add closing to csv and yaml
-      Better naming for these state vars
-      Move export artifacts to own file
-       */}
 
       <PromptDialog
         contentText="Discard changes?"

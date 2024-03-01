@@ -1,7 +1,7 @@
 import { useContext, useState, MouseEvent } from "react";
 import AppContext from "../AppContext";
 import PromptDialog from "../PromptDialog/PromptDialog";
-import { IconButton, Menu, Toolbar, Tooltip } from "@mui/material";
+import { Menu, Toolbar } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import SaveIcon from "@mui/icons-material/Save";
 import RestoreIcon from "@mui/icons-material/Restore";

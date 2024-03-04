@@ -67,6 +67,11 @@ Allows for joining datasets with parent datasets, keeping all records from the p
 
 > Rule: Matching on BE.USUBJID = RELSPEC.USUBJID and BE.BEREFID = RELSPEC.REFID: BEDECOD in ("EXTRACTING", "ALIQUOTING") AND RELSPEC.PARENT is empty
 
+Reports extracting/aliquoting records from BE where:
+
+- There is a matching record in RELSPEC, but PARENT is empty
+- There is no matching record in RELSPEC.
+
 ```yaml
 Check:
   all:

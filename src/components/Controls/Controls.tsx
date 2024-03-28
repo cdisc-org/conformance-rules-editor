@@ -1,7 +1,7 @@
-import { useContext, useState } from "react";
+import { useContext, useState, MouseEvent } from "react";
 import AppContext from "../AppContext";
 import PromptDialog from "../PromptDialog/PromptDialog";
-import { IconButton, Toolbar, Tooltip } from "@mui/material";
+import { Menu, Toolbar } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import SaveIcon from "@mui/icons-material/Save";
 import RestoreIcon from "@mui/icons-material/Restore";
@@ -10,9 +10,10 @@ import PublishIcon from "@mui/icons-material/Publish";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import QuickSearchToolbar from "../QuickSearchToolbar/QuickSearchToolbar";
 import jsYaml from "js-yaml";
-import JSZip from "jszip";
-import { saveAs } from "file-saver";
-import ExportRules from "./ExportRules";
+import ExportRulesCSV from "./ExportRulesCSV";
+import ExportArtifacts from "./ExportArtifacts";
+import ExportRulesYAML from "./ExportRulesYAML";
+import ControlButton from "./ControlButton";
 
 export default function Controls() {
   const [discardDialog, setDiscardDialog] = useState<boolean>(false);
@@ -31,12 +32,6 @@ export default function Controls() {
     isRuleDirty,
     setAlertState,
     isRuleModifiable,
-    syntaxCheck,
-    schemaCheck,
-    jsonCheck,
-    loadDefineXMLCheck,
-    loadDatasetsCheck,
-    testCheck,
   } = useContext(AppContext);
 
   const newRule = () => {
@@ -97,39 +92,15 @@ export default function Controls() {
     }
   };
 
-  const exportArtifacts = async () => {
-    const zip = new JSZip();
-    zip.file("Rule.yml", modifiedRule);
-    zip.file(
-      "Rule_spaces.json",
-      JSON.stringify(syntaxCheck.details[0].details, null, 4)
-    );
-    zip.file(
-      "Schema_Validation.json",
-      JSON.stringify(schemaCheck.details[0].details, null, 4)
-    );
-    zip.file(
-      "Rule_underscores.json",
-      JSON.stringify(jsonCheck.details[0].details, null, 4)
-    );
-    zip.file("Define.xml", loadDefineXMLCheck.details[1]?.details ?? "");
-    zip.file("Datasets.xlsx", loadDatasetsCheck.details[0]?.details ?? "");
-    zip.file(
-      "Datasets.json",
-      JSON.stringify(loadDatasetsCheck.details[1]?.details ?? "", null, 4)
-    );
-    zip.file(
-      "Request.json",
-      JSON.stringify(testCheck.details[1]?.details ?? "", null, 4)
-    );
-    zip.file(
-      "Results.json",
-      JSON.stringify(testCheck.details[3]?.details ?? "", null, 4)
-    );
-
-    zip.generateAsync({ type: "blob" }).then((content) => {
-      saveAs(content, "Rule.zip");
-    });
+  const [exportAnchorEl, setExportAnchorEl] = useState<null | HTMLElement>(
+    null
+  );
+  const open = Boolean(exportAnchorEl);
+  const handleExport = (event: MouseEvent<HTMLButtonElement>) => {
+    setExportAnchorEl(event.currentTarget);
+  };
+  const handleExportClose = () => {
+    setExportAnchorEl(null);
   };
 
   return (
@@ -141,79 +112,54 @@ export default function Controls() {
           bgcolor: "#DDEEFF",
         }}
       >
-        <Tooltip title="New Rule">
-          <span>
-            <IconButton
-              disabled={
-                isRuleDirty() || !isRuleSelected() || !isRuleModifiable()
-              }
-              onClick={newRule}
-              color="primary"
-            >
-              <AddIcon />
-            </IconButton>
-          </span>
-        </Tooltip>
-
-        <Tooltip title="Save Rule">
-          <span>
-            <IconButton
-              disabled={!isRuleDirty() || !isRuleModifiable()}
-              onClick={saveRule}
-              color="primary"
-            >
-              <SaveIcon />
-            </IconButton>
-          </span>
-        </Tooltip>
-
-        <Tooltip title="Discard Changes">
-          <span>
-            <IconButton
-              disabled={!isRuleDirty()}
-              onClick={() => setDiscardDialog(true)}
-              color="primary"
-            >
-              <RestoreIcon />
-            </IconButton>
-          </span>
-        </Tooltip>
-
-        <Tooltip title="Delete Rule">
-          <span>
-            <IconButton
-              disabled={!isRuleSelected() || !isRuleModifiable()}
-              onClick={() => setDeleteDialog(true)}
-              color="primary"
-            >
-              <DeleteIcon />
-            </IconButton>
-          </span>
-        </Tooltip>
-
-        <Tooltip title={"Publish Rule"}>
-          <span>
-            <IconButton
-              disabled={
-                isRuleDirty() || !isRuleSelected() || !isRuleModifiable()
-              }
-              onClick={publishRule}
-              color="primary"
-            >
-              <PublishIcon />
-            </IconButton>
-          </span>
-        </Tooltip>
-
-        <Tooltip title={"Export Artifacts"}>
-          <span>
-            <IconButton onClick={exportArtifacts} color="primary">
-              <FileDownloadIcon />
-            </IconButton>
-          </span>
-        </Tooltip>
-
-        <ExportRules />
+        <ControlButton
+          title="New Rule"
+          disabled={isRuleDirty() || !isRuleSelected() || !isRuleModifiable()}
+          onClick={newRule}
+        >
+          <AddIcon />
+        </ControlButton>
+        <ControlButton
+          title="Save Rule"
+          disabled={!isRuleDirty() || !isRuleModifiable()}
+          onClick={saveRule}
+        >
+          <SaveIcon />
+        </ControlButton>
+        <ControlButton
+          title="Discard Changes"
+          disabled={!isRuleDirty()}
+          onClick={() => setDiscardDialog(true)}
+        >
+          <RestoreIcon />
+        </ControlButton>
+        <ControlButton
+          title="Delete Rule"
+          disabled={!isRuleSelected() || !isRuleModifiable()}
+          onClick={() => setDeleteDialog(true)}
+        >
+          <DeleteIcon />
+        </ControlButton>
+        <ControlButton
+          title={"Publish Rule"}
+          disabled={isRuleDirty() || !isRuleSelected() || !isRuleModifiable()}
+          onClick={publishRule}
+        >
+          <PublishIcon />
+        </ControlButton>
+        <ControlButton title={"Export..."} onClick={handleExport}>
+          <FileDownloadIcon />
+        </ControlButton>
+        <Menu
+          id="export-menu"
+          anchorEl={exportAnchorEl}
+          open={open}
+          onClose={handleExportClose}
+        >
+          <ExportArtifacts onClose={handleExportClose} />
+          <ExportRulesCSV onClose={handleExportClose} />
+          <ExportRulesYAML onClose={handleExportClose} />
+        </Menu>
 
         <QuickSearchToolbar label="Search YAML..." queryParam={"content"} />
       </Toolbar>

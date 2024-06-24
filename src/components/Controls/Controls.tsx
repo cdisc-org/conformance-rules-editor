@@ -1,11 +1,7 @@
 import { useContext, useState, MouseEvent } from "react";
 import AppContext from "../AppContext";
 import PromptDialog from "../PromptDialog/PromptDialog";
-<<<<<<< HEAD
 import { Menu, Toolbar } from "@mui/material";
-=======
-import { IconButton, Menu, Toolbar, Tooltip } from "@mui/material";
->>>>>>> ded6316eddbb42b4f3bd5f96fc3eeaa1a1c9afd3
 import AddIcon from "@mui/icons-material/Add";
 import SaveIcon from "@mui/icons-material/Save";
 import RestoreIcon from "@mui/icons-material/Restore";
@@ -17,10 +13,7 @@ import jsYaml from "js-yaml";
 import ExportRulesCSV from "./ExportRulesCSV";
 import ExportArtifacts from "./ExportArtifacts";
 import ExportRulesYAML from "./ExportRulesYAML";
-<<<<<<< HEAD
 import ControlButton from "./ControlButton";
-=======
->>>>>>> ded6316eddbb42b4f3bd5f96fc3eeaa1a1c9afd3
 
 export default function Controls() {
   const [discardDialog, setDiscardDialog] = useState<boolean>(false);

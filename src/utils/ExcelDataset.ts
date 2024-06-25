@@ -144,9 +144,9 @@ const getDomainName = (rows: {}[], sheetName: string): string => {
     const domainName = domainRow["DOMAIN"] || domainRow["RDOMAIN"];
     return domainName || sheetName.toUpperCase().replace(".XPT", "");
   }
-  console.log(`Using Sheet Name as Domain: ${sheetName.toUpperCase().replace(".XPT", "")}`);
   return sheetName.toUpperCase().replace(".XPT", "");
 };
+
 
 const mergeDatasetRecords = (
   workbook: WorkBook,

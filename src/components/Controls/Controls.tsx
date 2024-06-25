@@ -109,7 +109,7 @@ export default function Controls() {
         sx={{
           pl: { sm: 2 },
           pr: { xs: 1, sm: 1 },
-          bgcolor: "#DDEEFF",
+          bgcolor: "#FF0000",
         }}
       >
         <ControlButton
@@ -163,6 +163,14 @@ export default function Controls() {
 
         <QuickSearchToolbar label="Search YAML..." queryParam={"content"} />
       </Toolbar>
+
+      {/* TODO:
+      Get rid of or use ControlButton
+      Implement YAML
+      Add closing to csv and yaml
+      Better naming for these state vars
+      Move export artifacts to own file
+       */}
 
       <PromptDialog
         contentText="Discard changes?"

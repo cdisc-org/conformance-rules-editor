@@ -164,14 +164,6 @@ export default function Controls() {
         <QuickSearchToolbar label="Search YAML..." queryParam={"content"} />
       </Toolbar>
 
-      {/* TODO:
-      Get rid of or use ControlButton
-      Implement YAML
-      Add closing to csv and yaml
-      Better naming for these state vars
-      Move export artifacts to own file
-       */}
-
       <PromptDialog
         contentText="Discard changes?"
         open={discardDialog}

@@ -22,11 +22,11 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref || github.ref }}
           fetch-depth: 0
           submodules: true
-      - name: Print current branch
+      - name: Clean build directory
+        run: rm -rf build
+      - name: Print current branch and commit hash
         run: |
           echo "Current branch: $(git branch --show-current)"
-      - name: Print current commit hash
-        run: |
           echo "Current commit hash: $(git rev-parse HEAD)"
       - name: Build And Deploy Prod
         id: builddeployprod

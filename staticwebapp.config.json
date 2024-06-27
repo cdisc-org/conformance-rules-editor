@@ -81,15 +81,5 @@
   },
   "platform": {
     "apiRuntime": "node:16"
-  },
-  "headers": [
-    {
-      "route": "/*",
-      "headers": {
-        "Cache-Control": "no-cache, no-store, must-revalidate",
-        "Pragma": "no-cache",
-        "Expires": "0"
-      }
-    }
-  ]
+  }
 }

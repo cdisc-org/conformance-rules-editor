@@ -43,7 +43,7 @@ jobs:
 
 
   build_and_deploy_preview:
-    if: github.event_name == 'pull_request' && github.event.action != 'closed'
+    if: github.event_name == 'pull_request' && github.event.action != 'closed' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     name: Build and Deploy Preview
     steps:
@@ -59,7 +59,7 @@ jobs:
           action: "upload"
           app_location: "/"
           api_location: "/api"
-          output_location: "build"
+          output_location: "/build"
         env:
           NPM_CONFIG_LEGACY_PEER_DEPS: true
   

@@ -13,16 +13,13 @@ on:
 
 jobs:
   build_and_deploy_prod_job:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed') || github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'push' && github.event.action != 'closed') || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     name: Build and Deploy Prod Job
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: main
           submodules: true
-      - name: Clean build directory
-        run: rm -rf build
       - name: Print current branch and commit hash
         run: |
           echo "Current branch: $(git branch --show-current)"
@@ -43,14 +40,28 @@ jobs:
           ###### End of Repository/Build Configurations ######
         env:
           NPM_CONFIG_LEGACY_PEER_DEPS: true
-      - name: List all files after build
-        run: ls -R src
-      - name: Verify build artifacts
-        run: |
-          echo "Verifying build artifacts"
-          ls -al src/build
-      - name: Deployment logs
-        run: cat /home/runner/work/_actions/Azure/static-web-apps-deploy@v1/*.log
+
+
+  build_and_deploy_preview:
+    if: github.event_name == 'pull_request' && github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    name: Build and Deploy Preview
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Build And Deploy Preview
+        id: builddeploypreview
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_CONFORMANCE_RULES_EDITOR_PROD }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: "upload"
+          app_location: "/"
+          api_location: "/api"
+          output_location: "build"
+        env:
+          NPM_CONFIG_LEGACY_PEER_DEPS: true
   
   build_and_deploy_training_job:
     if: github.ref_name == 'main' && (github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed') || github.event_name == 'workflow_dispatch')

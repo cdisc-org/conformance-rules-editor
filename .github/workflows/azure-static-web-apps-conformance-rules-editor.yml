@@ -68,15 +68,18 @@ jobs:
           deployment_environment: pr_${{ github.event.number }}
         env:
           NPM_CONFIG_LEGACY_PEER_DEPS: true
+      - name: Set Preview URL
+        if: github.event_name == 'pull_request' && github.event.action != 'closed'
+        run: |
+          echo "PREVIEW_URL=https://icy-flower-095494b10-pr-${{ github.event.number }}.centralus.azurestaticapps.net" >> $GITHUB_ENV
       - name: Comment PR
         uses: actions/github-script@v6
         if: github.event_name == 'pull_request'
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            const previewUrl = '${{ steps.builddeploypreview.outputs.static_web_app_url }}';
-            const body = `Preview environment is ready! 🚀\n\nYou can view it here: https://${previewUrl}`;
-            
+            const previewUrl = process.env.PREVIEW_URL;
+            const body = `Preview environment is ready! 🚀\n\nYou can view it here: ${previewUrl}\n`;
             const { data: comments } = await github.rest.issues.listComments({
               issue_number: context.issue.number,
               owner: context.repo.owner,

@@ -139,12 +139,14 @@ const getRecords = (cols: IVariable[], rows: {}[]): {} => {
 };
 
 const getDomainName = (rows: {}[], sheetName: string): string => {
-  return rows.length > 3 && rows[3]["DOMAIN"]
-    ? rows[3]["DOMAIN"]
-    : /* This is technically not the domain name, 
-    but it is what the CORE engine currently expects */
-      sheetName.toUpperCase().replace(".XPT", "");
+  if (rows.length > 3) {
+    const domainRow = rows[3];
+    const domainName = domainRow["DOMAIN"] || domainRow["RDOMAIN"];
+    return domainName || sheetName.toUpperCase().replace(".XPT", "");
+  }
+  return sheetName.toUpperCase().replace(".XPT", "");
 };
+
 
 const mergeDatasetRecords = (
   workbook: WorkBook,

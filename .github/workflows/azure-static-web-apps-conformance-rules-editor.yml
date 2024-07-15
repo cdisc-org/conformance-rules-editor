@@ -47,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Deploy Preview
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: true
           # ref: ${{ github.head_ref || github.ref_name }}

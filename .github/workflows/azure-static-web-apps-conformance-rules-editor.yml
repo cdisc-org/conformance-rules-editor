@@ -69,7 +69,6 @@ jobs:
             echo "Commit: ${{ github.sha }}"
       - name: Comment PR
         uses: actions/github-script@v6
-        if: success()
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |

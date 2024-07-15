@@ -46,8 +46,11 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: true
-          fetch-depth: 0
           ref: ${{ github.head_ref || github.ref_name }}
+      - name: Use preview config for PR
+        run: |
+          cp staticwebapp.preview.config.json staticwebapp.config.json
+          echo "Using preview configuration for this deployment"
       - name: Build And Deploy Preview
         id: builddeploypreview
         uses: Azure/static-web-apps-deploy@v1
@@ -58,6 +61,7 @@ jobs:
           app_location: "/"
           api_location: "/api"
           output_location: "build"
+          config_file_location: "/"
           production_branch: ${{ github.ref_name }}
         env:
           NPM_CONFIG_LEGACY_PEER_DEPS: true

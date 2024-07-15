@@ -47,7 +47,7 @@ jobs:
         with:
           submodules: true
           fetch-depth: 0
-          # ref: ${{ github.head_ref || github.ref_name }}
+          ref: ${{ github.head_ref || github.ref_name }}
       - name: Build And Deploy Preview
         id: builddeploypreview
         uses: Azure/static-web-apps-deploy@v1
@@ -59,6 +59,7 @@ jobs:
           api_location: "/api"
           output_location: "build"
           pr_number: ${{ github.event.number }}
+          is_pull_request_environment: true
         env:
           NPM_CONFIG_LEGACY_PEER_DEPS: true
       - name: Debug Info

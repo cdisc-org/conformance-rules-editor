@@ -32,7 +32,7 @@
     },
     {
       "route": "/*",
-      "allowedRoles": ["authenticated"]
+      "allowedRoles": ["authenticated", "$preview"]
     }
   ],
   "navigationFallback": {

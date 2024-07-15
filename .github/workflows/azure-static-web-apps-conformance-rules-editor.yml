@@ -58,8 +58,7 @@ jobs:
           app_location: "/"
           api_location: "/api"
           output_location: "build"
-          pr_number: ${{ github.event.number }}
-          is_pull_request_environment: true
+          production_branch: ${{ github.ref_name }}
         env:
           NPM_CONFIG_LEGACY_PEER_DEPS: true
       - name: Debug Info

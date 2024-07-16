@@ -16,9 +16,10 @@ Install Node.js version **16**: https://nodejs.org/en/download/releases
 2. Install api dependencies - From the ./api directory, run the command: `npm install`
 3. Install static web app node libraries by running the following commands:
    ```
-   npm install -g @azure/static-web-apps-cli
+   npm install -g @azure/static-web-apps-cli@1.1.6
    npm install -g azure-functions-core-tools@4 --unsafe-perm true
    ```
+   Note: Currently rule editor requires version 1.1.6 of Azure SWA CLI.  Newer versions of the CLI will result in a 404 error from the emulator.
 4. Using VSCODE, install the "Azure Functions" extension.
 5. Create a local.settings.json in the API folder to support local development of the API. It should contain the following values which provide information for the staticwebapp config and the Microsoft Graph API for Users' name resolution:
 

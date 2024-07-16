@@ -7,7 +7,12 @@
       },
       {
         "route": "/api/*",
-        "methods": ["PUT", "POST", "PATCH", "DELETE", "GET"],
+        "methods": ["GET"],
+        "allowedRoles": ["anonymous"]
+      },
+      {
+        "route": "/api/*",
+        "methods": ["PUT", "POST", "PATCH", "DELETE"],
         "allowedRoles": ["authenticated"]
       },
       {

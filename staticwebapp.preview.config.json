@@ -8,7 +8,7 @@
       {
         "route": "/api/*",
         "methods": ["PUT", "POST", "PATCH", "DELETE", "GET"],
-        "allowedRoles": ["anonymous"]
+        "allowedRoles": ["authenticated"]
       },
       {
         "route": "/api/*",

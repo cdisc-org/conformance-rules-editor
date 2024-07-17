@@ -109,8 +109,7 @@ export default function Controls() {
         sx={{
           pl: { sm: 2 },
           pr: { xs: 1, sm: 1 },
-          bgcolor: "#FF0000",
-          // bgcolor: "#DDEEFF",
+          bgcolor: "#DDEEFF",
         }}
       >
         <ControlButton

@@ -141,7 +141,7 @@ const getRecords = (cols: IVariable[], rows: {}[]): {} => {
 const getDomainName = (rows: {}[], sheetName: string): string => {
   if (rows.length > 3) {
     const domainRow = rows[3];
-    const domainName = domainRow["DOMAIN"] || domainRow["RDOMAIN"];
+    const domainName = domainRow["DOMAIN"]
     return domainName || sheetName.toUpperCase().replace(".XPT", "");
   }
   return sheetName.toUpperCase().replace(".XPT", "");

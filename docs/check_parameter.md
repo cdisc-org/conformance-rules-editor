@@ -16,6 +16,18 @@
 
 ## name
 
+## negative
+
+Boolean. Used with the `invalid_duration` operator to specify whether negative durations should be considered valid (True) or invalid (False).
+
+```yaml
+- name: "BRTHDTC"
+  operator: "invalid_duration"
+  negative: False
+```
+In this example, the rule will flag any negative durations in the DURVAR variable as invalid. If `negative` were set to `true`, negative durations would be considered valid and not raise issues.
+
+
 ## operator
 
 ## order

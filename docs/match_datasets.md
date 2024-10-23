@@ -1,4 +1,5 @@
 # Match Datasets (Merge)
+Note: The Match Datasets section must list each dataset with "Name" as its first attribute followed by "Keys", preserving this exact structure ensures proper parsing
 
 ## Non pivoted relationship - unique check variable names
 
@@ -117,7 +118,7 @@ Match Datasets:
   - Name: SUPPAE
     Keys:
       - USUBJID
-    Is Relationship: Y
+    Is Relationship: true
 ```
 
 ## RELREC Relationship

@@ -98,6 +98,15 @@ Scope:
 ```
 
 ## Pivoted (Supp/VL) relationship
+When 'Is Relationship: True' is specified, the system filters a parent dataset using a supplementary dataset that defines allowed column-value pairs. The supplementary dataset must contain two columns - one specifying which columns to filter in the parent dataset (IDVAR) and another containing the allowed values (IDVARVAL) - enabling complex filtering.
+
+> If your Supp-- dataset looks like below and 'Is Relationship: True', it will 'keep rows where ECSEQ is 100 or 101 AND ECNUM is 105'
+```
+IDVAR    IDVARVAL
+ECSEQ    100
+ECSEQ    101
+ECNUM    105
+```
 
 > Record present in SUPPAE where SUPPAE.QNAM=AESOSP and AESMIE != 'Y'
 
@@ -117,7 +126,7 @@ Match Datasets:
   - Name: SUPPAE
     Keys:
       - USUBJID
-    Is Relationship: Y
+    Is Relationship: true
 ```
 
 ## RELREC Relationship

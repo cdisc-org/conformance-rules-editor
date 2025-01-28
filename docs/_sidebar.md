@@ -4,6 +4,7 @@
 - [Check Parameter](check_parameter.md)
 - [Match Datasets (Merge)](match_datasets.md)
 - [Operations (Aggregate)](operations.md)
+- [External Dictionaries](exdictionary.md)
 - [Rule Type](rule_type.md)
 - [Scope](scope.md)
 - [Sensitivity](sensitivity.md)

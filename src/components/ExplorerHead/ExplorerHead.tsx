@@ -95,16 +95,25 @@ export default function ExplorerHead() {
     setOrderBy(property);
   };
 
+  const { searchText, setSearchText } = useContext(AppContext);
+
   const removeColumn = (filterParam: string) => {
     setActiveColumns(cols => cols.filter(col => col.filterParam !== filterParam));
+    const newSearchText = { ...searchText };
+    delete newSearchText[filterParam];
+    setSearchText(newSearchText);
   };
 
   const addColumn = () => {
     if (newColumnName && newFilterParam) {
+      const finalFilterParam = `json.${newFilterParam}`;
       const newColumn: HeadCell = {
         label: newColumnName,
-        filterParam: newFilterParam,
-        getValue: (rule) => String(rule[newFilterParam] || ''),
+        filterParam: finalFilterParam,
+          getValue: (rule) => {
+            const value = rule[finalFilterParam];
+            return Array.isArray(value) ? value.join(', ') : String(value || '');
+          },
         sortable: true,
         filterable: true,
       };

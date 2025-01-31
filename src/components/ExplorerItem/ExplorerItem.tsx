@@ -6,7 +6,7 @@ import { IRule } from "../../types/IRule";
 import { headCells } from "../ExplorerHead/ExplorerHead";
 
 export default function ExplorerItem(rule: IRule) {
-  const { selectedRule, setSelectedRule, isRuleDirty } = useContext(AppContext);
+  const { selectedRule, setSelectedRule, isRuleDirty, activeColumns} = useContext(AppContext);
 
   const handleListItemClick = () => {
     if (!isRuleDirty()) {
@@ -20,7 +20,7 @@ export default function ExplorerItem(rule: IRule) {
       onClick={handleListItemClick}
       selected={selectedRule === rule.id}
     >
-      {headCells.map((headCell) => (
+      {activeColumns.map((headCell) => (
         <TableCell key={`${rule.id}.${headCell.filterParam}`}>
           {headCell.getValue(rule)}
         </TableCell>

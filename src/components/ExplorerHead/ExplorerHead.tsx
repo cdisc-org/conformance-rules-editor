@@ -22,7 +22,7 @@ export interface HeadCell {
   filterable: boolean;
 }
 
-export const headCells: readonly HeadCell[] = [
+export const headCells: HeadCell[] = [
   {
     label: "Rule Ids",
     filterParam: "json.Authorities.Standards.References.Rule Identifier.Id",
@@ -83,8 +83,9 @@ export const headCells: readonly HeadCell[] = [
 ];
 
 export default function ExplorerHead() {
-  const { order, setOrder, orderBy, setOrderBy } = useContext(AppContext);
-  const [activeColumns, setActiveColumns] = useState(headCells);
+  const { order, setOrder, orderBy, setOrderBy, activeColumns, setActiveColumns, searchText, setSearchText } = useContext(AppContext);
+  // const [activeColumns, setActiveColumns] = useState(headCells);
+  // const { searchText, setSearchText } = useContext(AppContext);
   const [showAddColumn, setShowAddColumn] = useState(false);
   const [newColumnName, setNewColumnName] = useState("");
   const [newFilterParam, setNewFilterParam] = useState("");
@@ -94,8 +95,6 @@ export default function ExplorerHead() {
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
-
-  const { searchText, setSearchText } = useContext(AppContext);
 
   const removeColumn = (filterParam: string) => {
     setActiveColumns(cols => cols.filter(col => col.filterParam !== filterParam));

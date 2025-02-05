@@ -88,7 +88,6 @@ export default function ExplorerHead() {
   // const { searchText, setSearchText } = useContext(AppContext);
   const [showAddColumn, setShowAddColumn] = useState(false);
   const [newColumnName, setNewColumnName] = useState("");
-  const [newFilterParam, setNewFilterParam] = useState("");
 
   const onRequestSort = (property: string) => {
     const isAsc = orderBy === property && order === "asc";
@@ -104,22 +103,27 @@ export default function ExplorerHead() {
   };
 
   const addColumn = () => {
-    if (newColumnName && newFilterParam) {
-      const finalFilterParam = `json.${newFilterParam}`;
+    if (newColumnName) {
       const newColumn: HeadCell = {
         label: newColumnName,
-        filterParam: finalFilterParam,
-          getValue: (rule) => {
-            const value = rule[finalFilterParam];
-            return Array.isArray(value) ? value.join(', ') : String(value || '');
-          },
+        filterParam: "content",
+        getValue: (rule: IRule) => {
+          try {
+            if (!rule || !rule.content) return '';
+            const pattern = new RegExp(`${newColumnName}:\\s*([^\\n]+)`, 'g');
+            const matches = [...rule.content.matchAll(pattern)];
+            return matches.map(match => match[1].trim()).join(', ');
+          } catch (error) {
+            console.error('Error in getValue:', error);
+            return '';
+          }
+        },
         sortable: true,
         filterable: true,
       };
-      setActiveColumns(cols => [...cols, newColumn]);
+      setActiveColumns(prevCols => [...prevCols, newColumn]);
       setShowAddColumn(false);
       setNewColumnName("");
-      setNewFilterParam("");
     }
   };
 
@@ -180,13 +184,6 @@ export default function ExplorerHead() {
                 placeholder="Column Name"
                 value={newColumnName}
                 onChange={(e) => setNewColumnName(e.target.value)}
-                className="w-full p-1 border rounded"
-              />
-              <input
-                type="text"
-                placeholder="Filter Parameter"
-                value={newFilterParam}
-                onChange={(e) => setNewFilterParam(e.target.value)}
                 className="w-full p-1 border rounded"
               />
               <div className="flex justify-between">

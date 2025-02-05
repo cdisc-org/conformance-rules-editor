@@ -135,6 +135,25 @@ export default function ExplorerList() {
             })
           ),
       };
+  //     filters: Object.entries(searchText)
+  //   .filter(([filterName, filterValue]) => {
+  //     return !(filterValue == null || filterValue === "");
+  //   })
+  //   .map(([filterName, filterValue]): IFilter => {
+  //     if (filterName === "operator") {
+  //       return {
+  //         name: "content",
+  //         operator: "contains",
+  //         value: filterValue
+  //       };
+  //     }
+  //     return {
+  //       name: filterName,
+  //       operator: "contains",
+  //       value: filterValue
+  //     };
+  //   }),
+  // };
       setFetchParams({
         params: params,
         type: FetchType.FilterSort,

@@ -106,13 +106,19 @@ export default function ExplorerHead() {
     if (newColumnName) {
       const newColumn: HeadCell = {
         label: newColumnName,
-        filterParam: "content",
+        // filterParam: "content",
+        filterParam: "operator",
         getValue: (rule: IRule) => {
           try {
             if (!rule || !rule.content) return '';
-            const pattern = new RegExp(`${newColumnName}:\\s*([^\\n]+)`, 'g');
-            const matches = [...rule.content.matchAll(pattern)];
-            return matches.map(match => match[1].trim()).join(', ');
+            const escapedSearch = newColumnName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const pattern = new RegExp(`^[\\s]*${escapedSearch}:\\s*(.+)$`, 'm');
+            const match = rule.content.match(pattern);
+            
+            if (match && match[1]) {
+              return match[1].trim();
+            }
+            return '';
           } catch (error) {
             console.error('Error in getValue:', error);
             return '';

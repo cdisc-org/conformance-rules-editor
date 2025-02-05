@@ -17,7 +17,7 @@ import {
 } from "../utils/json_yaml";
 
 interface Operation {
-  (name: string, value: any, collectionAlias: string): {
+  (name: string, value: any, collectionAlias: string, paramIndex: number): {
     filter: string;
     parameters: SqlParameter[];
   };
@@ -128,20 +128,20 @@ const rulesAlias = "Rules";
 const containsOperation: Operation = (
   name,
   value: string | number,
-  collectionAlias
+  collectionAlias,
+  paramIndex
 ) => {
-  return {
-    filter: `CONTAINS(${collectionAlias}${sqlName(name)}, ${paramName(
-      name
-    )}, true)`,
-    parameters: [
-      {
-        name: paramName(name),
-        value: value,
-      },
-    ],
+    const paramName = `@content${paramIndex}`;
+    return {
+      filter: `CONTAINS(${collectionAlias}${sqlName(name)}, ${paramName}, true)`,
+      parameters: [
+        {
+          name: paramName,
+          value: value,
+        },
+      ],
+    };
   };
-};
 
 const inOperation: Operation = (
   name,
@@ -279,7 +279,8 @@ function buildJoinsAndFilters(query: IQuery) {
   var joins = "";
   var filters = "";
   var aliasIndex = 1;
-  for (const filter of query.filters) {
+
+  for (const [index, filter] of query.filters.entries()) {
     const subqueryNames = splitSubqueryNames(filter.name);
     for (const [subqueryIndex, subqueryName] of subqueryNames
       .slice(0, -1)
@@ -292,7 +293,8 @@ function buildJoinsAndFilters(query: IQuery) {
     const filterParam = operations[filter.operator](
       subqueryNames[subqueryNames.length - 1],
       filter.value,
-      `${rulesAlias}${subqueryNames.length === 1 ? "1" : aliasIndex}`
+      `${rulesAlias}${subqueryNames.length === 1 ? "1" : aliasIndex}`,
+      index
     );
     filters = `${filters}${filters === "" ? " WHERE" : " AND"} ${
       filterParam.filter

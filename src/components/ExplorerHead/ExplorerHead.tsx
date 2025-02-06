@@ -84,8 +84,6 @@ export const headCells: HeadCell[] = [
 
 export default function ExplorerHead() {
   const { order, setOrder, orderBy, setOrderBy, activeColumns, setActiveColumns, searchText, setSearchText } = useContext(AppContext);
-  // const [activeColumns, setActiveColumns] = useState(headCells);
-  // const { searchText, setSearchText } = useContext(AppContext);
   const [showAddColumn, setShowAddColumn] = useState(false);
   const [newColumnName, setNewColumnName] = useState("");
 

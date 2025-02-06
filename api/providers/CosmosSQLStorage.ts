@@ -17,7 +17,7 @@ import {
 } from "../utils/json_yaml";
 
 interface Operation {
-  (name: string, value: any, collectionAlias: string, paramIndex: number): {
+  (name: string, value: any, collectionAlias: string): {
     filter: string;
     parameters: SqlParameter[];
   };
@@ -125,23 +125,42 @@ const getRule = async (id: string): Promise<IRule> => {
 
 const rulesAlias = "Rules";
 
+// const containsOperation: Operation = (
+//   name,
+//   value: string | number,
+//   collectionAlias,
+//   paramIndex
+// ) => {
+//     const paramName = `@content${paramIndex}`;
+//     return {
+//       filter: `CONTAINS(${collectionAlias}${sqlName(name)}, ${paramName}, true)`,
+//       parameters: [
+//         {
+//           name: paramName,
+//           value: value,
+//         },
+//       ],
+//     };
+//   };
+
 const containsOperation: Operation = (
   name,
   value: string | number,
-  collectionAlias,
-  paramIndex
+  collectionAlias
 ) => {
-    const paramName = `@content${paramIndex}`;
-    return {
-      filter: `CONTAINS(${collectionAlias}${sqlName(name)}, ${paramName}, true)`,
-      parameters: [
-        {
-          name: paramName,
-          value: value,
-        },
-      ],
-    };
+  return {
+    filter: `CONTAINS(${collectionAlias}${sqlName(name)}, ${paramName(
+      name
+    )}, true)`,
+    parameters: [
+      {
+        name: paramName(name),
+        value: value,
+      },
+    ],
   };
+};
+
 
 const inOperation: Operation = (
   name,
@@ -281,7 +300,28 @@ function buildJoinsAndFilters(query: IQuery) {
   var filters = "";
   var aliasIndex = 1;
 
-  for (const [index, filter] of query.filters.entries()) {
+  // for (const [index, filter] of query.filters.entries()) {
+  //   const subqueryNames = splitSubqueryNames(filter.name);
+  //   for (const [subqueryIndex, subqueryName] of subqueryNames
+  //     .slice(0, -1)
+  //     .entries()) {
+  //     joins = `${joins} JOIN ${rulesAlias}${aliasIndex + 1} IN ${rulesAlias}${
+  //       subqueryIndex === 0 ? "1" : aliasIndex
+  //     }${sqlName(subqueryName)}`;
+  //     aliasIndex = aliasIndex + 1;
+  //   }
+  //   const filterParam = operations[filter.operator](
+  //     subqueryNames[subqueryNames.length - 1],
+  //     filter.value,
+  //     `${rulesAlias}${subqueryNames.length === 1 ? "1" : aliasIndex}`,
+  //     index
+  //   );
+  //   filters = `${filters}${filters === "" ? " WHERE" : " AND"} ${
+  //     filterParam.filter
+  //   }`;
+  //   filterParams.push(...filterParam.parameters);
+  // }
+  for (const filter of query.filters) {
     const subqueryNames = splitSubqueryNames(filter.name);
     for (const [subqueryIndex, subqueryName] of subqueryNames
       .slice(0, -1)
@@ -294,8 +334,7 @@ function buildJoinsAndFilters(query: IQuery) {
     const filterParam = operations[filter.operator](
       subqueryNames[subqueryNames.length - 1],
       filter.value,
-      `${rulesAlias}${subqueryNames.length === 1 ? "1" : aliasIndex}`,
-      index
+      `${rulesAlias}${subqueryNames.length === 1 ? "1" : aliasIndex}`
     );
     filters = `${filters}${filters === "" ? " WHERE" : " AND"} ${
       filterParam.filter

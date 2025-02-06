@@ -3,7 +3,6 @@ import AppContext from "../AppContext";
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import { IRule } from "../../types/IRule";
-import { headCells } from "../ExplorerHead/ExplorerHead";
 
 export default function ExplorerItem(rule: IRule) {
   const { selectedRule, setSelectedRule, isRuleDirty, activeColumns} = useContext(AppContext);

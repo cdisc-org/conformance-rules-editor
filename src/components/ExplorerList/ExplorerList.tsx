@@ -38,8 +38,7 @@ export default function ExplorerList() {
     setModifiedRule,
     setUnmodifiedRule,
     setCreator,
-    activeColumns
-  } = useContext(AppContext);
+    } = useContext(AppContext);
   const [rulesList, setRulesList] = useState([]);
   const [wantsMoreRules, setWantsMoreRules] = useState<boolean>(false);
   const [paginationLinks, setPaginationLinks] = useState<IQuery>(null);

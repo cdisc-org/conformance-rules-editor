@@ -199,6 +199,7 @@ function buildSelect(query: IQuery, aliasIndex: number) {
     /* id is needed in order to maintain one result per rule item */
     query.select.push("id");
   }
+  select.push(`${rulesAlias}1["json"] as "full_json"`);
   for (const selectItem of query.select) {
     const subqueryNames = splitSubqueryNames(selectItem);
     if (subqueryNames.length === 1) {

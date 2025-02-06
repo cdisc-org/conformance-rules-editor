@@ -104,29 +104,35 @@ export default function ExplorerHead() {
 
   const addColumn = () => {
     if (newColumnName) {
+      const pathSegments = newColumnName.split('.');
       const newColumn: HeadCell = {
         label: newColumnName,
-        // filterParam: "content",
-        filterParam: "operator",
+        filterParam: `full_json.${newColumnName}`,
         getValue: (rule: IRule) => {
           try {
-            if (!rule || !rule.content) return '';
-            const escapedSearch = newColumnName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            const pattern = new RegExp(`^[\\s]*${escapedSearch}:\\s*(.+)$`, 'm');
-            const match = rule.content.match(pattern);
-            
-            if (match && match[1]) {
-              return match[1].trim();
+            let value = rule.full_json;
+            for (const segment of pathSegments) {
+              if (Array.isArray(value)) {
+                value = value.map(item => item[segment]);
+              } else {
+                value = value[segment];
+              }
+              
+              if (value === undefined) return '';
             }
-            return '';
+            if (Array.isArray(value)) {
+              return value.flat().filter(Boolean).join(', ');
+            }
+            
+            return value?.toString() || '';
           } catch (error) {
-            console.error('Error in getValue:', error);
+            console.error('Error accessing custom column path:', error);
             return '';
           }
         },
-        sortable: true,
-        filterable: true,
-      };
+      sortable: true,
+      filterable: true,
+    };
       setActiveColumns(prevCols => [...prevCols, newColumn]);
       setShowAddColumn(false);
       setNewColumnName("");

@@ -8,6 +8,10 @@ import { headCells } from "../ExplorerHead/ExplorerHead";
 export default function ExplorerItem(rule: IRule) {
   const { selectedRule, setSelectedRule, isRuleDirty, activeColumns} = useContext(AppContext);
 
+  console.log('rule:', rule);
+  console.log('activeColumns:', activeColumns);
+
+
   const handleListItemClick = () => {
     if (!isRuleDirty()) {
       setSelectedRule(rule.id);

@@ -130,7 +130,7 @@ export default function ExplorerHead() {
             return '';
           }
         },
-      sortable: true,
+      sortable: false,
       filterable: true,
     };
       setActiveColumns(prevCols => [...prevCols, newColumn]);

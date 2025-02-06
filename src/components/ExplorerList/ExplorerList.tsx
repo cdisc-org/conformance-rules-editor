@@ -123,37 +123,18 @@ export default function ExplorerList() {
         orderBy: orderBy,
         order: order,
         select: headCells.map((headCell: HeadCell) => headCell.filterParam),
-  //     filters: Object.entries(searchText)
-  //   .filter(([filterName, filterValue]) => {
-  //     return !(filterValue == null || filterValue === "");
-  //   })
-  //   .map(([filterName, filterValue]): IFilter => {
-  //     if (filterName.startsWith('custom.')) {
-  //         return {
-  //         name: "content",
-  //         operator: "contains",
-  //         value: filterValue
-  //       };
-  //     }
-  //     return {
-  //       name: filterName,
-  //       operator: "contains",
-  //       value: filterValue
-  //     };
-  //   }),
-  // };
-      filters: Object.entries(searchText)
-      .filter(([filterName, filterValue]) => {
-        return !(filterValue == null || filterValue === "");
-      })
-      .map(([filterName, filterValue]): IFilter => {
-        return {
-          name: filterName,
-          operator: "contains",
-          value: filterValue
-        };
-      }),
-      };
+        filters: Object.entries(searchText)
+        .filter(([filterName, filterValue]) => {
+          return !(filterValue == null || filterValue === "");
+        })
+        .map(([filterName, filterValue]): IFilter => {
+          return {
+            name: filterName,
+            operator: "contains",
+            value: filterValue
+          };
+        }),
+    };
       setFetchParams({
         params: params,
         type: FetchType.FilterSort,

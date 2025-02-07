@@ -124,7 +124,6 @@ export default function ExplorerHead() {
             
             return value?.toString() || '';
           } catch (error) {
-            console.error('Error accessing custom column path:', error);
             return '';
           }
         },

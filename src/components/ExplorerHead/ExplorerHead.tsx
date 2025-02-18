@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Box from "@mui/material/Box";
 import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
@@ -100,41 +100,64 @@ export default function ExplorerHead() {
     setSearchText(newSearchText);
   };
 
+  const sanitizePath = (path: string): string => {
+    // Remove all characters that are not alphanumeric, period, or underscore
+    return path.replace(/[^a-zA-Z0-9._@]/g, '')
+      .replace(/\.\./g, '')
+      .replace(/^\.+|\.+$/g, '');
+  };
+
   const addColumn = () => {
     if (newColumnName) {
-      const pathSegments = newColumnName.split('.');
+      const sanitizedPath = sanitizePath(newColumnName);
       const newColumn: HeadCell = {
-        label: newColumnName,
-        filterParam: `full_json.${newColumnName}`,
-        getValue: (rule: IRule) => {
-          try {
-            let value = rule.full_json;
-            for (const segment of pathSegments) {
-              if (Array.isArray(value)) {
-                value = value.map(item => item[segment]);
-              } else {
-                value = value[segment];
-              }
-              
-              if (value === undefined) return '';
-            }
-            if (Array.isArray(value)) {
-              return value.flat().filter(Boolean).join(', ');
-            }
-            
-            return value?.toString() || '';
-          } catch (error) {
-            return '';
-          }
-        },
-      sortable: false,
-      filterable: true,
-    };
+        label: sanitizedPath,
+        filterParam: `custom.${sanitizedPath}`,
+        getValue: (rule) => rule[`custom.${sanitizedPath}`]?.toString() || '',
+        sortable: true,
+        filterable: true,
+      };
       setActiveColumns(prevCols => [...prevCols, newColumn]);
       setShowAddColumn(false);
       setNewColumnName("");
     }
   };
+
+  // const addColumn = () => {
+  //   if (newColumnName) {
+  //     const pathSegments = newColumnName.split('.');
+  //     const newColumn: HeadCell = {
+  //       label: newColumnName,
+  //       filterParam: `full_json.${newColumnName}`,
+  //       getValue: (rule: IRule) => {
+  //         try {
+  //           let value = rule.full_json;
+  //           for (const segment of pathSegments) {
+  //             if (Array.isArray(value)) {
+  //               value = value.map(item => item[segment]);
+  //             } else {
+  //               value = value[segment];
+  //             }
+              
+  //             if (value === undefined) return '';
+  //           }
+  //           if (Array.isArray(value)) {
+  //             return value.flat().filter(Boolean).join(', ');
+  //           }
+            
+  //           return value?.toString() || '';
+  //         } catch (error) {
+  //           return '';
+  //         }
+  //       },
+  //     sortable: false,
+  //     filterable: true,
+  //   };
+  //     setActiveColumns(prevCols => [...prevCols, newColumn]);
+  //     setShowAddColumn(false);
+  //     setNewColumnName("");
+  //   }
+  // };
 
   const addDefaultColumn = (column: HeadCell) => {
     if (!activeColumns.find(col => col.filterParam === column.filterParam)) {
@@ -190,7 +213,7 @@ export default function ExplorerHead() {
             <Box className="space-y-2">
               <input
                 type="text"
-                placeholder="Column Name"
+                placeholder="Enter path (e.g. Core.Id)"
                 value={newColumnName}
                 onChange={(e) => setNewColumnName(e.target.value)}
                 className="w-full p-1 border rounded"

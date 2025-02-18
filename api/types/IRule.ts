@@ -7,5 +7,5 @@ export interface IRule {
   history?: IRule[];
   id?: string;
   json?: object;
-  full_json?: object;
+  // full_json?: object;
 }

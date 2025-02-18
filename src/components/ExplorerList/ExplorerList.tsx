@@ -38,12 +38,14 @@ export default function ExplorerList() {
     setModifiedRule,
     setUnmodifiedRule,
     setCreator,
+    activeColumns 
     } = useContext(AppContext);
   const [rulesList, setRulesList] = useState([]);
   const [wantsMoreRules, setWantsMoreRules] = useState<boolean>(false);
   const [paginationLinks, setPaginationLinks] = useState<IQuery>(null);
   const [rulesLoaded, setRulesLoaded] = useState<boolean>(false);
   const [fetchParams, setFetchParams] = useState<Fetch>(null);
+
   const rulesListRef = useRef<any>();
 
   /* More rules exist than the ones already loaded in the scroll pane */
@@ -60,6 +62,7 @@ export default function ExplorerList() {
 
   const populateRulesList = useCallback(
     (responseJson: IRules) => {
+      console.log("Response rules:", responseJson.rules[0]);
       setPaginationLinks(responseJson.next);
       setRulesList([
         ...rulesList,
@@ -121,7 +124,7 @@ export default function ExplorerList() {
       const params = {
         orderBy: orderBy,
         order: order,
-        select: headCells.map((headCell: HeadCell) => headCell.filterParam),
+        select: activeColumns.map((headCell: HeadCell) => headCell.filterParam),
         filters: Object.entries(searchText)
         .filter(([filterName, filterValue]) => {
           return !(filterValue == null || filterValue === "");
@@ -185,7 +188,7 @@ export default function ExplorerList() {
 
   useEffect(() => {
     setDirtyExplorerList(true);
-  }, [setDirtyExplorerList, searchText, order, orderBy]);
+  }, [setDirtyExplorerList, searchText, order, orderBy, activeColumns]);
 
   return (
     <>

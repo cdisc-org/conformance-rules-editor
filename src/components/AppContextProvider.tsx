@@ -67,7 +67,6 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
   );
   const [creator, setCreator] = useState<IUser>(null);
   const [activeColumns, setActiveColumns] = useState<HeadCell[]>(headCells);
-
   const clearError = () => (appError ? setAppError(null) : undefined);
 
   const setError = (title: string, message: string, isUncaught = false) => {

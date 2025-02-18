@@ -125,24 +125,6 @@ const getRule = async (id: string): Promise<IRule> => {
 
 const rulesAlias = "Rules";
 
-// const containsOperation: Operation = (
-//   name,
-//   value: string | number,
-//   collectionAlias,
-//   paramIndex
-// ) => {
-//     const paramName = `@content${paramIndex}`;
-//     return {
-//       filter: `CONTAINS(${collectionAlias}${sqlName(name)}, ${paramName}, true)`,
-//       parameters: [
-//         {
-//           name: paramName,
-//           value: value,
-//         },
-//       ],
-//     };
-//   };
-
 const containsOperation: Operation = (
   name,
   value: string | number,
@@ -161,7 +143,6 @@ const containsOperation: Operation = (
   };
 };
 
-
 const inOperation: Operation = (
   name,
   value: string[] | number[],
@@ -177,6 +158,40 @@ const inOperation: Operation = (
     })),
   };
 };
+
+function parseCustomPath(path: string) {
+  const segments = path.split('.');
+  let currentAlias = 1;
+  let currentPath = `${rulesAlias}1["json"]`;
+  let lastProperty = '';
+  let hasArray = false;
+
+  segments.forEach(segment => {
+    if (segment.startsWith('@')) {
+      hasArray = true;
+      const arrayName = segment.substring(1);
+      currentAlias++;
+      currentPath = `${rulesAlias}${currentAlias} IN ${currentPath}["${arrayName}"]`;
+    } else {
+      lastProperty = segment;
+      if (!hasArray) {
+        currentPath += `["${segment}"]`;
+      }
+    }
+  });
+
+  if (hasArray) {
+    return {
+      select: `ARRAY(SELECT DISTINCT VALUE ${rulesAlias}${currentAlias}["${lastProperty}"] FROM ${currentPath})`,
+      finalAlias: currentAlias
+    };
+  }
+
+  return {
+    select: currentPath,
+    finalAlias: currentAlias
+  };
+}
 
 function buildSelect(query: IQuery, aliasIndex: number) {
   /**
@@ -213,14 +228,24 @@ function buildSelect(query: IQuery, aliasIndex: number) {
    * Note that we need to select from the root of the document,
    * which has the first alias (Rules1) in the FROM clause
    */
+  console.log("Query select:", query.select);
   const select = [];
   if (!query.select.includes("id")) {
     /* id is needed in order to maintain one result per rule item */
     query.select.push("id");
   }
-  select.push(`${rulesAlias}1["json"] as "full_json"`);
+  // select.push(`${rulesAlias}1["json"] as "full_json"`);
   for (const selectItem of query.select) {
+    if (selectItem.startsWith('custom.')) {
+      const jsonPath = selectItem.replace('custom.', '');
+      const { select: path, finalAlias } = parseCustomPath(jsonPath);
+      select.push(`${path} as "${selectItem}"`);
+      aliasIndex = Math.max(aliasIndex, finalAlias);
+      continue;
+    }
+
     const subqueryNames = splitSubqueryNames(selectItem);
+    console.log("Subquery names for", selectItem, ":", subqueryNames);
     if (subqueryNames.length === 1) {
       select.push(`${rulesAlias}1${sqlName(selectItem)} as "${selectItem}"`);
     } else {
@@ -260,6 +285,7 @@ function splitSubqueryNames(name: string) {
    *
    * Useful because will need a new self JOIN clause every time a nested array is encountered.
    */
+  console.log("Splitting name:", name);
   return name.split(".").reduce(
     (previousValue: string[], currentValue: string) => {
       const previousName = previousValue[previousValue.length - 1];
@@ -289,6 +315,7 @@ function buildJoinsAndFilters(query: IQuery) {
    * Refer to:
    * https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/query/join#self-joining-multiple-items
    */
+  console.log("Building joins and filters for query:", query);
   const operations: {
     [operator: string]: Operation;
   } = {
@@ -299,29 +326,8 @@ function buildJoinsAndFilters(query: IQuery) {
   var joins = "";
   var filters = "";
   var aliasIndex = 1;
-
-  // for (const [index, filter] of query.filters.entries()) {
-  //   const subqueryNames = splitSubqueryNames(filter.name);
-  //   for (const [subqueryIndex, subqueryName] of subqueryNames
-  //     .slice(0, -1)
-  //     .entries()) {
-  //     joins = `${joins} JOIN ${rulesAlias}${aliasIndex + 1} IN ${rulesAlias}${
-  //       subqueryIndex === 0 ? "1" : aliasIndex
-  //     }${sqlName(subqueryName)}`;
-  //     aliasIndex = aliasIndex + 1;
-  //   }
-  //   const filterParam = operations[filter.operator](
-  //     subqueryNames[subqueryNames.length - 1],
-  //     filter.value,
-  //     `${rulesAlias}${subqueryNames.length === 1 ? "1" : aliasIndex}`,
-  //     index
-  //   );
-  //   filters = `${filters}${filters === "" ? " WHERE" : " AND"} ${
-  //     filterParam.filter
-  //   }`;
-  //   filterParams.push(...filterParam.parameters);
-  // }
   for (const filter of query.filters) {
+    console.log("Processing filter:", filter);
     const subqueryNames = splitSubqueryNames(filter.name);
     for (const [subqueryIndex, subqueryName] of subqueryNames
       .slice(0, -1)
@@ -391,6 +397,7 @@ const getRules = async (query: IQuery): Promise<IRules> => {
         next: { ...query, offset: offset + limit, limit: limit },
       }),
     };
+    console.log("response: ", resp)
     return resp;
   } catch (error) {
     console.error(error);

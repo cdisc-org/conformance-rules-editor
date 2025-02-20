@@ -114,7 +114,7 @@ export default function ExplorerHead() {
         label: sanitizedPath,
         filterParam: `custom.${sanitizedPath}`,
         getValue: (rule) => rule[`custom.${sanitizedPath}`]?.toString() || '',
-        sortable: true,
+        sortable: false,
         filterable: true,
       };
       setActiveColumns(prevCols => [...prevCols, newColumn]);

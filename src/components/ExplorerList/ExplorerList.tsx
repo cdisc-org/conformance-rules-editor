@@ -6,7 +6,6 @@ import AppContext from "../AppContext";
 import { useEffect, useState, useContext, useCallback, useRef } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import ExplorerHead, {
-  headCells,
   HeadCell,
 } from "../ExplorerHead/ExplorerHead";
 import { debounce } from "lodash-es";
@@ -143,7 +142,7 @@ export default function ExplorerList() {
       setDirtyExplorerList(false);
       setRulesLoaded(false);
     }
-  }, [dirtyExplorerList, setDirtyExplorerList, orderBy, order, searchText]);
+  }, [dirtyExplorerList, setDirtyExplorerList, orderBy, order, searchText, activeColumns]);
 
   /* More rules requested or rules didn't fill scrollbars. Load additional rules. */
   useEffect(() => {

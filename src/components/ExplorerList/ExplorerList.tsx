@@ -62,7 +62,6 @@ export default function ExplorerList() {
 
   const populateRulesList = useCallback(
     (responseJson: IRules) => {
-      console.log("Response rules:", responseJson.rules[0]);
       setPaginationLinks(responseJson.next);
       setRulesList([
         ...rulesList,

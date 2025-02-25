@@ -125,28 +125,11 @@ const getRule = async (id: string): Promise<IRule> => {
 
 const rulesAlias = "Rules";
 
-// const containsOperation: Operation = (
-//   name,
-//   value: string | number,
-//   collectionAlias
-// ) => {
-//   return {
-//     filter: `CONTAINS(${collectionAlias}${sqlName(name)}, ${paramName(
-//       name
-//     )}, true)`,
-//     parameters: [
-//       {
-//         name: paramName(name),
-//         value: value,
-//       },
-//     ],
-//   };
-// };
 const containsOperation: Operation = (name, value: string | number, collectionAlias) => {
     // If it's a custom path (starts with custom.)
     if (name.startsWith('custom.')) {
       const path = name.split('.');
-      path.shift(); // Remove 'custom.'
+      path.shift();
       
       const arrayIndices = path
         .map((segment, index) => segment.startsWith('@') ? index : -1)
@@ -168,8 +151,7 @@ const containsOperation: Operation = (name, value: string | number, collectionAl
       let previousAlias = '';
   
       for (let i = 0; i < arrayIndices.length; i++) {
-        const arrayName = path[arrayIndices[i]].substring(1);  // Remove @ from array name
-        // For first join, include any non-array path parts
+        const arrayName = path[arrayIndices[i]].substring(1);
         const previousPath = i === 0 
           ? `${collectionAlias}["json"]${basePath ? sqlName(basePath) : ''}`
           : previousAlias;
@@ -201,41 +183,6 @@ const containsOperation: Operation = (name, value: string | number, collectionAl
       ],
     };
   };
-//   const path = name.split('.');
-//   const arrayIndex = path.findIndex(p => p.startsWith('@'));
-  
-//   if (arrayIndex === -1) {
-//     return {
-//       filter: `CONTAINS(${collectionAlias}${sqlName(name)}, ${paramName(name)}, true)`,
-//       parameters: [
-//         {
-//           name: paramName(name),
-//           value: value,
-//         },
-//       ],
-//     };
-//   }
-
-//   // For array paths, create a parameter name based on the full path but without @ symbol
-//   const paramPath = path.map(segment => segment.startsWith('@') ? segment.substring(1) : segment).join('.');
-//   const basePath = path.slice(0, arrayIndex).join('.');
-//   const arrayName = path[arrayIndex].substring(1); 
-//   const propertyPath = path.slice(arrayIndex + 1).join('.');
-  
-//   return {
-//     filter: `EXISTS (
-//       SELECT VALUE arrayItem 
-//       FROM arrayItem IN ${collectionAlias}${sqlName(basePath)}["${arrayName}"] 
-//       WHERE CONTAINS(arrayItem["${propertyPath}"], ${paramName(paramPath)}, true)
-//     )`,
-//     parameters: [
-//       {
-//         name: paramName(paramPath),
-//         value: value,
-//       },
-//     ],
-//   };
-// };
 
 const inOperation: Operation = (
   name,
@@ -253,14 +200,6 @@ const inOperation: Operation = (
   };
 };
 
-function transformCustomPath(path: string): string {
-  if (!path.startsWith('custom.')) {
-    return path;
-  }
-  
-  return path.replace('custom.', 'json.');
-}
-
 function parseCustomPath(path: string) {
   const segments = path.split('.');
   const arrayIndices = segments
@@ -268,18 +207,16 @@ function parseCustomPath(path: string) {
       .filter(index => index !== -1);
   
   if (arrayIndices.length === 0) {
-    // Non-array path
     return {
       select: segments.reduce((path, segment) => 
         `${path}["${segment}"]`, 
         `${rulesAlias}1["json"]`
       ),
       filterInfo: null,
-      finalAlias: 1  // No arrays, so we stay with alias 1
+      finalAlias: 1
     };
   }
 
-  // Build the chain of array joins
   let basePath = segments.slice(0, arrayIndices[0]).reduce((path, segment) => 
     `${path}["${segment}"]`, 
     `${rulesAlias}1["json"]`
@@ -302,7 +239,6 @@ function parseCustomPath(path: string) {
       }
   }
 
-  // Get the final property after the last array
   const finalProperty = segments.slice(arrayIndices[arrayIndices.length - 1] + 1).join('.');
   const lastAlias = `${rulesAlias}${currentAlias}`;
   
@@ -316,36 +252,6 @@ function parseCustomPath(path: string) {
       finalAlias: currentAlias
   };
 }
-//   const segments = path.split('.');
-//   let currentAlias = 1;
-//   let currentPath = `${rulesAlias}1["json"]`;
-//   let hasArray = false;
-
-//   segments.forEach(segment => {
-//     if (segment.startsWith('@')) {
-//       hasArray = true;
-//       const arrayName = segment.substring(1);
-//       currentAlias++;
-//       currentPath = `${rulesAlias}${currentAlias} IN ${currentPath}["${arrayName}"]`;
-//     } else {
-//       if (!hasArray) {
-//         currentPath += `["${segment}"]`;
-//       }
-//     }
-//   });
-
-//   if (hasArray) {
-//     return {
-//       select: `ARRAY(SELECT DISTINCT VALUE ${rulesAlias}${currentAlias}["${lastProperty}"] FROM ${currentPath})`,
-//       finalAlias: currentAlias,
-//     };
-//   }
-
-//   return {
-//     select: currentPath,
-//     finalAlias: currentAlias,
-//   };
-// }
 
 function buildSelect(query: IQuery, aliasIndex: number) {
   /**
@@ -468,7 +374,6 @@ function buildJoinsAndFilters(query: IQuery) {
    * Refer to:
    * https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/query/join#self-joining-multiple-items
    */
-  console.log("Building joins and filters for query:", query);
   const operations: {
     [operator: string]: Operation;
   } = {
@@ -481,7 +386,6 @@ function buildJoinsAndFilters(query: IQuery) {
 
   for (const filter of query.filters) {
     if (filter.name.includes('@')) {
-      // Keep existing custom path logic
       const filterParam = operations[filter.operator](
         filter.name,
         filter.value,
@@ -490,11 +394,8 @@ function buildJoinsAndFilters(query: IQuery) {
       filters = `${filters}${filters === "" ? " WHERE" : " AND"} ${filterParam.filter}`;
       filterParams.push(...filterParam.parameters);
     } else {
-      // For non-custom paths
       const subqueryNames = splitSubqueryNames(filter.name);
-      
       if (subqueryNames.length === 1) {
-        // Simple path - use direct CONTAINS
         const filterParam = operations[filter.operator](
           filter.name,
           filter.value,
@@ -503,7 +404,6 @@ function buildJoinsAndFilters(query: IQuery) {
         filters = `${filters}${filters === "" ? " WHERE" : " AND"} ${filterParam.filter}`;
         filterParams.push(...filterParam.parameters);
       } else {
-        // Array path - use EXISTS with subquery
         let subqueryJoins = [];
         for (const [subqueryIndex, subqueryName] of subqueryNames.slice(0, -1).entries()) {
           const currentAlias = `SubRules${subqueryIndex + 1}`;
@@ -522,84 +422,6 @@ function buildJoinsAndFilters(query: IQuery) {
 
   return { joins, filters, filterParams, aliasIndex: 1 };
 }
-
-  //       if (filter.name.startsWith('custom.')) {
-  //         const jsonPath = filter.name.replace('custom.', '');
-  //         const { filterInfo } = parseCustomPath(jsonPath);
-          
-  //         if (filterInfo.join) {
-  //           joins = `${joins} JOIN ${filterInfo.join}`;
-  //         }
-          
-  //         const filterParam = operations[filter.operator](
-  //           filterInfo.property,
-  //           filter.value,
-  //           filterInfo.alias
-  //         );
-          
-  //         filters = `${filters}${filters === "" ? " WHERE" : " AND"} ${filterParam.filter}`;
-  //         filterParams.push(...filterParam.parameters);
-  //         continue;
-  //       }
-
-    // if (filter.name.startsWith('custom.')) {
-    //   const jsonPath = filter.name.replace('custom.', '');
-    //   // const { select: path, finalAlias, joins: customJoins } = parseCustomPath(jsonPath);
-    //   const pathParts = jsonPath.split('.');
-    //   let currentAlias = aliasIndex;
-    //   const arrayIndex = pathParts.findIndex(part => part.startsWith('@'));
-    //   if (arrayIndex !== -1) {
-    //     const beforeArray = pathParts.slice(0, arrayIndex).join('.');
-    //     const arrayName = pathParts[arrayIndex].substring(1); // remove @
-    //     const propertyName = pathParts[arrayIndex + 1]; // part after array
-    //     currentAlias++;
-    //     // Build JOIN like regular paths
-    //     joins = `${joins} JOIN ${rulesAlias}${currentAlias} IN ${rulesAlias}1["json"]["${beforeArray}"]["${arrayName}"]`;
-        
-    //     // Create filter on array element
-    //     const filterParam = operations[filter.operator](
-    //       propertyName,
-    //       filter.value,
-    //       `${rulesAlias}${currentAlias}`
-    //     );
-    //     filters = `${filters}${filters === "" ? " WHERE" : " AND"} ${filterParam.filter}`;
-    //     filterParams.push(...filterParam.parameters);
-        
-    //     aliasIndex = currentAlias;
-    //   } else {
-    //     // Non-array custom path
-    //     const filterParam = operations[filter.operator](
-    //       jsonPath,
-    //       filter.value,
-    //       `${rulesAlias}1["json"]`
-    //     );
-        
-    //     filters = `${filters}${filters === "" ? " WHERE" : " AND"} ${filterParam.filter}`;
-    //     filterParams.push(...filterParam.parameters);
-    //   }
-    //   continue;
-    // }
-//     const subqueryNames = splitSubqueryNames(filter.name);
-//     for (const [subqueryIndex, subqueryName] of subqueryNames
-//       .slice(0, -1)
-//       .entries()) {
-//       joins = `${joins} JOIN ${rulesAlias}${aliasIndex + 1} IN ${rulesAlias}${
-//         subqueryIndex === 0 ? "1" : aliasIndex
-//       }${sqlName(subqueryName)}`;
-//       aliasIndex = aliasIndex + 1;
-//     }
-//     const filterParam = operations[filter.operator](
-//       subqueryNames[subqueryNames.length - 1],
-//       filter.value,
-//       `${rulesAlias}${subqueryNames.length === 1 ? "1" : aliasIndex}`
-//     );
-//     filters = `${filters}${filters === "" ? " WHERE" : " AND"} ${
-//       filterParam.filter
-//     }`;
-//     filterParams.push(...filterParam.parameters);
-//   }
-//   return { joins, filters, filterParams, aliasIndex };
-// }
 
 function buildOrderBy(query: IQuery) {
   return query.orderBy
@@ -671,6 +493,7 @@ const maxCoreId = async (): Promise<string> => {
 };
 
 const patchRule = async (rule: IRule): Promise<IRule> => {
+  console.log("database patchRule ", rule);
   try {
     const patchedRule = (await _patchRule(rule)).resource;
     return patchedRule;
@@ -680,6 +503,7 @@ const patchRule = async (rule: IRule): Promise<IRule> => {
 };
 
 const postRule = async (content: string, creatorId: string): Promise<IRule> => {
+  console.log("database postRule ", content);
   const date = new Date().toJSON();
   const toCreate = {
     content,

@@ -123,42 +123,6 @@ export default function ExplorerHead() {
     }
   };
 
-  // const addColumn = () => {
-  //   if (newColumnName) {
-  //     const pathSegments = newColumnName.split('.');
-  //     const newColumn: HeadCell = {
-  //       label: newColumnName,
-  //       filterParam: `full_json.${newColumnName}`,
-  //       getValue: (rule: IRule) => {
-  //         try {
-  //           let value = rule.full_json;
-  //           for (const segment of pathSegments) {
-  //             if (Array.isArray(value)) {
-  //               value = value.map(item => item[segment]);
-  //             } else {
-  //               value = value[segment];
-  //             }
-              
-  //             if (value === undefined) return '';
-  //           }
-  //           if (Array.isArray(value)) {
-  //             return value.flat().filter(Boolean).join(', ');
-  //           }
-            
-  //           return value?.toString() || '';
-  //         } catch (error) {
-  //           return '';
-  //         }
-  //       },
-  //     sortable: false,
-  //     filterable: true,
-  //   };
-  //     setActiveColumns(prevCols => [...prevCols, newColumn]);
-  //     setShowAddColumn(false);
-  //     setNewColumnName("");
-  //   }
-  // };
-
   const addDefaultColumn = (column: HeadCell) => {
     if (!activeColumns.find(col => col.filterParam === column.filterParam)) {
       setActiveColumns(cols => [...cols, column]);

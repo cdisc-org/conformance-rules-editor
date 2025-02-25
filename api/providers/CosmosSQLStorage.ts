@@ -288,7 +288,6 @@ function buildSelect(query: IQuery, aliasIndex: number) {
    * Note that we need to select from the root of the document,
    * which has the first alias (Rules1) in the FROM clause
    */
-  console.log("Query select:", query.select);
   const select = [];
   if (!query.select.includes("id")) {
     /* id is needed in order to maintain one result per rule item */
@@ -304,7 +303,6 @@ function buildSelect(query: IQuery, aliasIndex: number) {
     }
 
     const subqueryNames = splitSubqueryNames(selectItem);
-    console.log("Subquery names for", selectItem, ":", subqueryNames);
     if (subqueryNames.length === 1) {
       select.push(`${rulesAlias}1${sqlName(selectItem)} as "${selectItem}"`);
     } else {
@@ -344,7 +342,6 @@ function splitSubqueryNames(name: string) {
    *
    * Useful because will need a new self JOIN clause every time a nested array is encountered.
    */
-  console.log("Splitting name:", name);
   return name.split(".").reduce(
     (previousValue: string[], currentValue: string) => {
       const previousName = previousValue[previousValue.length - 1];
@@ -461,7 +458,6 @@ const getRules = async (query: IQuery): Promise<IRules> => {
     parameters: [...filterParams, offsetParam, limitParam],
     query: `SELECT DISTINCT ${select} FROM ${rulesAlias}1${joins}${filters}${orderBy} OFFSET @offset LIMIT @limit`,
   };
-  console.log(querySpec);
   try {
     const results = await rulesContainer.items.query(querySpec).fetchAll();
     const resp = {
@@ -470,7 +466,6 @@ const getRules = async (query: IQuery): Promise<IRules> => {
         next: { ...query, offset: offset + limit, limit: limit },
       }),
     };
-    console.log("response: ", resp)
     return resp;
   } catch (error) {
     console.error(error);
@@ -493,7 +488,6 @@ const maxCoreId = async (): Promise<string> => {
 };
 
 const patchRule = async (rule: IRule): Promise<IRule> => {
-  console.log("database patchRule ", rule);
   try {
     const patchedRule = (await _patchRule(rule)).resource;
     return patchedRule;
@@ -503,7 +497,6 @@ const patchRule = async (rule: IRule): Promise<IRule> => {
 };
 
 const postRule = async (content: string, creatorId: string): Promise<IRule> => {
-  console.log("database postRule ", content);
   const date = new Date().toJSON();
   const toCreate = {
     content,

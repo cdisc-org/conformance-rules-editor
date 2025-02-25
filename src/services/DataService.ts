@@ -136,7 +136,6 @@ export class DataService {
     ruleId: string,
     content: string
   ): Promise<IRule> => {
-    console.log("patch rule ", content);
     return fetch(`/api/rules/${ruleId}`, {
       method: "PATCH",
       headers: {

@@ -19,11 +19,21 @@ export default function ExplorerItem(rule: IRule) {
       onClick={handleListItemClick}
       selected={selectedRule === rule.id}
     >
-      {activeColumns.map((headCell) => (
-        <TableCell key={`${rule.id}.${headCell.filterParam}`}>
-          {headCell.getValue(rule)}
-        </TableCell>
-      ))}
+ {activeColumns.map((headCell) => {
+        let cellValue = "";
+        try {
+          cellValue = headCell.getValue(rule);
+        } catch (error) {
+          console.error(`Error getting value for ${headCell.filterParam}:`, error);
+          cellValue = "Error";
+        }
+        
+        return (
+          <TableCell key={`${rule.id}.${headCell.filterParam}`}>
+            {cellValue}
+          </TableCell>
+        );
+      })}
     </TableRow>
   );
 }

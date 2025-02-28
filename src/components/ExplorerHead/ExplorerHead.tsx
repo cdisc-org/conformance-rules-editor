@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Box from "@mui/material/Box";
 import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
@@ -27,56 +27,56 @@ export const headCells: HeadCell[] = [
     label: "Rule Ids",
     filterParam: "json.Authorities.Standards.References.Rule Identifier.Id",
     getValue: (rule) =>
-      rule["json.Authorities.Standards.References.Rule Identifier.Id"].join(", "),
+      rule["json.Authorities.Standards.References.Rule Identifier.Id"].join(", ") || "",
     sortable: false,
     filterable: true,
   },
   {
     label: "Creator",
     filterParam: "creator.name",
-    getValue: (rule) => rule["creator.name"],
+    getValue: (rule) => rule["creator.name"] || "",
     sortable: false,
     filterable: true,
   },
   {
     label: "Standards",
     filterParam: "json.Authorities.Standards.Name",
-    getValue: (rule) => rule["json.Authorities.Standards.Name"].join(", "),
+    getValue: (rule) => rule["json.Authorities.Standards.Name"].join(", ") || "",
     sortable: false,
     filterable: true,
   },
   {
     label: "Orgs",
     filterParam: "json.Authorities.Organization",
-    getValue: (rule) => rule["json.Authorities.Organization"].join(", "),
+    getValue: (rule) => rule["json.Authorities.Organization"].join(", ") || "",
     sortable: false,
     filterable: true,
   },
   {
     label: "Core ID",
     filterParam: "json.Core.Id",
-    getValue: (rule) => rule["json.Core.Id"],
+    getValue: (rule) => rule["json.Core.Id"] || "",
     sortable: true,
     filterable: true,
   },
   {
     label: "Status",
     filterParam: "json.Core.Status",
-    getValue: (rule) => rule["json.Core.Status"],
+    getValue: (rule) => rule["json.Core.Status"] || "",
     sortable: true,
     filterable: true,
   },
   {
     label: "Changed Timestamp",
     filterParam: "created",
-    getValue: (rule) => new Date(rule.created).toLocaleString("en-US"),
+    getValue: (rule) => new Date(rule.created).toLocaleString("en-US") || "",
     sortable: true,
     filterable: false,
   },
   {
     label: "Universal ID",
     filterParam: "id",
-    getValue: (rule) => rule["id"],
+    getValue: (rule) => rule["id"] || "",
     sortable: true,
     filterable: true,
   },
@@ -94,6 +94,10 @@ export default function ExplorerHead() {
   };
 
   const removeColumn = (filterParam: string) => {
+    if (activeColumns.length <= 1) {
+      return;
+    }
+    
     setActiveColumns(cols => cols.filter(col => col.filterParam !== filterParam));
     const newSearchText = { ...searchText };
     delete newSearchText[filterParam];
@@ -158,13 +162,15 @@ export default function ExplorerHead() {
                   </Box>
                 ) : null}
               </TableSortLabel>
-              <IconButton
-                size="small"
-                onClick={() => removeColumn(headCell.filterParam)}
-                className="opacity-50 hover:opacity-100"
-              >
-                ✕
-              </IconButton>
+              {activeColumns.length > 1 && (
+                <IconButton
+                  size="small"
+                  onClick={() => removeColumn(headCell.filterParam)}
+                  className="opacity-50 hover:opacity-100"
+                >
+                  ✕
+                </IconButton>
+              )}
             </Box>
             {headCell.filterable && (
               <QuickSearchToolbar queryParam={headCell.filterParam} />

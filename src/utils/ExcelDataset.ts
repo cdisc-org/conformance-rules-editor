@@ -11,7 +11,7 @@ export interface IDataset {
   name?: string;
   label?: string;
   domain?: string;
-  filesize?: string;
+  file_size?: string;
   variables?: IVariable[];
   records?: {};
 }
@@ -141,20 +141,20 @@ const getRecords = (cols: IVariable[], rows: {}[]): {} => {
 const getDomainName = (rows: {}[], sheetName: string): string => {
   if (rows.length > 3) {
     const domainRow = rows[3];
-    const domainName = domainRow["DOMAIN"]
+    const domainName = domainRow["DOMAIN"];
     return domainName || sheetName.toUpperCase().replace(".XPT", "");
   }
   return sheetName.toUpperCase().replace(".XPT", "");
 };
 
-
 const mergeDatasetRecords = (
   workbook: WorkBook,
   datasets: IDataset[]
 ): void => {
-  for (const [sheetName, sheet] of Object.entries(workbook.Sheets).filter(
-    ([sheetName, sheet]: [string, WorkSheet]) =>
-      sheetName.toLowerCase().endsWith(".xpt")
+  for (const [sheetName, sheet] of Object.entries(
+    workbook.Sheets
+  ).filter(([sheetName, sheet]: [string, WorkSheet]) =>
+    sheetName.toLowerCase().endsWith(".xpt")
   )) {
     const dataset = getMatchingDataset(datasets, sheetName);
     setDatatypes(sheet);

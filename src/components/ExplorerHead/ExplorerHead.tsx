@@ -86,6 +86,7 @@ export default function ExplorerHead() {
   const { order, setOrder, orderBy, setOrderBy, activeColumns, setActiveColumns, searchText, setSearchText } = useContext(AppContext);
   const [showAddColumn, setShowAddColumn] = useState(false);
   const [newColumnName, setNewColumnName] = useState("");
+  const [duplicateError, setDuplicateError] = useState("");
 
   const onRequestSort = (property: string) => {
     const isAsc = orderBy === property && order === "asc";
@@ -111,9 +112,27 @@ export default function ExplorerHead() {
       .replace(/^\.+|\.+$/g, '');
   };
 
+  const isColumnNameDuplicate = (name: string): boolean => {
+    const sanitizedPath = sanitizePath(name);
+    const customFilterParam = `custom.${sanitizedPath}`;
+    
+    return activeColumns.some(col => 
+      col.filterParam === customFilterParam || 
+      col.label.toLowerCase() === sanitizedPath.toLowerCase()
+    );
+  };
+
   const addColumn = () => {
     if (newColumnName) {
       const sanitizedPath = sanitizePath(newColumnName);
+      
+      if (isColumnNameDuplicate(sanitizedPath)) {
+        setDuplicateError(`Column with that path already exists.`);
+        return;
+      }
+      
+      setDuplicateError("");
+      
       const newColumn: HeadCell = {
         label: sanitizedPath,
         filterParam: `custom.${sanitizedPath}`,
@@ -121,6 +140,7 @@ export default function ExplorerHead() {
         sortable: false,
         filterable: true,
       };
+      
       setActiveColumns(prevCols => [...prevCols, newColumn]);
       setShowAddColumn(false);
       setNewColumnName("");
@@ -185,9 +205,15 @@ export default function ExplorerHead() {
                 type="text"
                 placeholder="Enter path (e.g. Core.Id)"
                 value={newColumnName}
-                onChange={(e) => setNewColumnName(e.target.value)}
+                onChange={(e) => {
+                  setNewColumnName(e.target.value);
+                  setDuplicateError("");
+                }}
                 className="w-full p-1 border rounded"
               />
+              {duplicateError && (
+                <div className="text-red-500 text-xs">{duplicateError}</div>
+              )}
               <div className="flex justify-between">
                 <Button
                   size="small"
@@ -199,7 +225,11 @@ export default function ExplorerHead() {
                 </Button>
                 <Button
                   size="small"
-                  onClick={() => setShowAddColumn(false)}
+                  onClick={() => {
+                    setShowAddColumn(false);
+                    setDuplicateError("");
+                    setNewColumnName("");
+                  }}
                 >
                   Cancel
                 </Button>

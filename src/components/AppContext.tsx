@@ -4,6 +4,7 @@ import { AlertState } from "./GeneralAlert/GeneralAlert";
 import { TOrder } from "../types/TOrder";
 import { IUser } from "../types/IUser";
 import { IRule } from "../types/IRule";
+import { headCells, HeadCell } from "./ExplorerHead/ExplorerHead";
 
 export interface IAppError {
   title: string;
@@ -90,6 +91,8 @@ export interface IAppContext {
   creator: IUser;
   setCreator: (creator: IUser) => void;
   isRuleModifiable: () => boolean;
+  activeColumns: HeadCell[];
+  setActiveColumns: React.Dispatch<React.SetStateAction<HeadCell[]>>;
 }
 
 export const defaultAppContext: IAppContext = {
@@ -189,6 +192,10 @@ export const defaultAppContext: IAppContext = {
     /* Placeholder */
   },
   isRuleModifiable: () => false,
+  activeColumns: headCells,
+  setActiveColumns: () => {
+    /* Placeholder */
+  },
 };
 
 const AppContext = React.createContext<IAppContext>(defaultAppContext);

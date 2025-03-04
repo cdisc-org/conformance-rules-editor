@@ -6,7 +6,6 @@ import AppContext from "../AppContext";
 import { useEffect, useState, useContext, useCallback, useRef } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import ExplorerHead, {
-  headCells,
   HeadCell,
 } from "../ExplorerHead/ExplorerHead";
 import { debounce } from "lodash-es";
@@ -38,12 +37,14 @@ export default function ExplorerList() {
     setModifiedRule,
     setUnmodifiedRule,
     setCreator,
-  } = useContext(AppContext);
+    activeColumns 
+    } = useContext(AppContext);
   const [rulesList, setRulesList] = useState([]);
   const [wantsMoreRules, setWantsMoreRules] = useState<boolean>(false);
   const [paginationLinks, setPaginationLinks] = useState<IQuery>(null);
   const [rulesLoaded, setRulesLoaded] = useState<boolean>(false);
   const [fetchParams, setFetchParams] = useState<Fetch>(null);
+
   const rulesListRef = useRef<any>();
 
   /* More rules exist than the ones already loaded in the scroll pane */
@@ -121,20 +122,19 @@ export default function ExplorerList() {
       const params = {
         orderBy: orderBy,
         order: order,
-        select: headCells.map((headCell: HeadCell) => headCell.filterParam),
+        select: activeColumns.map((headCell: HeadCell) => headCell.filterParam),
         filters: Object.entries(searchText)
-          .filter(
-            ([_, filterValue]: [string, string]) =>
-              !(filterValue == null || filterValue === "")
-          )
-          .map(
-            ([filterName, filterValue]: [string, string]): IFilter => ({
-              name: filterName,
-              operator: "contains",
-              value: filterValue,
-            })
-          ),
-      };
+        .filter(([filterName, filterValue]) => {
+          return !(filterValue == null || filterValue === "");
+        })
+        .map(([filterName, filterValue]): IFilter => {
+          return {
+            name: filterName,
+            operator: "contains",
+            value: filterValue
+          };
+        }),
+    };
       setFetchParams({
         params: params,
         type: FetchType.FilterSort,
@@ -142,7 +142,7 @@ export default function ExplorerList() {
       setDirtyExplorerList(false);
       setRulesLoaded(false);
     }
-  }, [dirtyExplorerList, setDirtyExplorerList, orderBy, order, searchText]);
+  }, [dirtyExplorerList, setDirtyExplorerList, orderBy, order, searchText, activeColumns]);
 
   /* More rules requested or rules didn't fill scrollbars. Load additional rules. */
   useEffect(() => {
@@ -186,7 +186,7 @@ export default function ExplorerList() {
 
   useEffect(() => {
     setDirtyExplorerList(true);
-  }, [setDirtyExplorerList, searchText, order, orderBy]);
+  }, [setDirtyExplorerList, searchText, order, orderBy, activeColumns]);
 
   return (
     <>

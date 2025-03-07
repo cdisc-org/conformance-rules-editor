@@ -12,6 +12,7 @@ import { AlertState } from "./GeneralAlert/GeneralAlert";
 import { configureMonacoYaml, SchemasSettings } from "monaco-yaml";
 import { IUser } from "../types/IUser";
 import { IRule } from "../types/IRule";
+import { HeadCell, headCells } from "./ExplorerHead/ExplorerHead";
 import * as monaco from "monaco-editor";
 
 const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
@@ -65,7 +66,7 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
     false
   );
   const [creator, setCreator] = useState<IUser>(null);
-
+  const [activeColumns, setActiveColumns] = useState<HeadCell[]>(headCells);
   const clearError = () => (appError ? setAppError(null) : undefined);
 
   const setError = (title: string, message: string, isUncaught = false) => {
@@ -142,6 +143,8 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
     creator,
     setCreator,
     isRuleModifiable,
+    activeColumns,
+    setActiveColumns,
   };
 
   useEffect(() => {

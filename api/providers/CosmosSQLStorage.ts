@@ -125,23 +125,64 @@ const getRule = async (id: string): Promise<IRule> => {
 
 const rulesAlias = "Rules";
 
-const containsOperation: Operation = (
-  name,
-  value: string | number,
-  collectionAlias
-) => {
-  return {
-    filter: `CONTAINS(${collectionAlias}${sqlName(name)}, ${paramName(
-      name
-    )}, true)`,
-    parameters: [
-      {
-        name: paramName(name),
-        value: value,
-      },
-    ],
+const containsOperation: Operation = (name, value: string | number, collectionAlias) => {
+    // If it's a custom path (starts with custom.)
+    if (name.startsWith('custom.')) {
+      const path = name.split('.');
+      path.shift();
+      
+      const arrayIndices = path
+        .map((segment, index) => segment.startsWith('@') ? index : -1)
+        .filter(index => index !== -1);
+  
+      if (arrayIndices.length === 0) {
+        // No arrays in path, use simple CONTAINS
+        const propertyPath = path.join('.');
+        return {
+          filter: `CONTAINS(${collectionAlias}["json"]${sqlName(propertyPath)}, ${paramName(name)}, true)`,
+          parameters: [{ name: paramName(name), value: value }],
+        };
+      }
+  
+      // Handle paths with arrays
+      const basePath = path.slice(0, arrayIndices[0]).join('.');
+      let joins = [];
+      let currentAlias = 'arrayItem1';
+      let previousAlias = '';
+  
+      for (let i = 0; i < arrayIndices.length; i++) {
+        const arrayName = path[arrayIndices[i]].substring(1);
+        const previousPath = i === 0 
+          ? `${collectionAlias}["json"]${basePath ? sqlName(basePath) : ''}`
+          : previousAlias;
+        joins.push(`${currentAlias} IN ${previousPath}["${arrayName}"]`);
+        
+        if (i < arrayIndices.length - 1) {
+          previousAlias = currentAlias;
+          currentAlias = `arrayItem${i + 2}`;
+        }
+      }
+  
+      const propertyPath = path.slice(arrayIndices[arrayIndices.length - 1] + 1).join('.');
+      const paramPath = path.map(segment => segment.startsWith('@') ? segment.substring(1) : segment).join('.');
+  
+      return {
+        filter: `EXISTS (SELECT VALUE ${currentAlias} FROM ${joins.join(" JOIN ")} WHERE CONTAINS(${currentAlias}["${propertyPath}"], ${paramName(paramPath)}, true))`,
+        parameters: [{ name: paramName(paramPath), value: value }],
+      };
+    }
+    
+    // For non-custom paths, use the original logic
+    return {
+      filter: `CONTAINS(${collectionAlias}${sqlName(name)}, ${paramName(name)}, true)`,
+      parameters: [
+        {
+          name: paramName(name),
+          value: value,
+        },
+      ],
+    };
   };
-};
 
 const inOperation: Operation = (
   name,
@@ -158,6 +199,59 @@ const inOperation: Operation = (
     })),
   };
 };
+
+function parseCustomPath(path: string) {
+  const segments = path.split('.');
+  const arrayIndices = segments
+      .map((segment, index) => segment.startsWith('@') ? index : -1)
+      .filter(index => index !== -1);
+  
+  if (arrayIndices.length === 0) {
+    return {
+      select: segments.reduce((path, segment) => 
+        `${path}["${segment}"]`, 
+        `${rulesAlias}1["json"]`
+      ),
+      filterInfo: null,
+      finalAlias: 1
+    };
+  }
+
+  let basePath = segments.slice(0, arrayIndices[0]).reduce((path, segment) => 
+    `${path}["${segment}"]`, 
+    `${rulesAlias}1["json"]`
+  );
+
+  let joins = [];
+  let currentAlias = 2;
+  let previousAlias = 1;
+
+  for (let i = 0; i < arrayIndices.length; i++) {
+      const arrayName = segments[arrayIndices[i]].substring(1);
+      const alias = `${rulesAlias}${currentAlias}`;
+      const previousPath = i === 0 ? basePath : `${rulesAlias}${previousAlias}`;
+      
+      joins.push(`${alias} IN ${previousPath}["${arrayName}"]`);
+      
+      if (i < arrayIndices.length - 1) {
+          previousAlias = currentAlias;
+          currentAlias++;
+      }
+  }
+
+  const finalProperty = segments.slice(arrayIndices[arrayIndices.length - 1] + 1).join('.');
+  const lastAlias = `${rulesAlias}${currentAlias}`;
+  
+  return {
+      select: `ARRAY(SELECT DISTINCT VALUE ${lastAlias}["${finalProperty}"] FROM ${joins.join(" JOIN ")})`,
+      filterInfo: {
+          joins,
+          alias: lastAlias,
+          property: finalProperty
+      },
+      finalAlias: currentAlias
+  };
+}
 
 function buildSelect(query: IQuery, aliasIndex: number) {
   /**
@@ -200,6 +294,14 @@ function buildSelect(query: IQuery, aliasIndex: number) {
     query.select.push("id");
   }
   for (const selectItem of query.select) {
+    if (selectItem.startsWith('custom.')) {
+      const jsonPath = selectItem.replace('custom.', '');
+      const { select: path, finalAlias } = parseCustomPath(jsonPath);
+      select.push(`${path} as "${selectItem}"`);
+      aliasIndex = Math.max(aliasIndex, finalAlias);
+      continue;
+    }
+
     const subqueryNames = splitSubqueryNames(selectItem);
     if (subqueryNames.length === 1) {
       select.push(`${rulesAlias}1${sqlName(selectItem)} as "${selectItem}"`);
@@ -278,28 +380,44 @@ function buildJoinsAndFilters(query: IQuery) {
   const filterParams: SqlParameter[] = [];
   var joins = "";
   var filters = "";
-  var aliasIndex = 1;
+
   for (const filter of query.filters) {
-    const subqueryNames = splitSubqueryNames(filter.name);
-    for (const [subqueryIndex, subqueryName] of subqueryNames
-      .slice(0, -1)
-      .entries()) {
-      joins = `${joins} JOIN ${rulesAlias}${aliasIndex + 1} IN ${rulesAlias}${
-        subqueryIndex === 0 ? "1" : aliasIndex
-      }${sqlName(subqueryName)}`;
-      aliasIndex = aliasIndex + 1;
+    if (filter.name.includes('@')) {
+      const filterParam = operations[filter.operator](
+        filter.name,
+        filter.value,
+        'Rules1'
+      );
+      filters = `${filters}${filters === "" ? " WHERE" : " AND"} ${filterParam.filter}`;
+      filterParams.push(...filterParam.parameters);
+    } else {
+      const subqueryNames = splitSubqueryNames(filter.name);
+      if (subqueryNames.length === 1) {
+        const filterParam = operations[filter.operator](
+          filter.name,
+          filter.value,
+          'Rules1'
+        );
+        filters = `${filters}${filters === "" ? " WHERE" : " AND"} ${filterParam.filter}`;
+        filterParams.push(...filterParam.parameters);
+      } else {
+        let subqueryJoins = [];
+        for (const [subqueryIndex, subqueryName] of subqueryNames.slice(0, -1).entries()) {
+          const currentAlias = `SubRules${subqueryIndex + 1}`;
+          const previousAlias = subqueryIndex === 0 ? 'Rules1' : `SubRules${subqueryIndex}`;
+          subqueryJoins.push(`${currentAlias} IN ${previousAlias}${sqlName(subqueryName)}`);
+        }
+
+        const lastAlias = `SubRules${subqueryNames.length - 1}`;
+        const lastProperty = subqueryNames[subqueryNames.length - 1];
+        
+        filters = `${filters}${filters === "" ? " WHERE" : " AND"} EXISTS (SELECT VALUE ${lastAlias} FROM ${subqueryJoins.join(" JOIN ")} WHERE CONTAINS(${lastAlias}${sqlName(lastProperty)}, ${paramName(filter.name)}, true))`;
+        filterParams.push({ name: paramName(filter.name), value: filter.value });
+      }
     }
-    const filterParam = operations[filter.operator](
-      subqueryNames[subqueryNames.length - 1],
-      filter.value,
-      `${rulesAlias}${subqueryNames.length === 1 ? "1" : aliasIndex}`
-    );
-    filters = `${filters}${filters === "" ? " WHERE" : " AND"} ${
-      filterParam.filter
-    }`;
-    filterParams.push(...filterParam.parameters);
   }
-  return { joins, filters, filterParams, aliasIndex };
+
+  return { joins, filters, filterParams, aliasIndex: 1 };
 }
 
 function buildOrderBy(query: IQuery) {
@@ -340,7 +458,6 @@ const getRules = async (query: IQuery): Promise<IRules> => {
     parameters: [...filterParams, offsetParam, limitParam],
     query: `SELECT DISTINCT ${select} FROM ${rulesAlias}1${joins}${filters}${orderBy} OFFSET @offset LIMIT @limit`,
   };
-  console.log(querySpec);
   try {
     const results = await rulesContainer.items.query(querySpec).fetchAll();
     const resp = {

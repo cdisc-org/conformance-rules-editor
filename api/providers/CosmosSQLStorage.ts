@@ -126,63 +126,69 @@ const getRule = async (id: string): Promise<IRule> => {
 const rulesAlias = "Rules";
 
 const containsOperation: Operation = (name, value: string | number, collectionAlias) => {
-    // If it's a custom path (starts with custom.)
+  // If it's a custom path with an array indicator (@)
+  if (name.includes('@')) {
+    const path = name.split('.');
+    
     if (name.startsWith('custom.')) {
-      const path = name.split('.');
       path.shift();
-      
-      const arrayIndices = path
-        .map((segment, index) => segment.startsWith('@') ? index : -1)
-        .filter(index => index !== -1);
-  
-      if (arrayIndices.length === 0) {
-        // No arrays in path, use simple CONTAINS
-        const propertyPath = path.join('.');
-        return {
-          filter: `CONTAINS(${collectionAlias}["json"]${sqlName(propertyPath)}, ${paramName(name)}, true)`,
-          parameters: [{ name: paramName(name), value: value }],
-        };
-      }
-  
-      // Handle paths with arrays
-      const basePath = path.slice(0, arrayIndices[0]).join('.');
-      let joins = [];
-      let currentAlias = 'arrayItem1';
-      let previousAlias = '';
-  
-      for (let i = 0; i < arrayIndices.length; i++) {
-        const arrayName = path[arrayIndices[i]].substring(1);
-        const previousPath = i === 0 
-          ? `${collectionAlias}["json"]${basePath ? sqlName(basePath) : ''}`
-          : previousAlias;
-        joins.push(`${currentAlias} IN ${previousPath}["${arrayName}"]`);
-        
-        if (i < arrayIndices.length - 1) {
-          previousAlias = currentAlias;
-          currentAlias = `arrayItem${i + 2}`;
-        }
-      }
-  
-      const propertyPath = path.slice(arrayIndices[arrayIndices.length - 1] + 1).join('.');
-      const paramPath = path.map(segment => segment.startsWith('@') ? segment.substring(1) : segment).join('.');
-  
-      return {
-        filter: `EXISTS (SELECT VALUE ${currentAlias} FROM ${joins.join(" JOIN ")} WHERE CONTAINS(${currentAlias}["${propertyPath}"], ${paramName(paramPath)}, true))`,
-        parameters: [{ name: paramName(paramPath), value: value }],
-      };
     }
     
-    // For non-custom paths, use the original logic
+    const arrayIndices = path
+      .map((segment, index) => segment.startsWith('@') ? index : -1)
+      .filter(index => index !== -1);
+
+    if (arrayIndices.length === 0) {
+      const propertyPath = path.join('.');
+      return {
+        filter: `CONTAINS(${collectionAlias}["json"]${sqlName(propertyPath)}, ${paramName(name)}, true)`,
+        parameters: [{ name: paramName(name), value: value }],
+      };
+    }
+
+    // Handle paths with arrays
+    const basePath = path.slice(0, arrayIndices[0]).join('.');
+    let joins = [];
+    let currentAlias = 'arrayItem1';
+    let previousAlias = '';
+
+    for (let i = 0; i < arrayIndices.length; i++) {
+      const arrayName = path[arrayIndices[i]].substring(1);
+      const previousPath = i === 0 
+        ? `${collectionAlias}["json"]${basePath ? sqlName(basePath) : ''}`
+        : previousAlias;
+      joins.push(`${currentAlias} IN ${previousPath}["${arrayName}"]`);
+      
+      if (i < arrayIndices.length - 1) {
+        previousAlias = currentAlias;
+        currentAlias = `arrayItem${i + 2}`;
+      }
+    }
+
+    const propertyPath = path.slice(arrayIndices[arrayIndices.length - 1] + 1).join('.');
+    const paramPath = path.map(segment => segment.startsWith('@') ? segment.substring(1) : segment).join('.');
+    
+    const comparisonPart = propertyPath 
+      ? `CONTAINS(${currentAlias}["${propertyPath}"], ${paramName(paramPath)}, true)`
+      : `CONTAINS(${currentAlias}, ${paramName(paramPath)}, true)`;
+
     return {
-      filter: `CONTAINS(${collectionAlias}${sqlName(name)}, ${paramName(name)}, true)`,
-      parameters: [
-        {
-          name: paramName(name),
-          value: value,
-        },
-      ],
+      filter: `EXISTS (SELECT VALUE ${currentAlias} FROM ${joins.join(" JOIN ")} WHERE ${comparisonPart})`,
+      parameters: [{ name: paramName(paramPath), value: value }],
     };
+  }
+  
+  // For non-array paths, use the original logic
+  return {
+    filter: `CONTAINS(${collectionAlias}${sqlName(name)}, ${paramName(name)}, true)`,
+    parameters: [
+      {
+        name: paramName(name),
+        value: value,
+      },
+    ],
   };
+};
 
 const inOperation: Operation = (
   name,
@@ -238,16 +244,23 @@ function parseCustomPath(path: string) {
           currentAlias++;
       }
   }
-
-  const finalProperty = segments.slice(arrayIndices[arrayIndices.length - 1] + 1).join('.');
+  const finalPropertySegments = segments.slice(arrayIndices[arrayIndices.length - 1] + 1);
   const lastAlias = `${rulesAlias}${currentAlias}`;
   
+  let select;
+  if (finalPropertySegments.length === 0) {
+    select = `ARRAY(SELECT DISTINCT VALUE ${lastAlias} FROM ${joins.join(" JOIN ")})`;
+  } else {
+    const finalProperty = finalPropertySegments.join('.');
+    select = `ARRAY(SELECT DISTINCT VALUE ${lastAlias}["${finalProperty}"] FROM ${joins.join(" JOIN ")})`;
+  }
+  
   return {
-      select: `ARRAY(SELECT DISTINCT VALUE ${lastAlias}["${finalProperty}"] FROM ${joins.join(" JOIN ")})`,
+      select: select,
       filterInfo: {
           joins,
           alias: lastAlias,
-          property: finalProperty
+          property: finalPropertySegments.length > 0 ? finalPropertySegments.join('.') : null
       },
       finalAlias: currentAlias
   };
@@ -458,6 +471,8 @@ const getRules = async (query: IQuery): Promise<IRules> => {
     parameters: [...filterParams, offsetParam, limitParam],
     query: `SELECT DISTINCT ${select} FROM ${rulesAlias}1${joins}${filters}${orderBy} OFFSET @offset LIMIT @limit`,
   };
+  console.log("Generated query:", querySpec.query);
+  console.log("With parameters:", querySpec.parameters);
   try {
     const results = await rulesContainer.items.query(querySpec).fetchAll();
     const resp = {

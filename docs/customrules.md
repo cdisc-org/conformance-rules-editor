@@ -1,1 +1,1 @@
-[](https://raw.githubusercontent.com/cdisc-org/cdisc-rules-engine/main/resources/schema/CustomRules.md ":include")
+[](https://raw.githubusercontent.com/cdisc-org/cdisc-rules-engine/main/resources/schema/customrules.md ":include")

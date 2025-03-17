@@ -44,17 +44,13 @@ Install Node.js version **16**: https://nodejs.org/en/download/releases
    "USERS_PROVIDER": "Dummy",
    ```
 
-6. Storage - There is a base Storage abstraction which allows for any storage implementation. Currently there are 2 storage implementations. Using one of these implementations requires the additional env variables to be added to the local.settings.json file
+6. Storage - Currently, Rule Editor supports CosmosDB and requires the additional env variables to be added to the local.settings.json file
 
    - CosmosDB (SQL)
 
-     Tell the editor which storage implementation to use:
 
      ```
      "STORAGE_PROVIDER": "CosmosSQL",
-     ```
-
-     ```
      "COSMOS_BASE_URL": <COSMOS_BASE_URL>,
      "COSMOS_KEY": <COSMOS_KEY>,
      "COSMOS_DATABASE": <COSMOS DB Name>,
@@ -66,23 +62,6 @@ Install Node.js version **16**: https://nodejs.org/en/download/releases
 
      ```
      "NODE_TLS_REJECT_UNAUTHORIZED": "0",
-     ```
-
-   - Drupal
-
-     Tell the editor which storage implementation to use:
-
-     ```
-     "STORAGE_PROVIDER": "Drupal",
-     ```
-
-     ```
-     "DRUPAL_BASE_URL": "<DRUPAL_API_URL>",
-     "DRUPAL_CLIENT_ID": "<DRUPAL_API_CLIENT_ID>",
-     "DRUPAL_CLIENT_SECRET": "<DRUPAL_API_CLIENT_SECRET>",
-     "DRUPAL_GRANT_TYPE": "<DRUPAL_API_GRANT_TYPE>",
-     "DRUPAL_PATH": "<DRUPAL_API_PATH>",
-     "DRUPAL_SCOPE": "<DRUPAL_API_SCOPE>",
      ```
 
 ## Running the App

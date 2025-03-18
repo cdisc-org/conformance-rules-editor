@@ -151,29 +151,48 @@ const containsOperation: Operation = (name, value: string | number, collectionAl
     let joins = [];
     let currentAlias = 'arrayItem1';
     let previousAlias = '';
+    let previousPath = '';
 
     for (let i = 0; i < arrayIndices.length; i++) {
       const arrayName = path[arrayIndices[i]].substring(1);
-      const previousPath = i === 0 
-        ? `${collectionAlias}["json"]${basePath ? sqlName(basePath) : ''}`
-        : previousAlias;
+      
+      // For the first array
+      if (i === 0) {
+        previousPath = `${collectionAlias}["json"]${basePath ? sqlName(basePath) : ''}`;
+      } 
+      // For subsequent arrays, include intermediate properties
+      else {
+        const startIdx = arrayIndices[i-1] + 1;
+        const endIdx = arrayIndices[i];
+        const intermediateProps = path.slice(startIdx, endIdx);
+        
+        previousPath = previousAlias;
+        // Add intermediate properties to the path
+        for (const prop of intermediateProps) {
+          previousPath += `["${prop}"]`;
+        }
+      }
+      
       joins.push(`${currentAlias} IN ${previousPath}["${arrayName}"]`);
       
-      if (i < arrayIndices.length - 1) {
-        previousAlias = currentAlias;
-        currentAlias = `arrayItem${i + 2}`;
-      }
+      previousAlias = currentAlias;
+      currentAlias = `arrayItem${i + 2}`;
     }
 
-    const propertyPath = path.slice(arrayIndices[arrayIndices.length - 1] + 1).join('.');
+    // Get properties after the last array
+    const finalPathSegments = path.slice(arrayIndices[arrayIndices.length - 1] + 1);
+    const finalPath = finalPathSegments.length > 0 
+      ? finalPathSegments.map(segment => `["${segment}"]`).join('') 
+      : '';
+    
     const paramPath = path.map(segment => segment.startsWith('@') ? segment.substring(1) : segment).join('.');
     
-    const comparisonPart = propertyPath 
-      ? `CONTAINS(${currentAlias}["${propertyPath}"], ${paramName(paramPath)}, true)`
-      : `CONTAINS(${currentAlias}, ${paramName(paramPath)}, true)`;
+    const comparisonPart = finalPath 
+      ? `CONTAINS(${previousAlias}${finalPath}, ${paramName(paramPath)}, true)`
+      : `CONTAINS(${previousAlias}, ${paramName(paramPath)}, true)`;
 
     return {
-      filter: `EXISTS (SELECT VALUE ${currentAlias} FROM ${joins.join(" JOIN ")} WHERE ${comparisonPart})`,
+      filter: `EXISTS (SELECT VALUE ${previousAlias} FROM ${joins.join(" JOIN ")} WHERE ${comparisonPart})`,
       parameters: [{ name: paramName(paramPath), value: value }],
     };
   }
@@ -231,28 +250,43 @@ function parseCustomPath(path: string) {
   let joins = [];
   let currentAlias = 2;
   let previousAlias = 1;
+  let previousPath = basePath;
 
   for (let i = 0; i < arrayIndices.length; i++) {
       const arrayName = segments[arrayIndices[i]].substring(1);
       const alias = `${rulesAlias}${currentAlias}`;
-      const previousPath = i === 0 ? basePath : `${rulesAlias}${previousAlias}`;
+      
+      // If this is not the first array, add the intermediate property path
+      if (i > 0) {
+          const startIdx = arrayIndices[i-1] + 1;
+          const endIdx = arrayIndices[i];
+          const intermediatePath = segments.slice(startIdx, endIdx);
+          previousPath = `${rulesAlias}${previousAlias}`;
+          
+          // Add the intermediate properties to the previous path
+          for (const prop of intermediatePath) {
+              previousPath += `["${prop}"]`;
+          }
+      }
       
       joins.push(`${alias} IN ${previousPath}["${arrayName}"]`);
       
-      if (i < arrayIndices.length - 1) {
-          previousAlias = currentAlias;
-          currentAlias++;
-      }
+      previousAlias = currentAlias;
+      currentAlias++;
   }
+  
   const finalPropertySegments = segments.slice(arrayIndices[arrayIndices.length - 1] + 1);
-  const lastAlias = `${rulesAlias}${currentAlias}`;
+  const lastAlias = `${rulesAlias}${previousAlias}`;
   
   let select;
   if (finalPropertySegments.length === 0) {
     select = `ARRAY(SELECT DISTINCT VALUE ${lastAlias} FROM ${joins.join(" JOIN ")})`;
   } else {
-    const finalProperty = finalPropertySegments.join('.');
-    select = `ARRAY(SELECT DISTINCT VALUE ${lastAlias}["${finalProperty}"] FROM ${joins.join(" JOIN ")})`;
+    const finalPropertyPath = finalPropertySegments.reduce((path, segment) => 
+      `${path}["${segment}"]`, 
+      lastAlias
+    );
+    select = `ARRAY(SELECT DISTINCT VALUE ${finalPropertyPath} FROM ${joins.join(" JOIN ")})`;
   }
   
   return {
@@ -262,7 +296,7 @@ function parseCustomPath(path: string) {
           alias: lastAlias,
           property: finalPropertySegments.length > 0 ? finalPropertySegments.join('.') : null
       },
-      finalAlias: currentAlias
+      finalAlias: currentAlias - 1
   };
 }
 

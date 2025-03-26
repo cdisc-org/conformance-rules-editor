@@ -109,7 +109,8 @@ export default function ExplorerHead() {
     // Remove all characters that are not alphanumeric, period, or underscore
     return path.replace(/[^a-zA-Z0-9 ._@]/g, '')
       .replace(/\.\./g, '')
-      .replace(/^\.+|\.+$/g, '');
+      .replace(/^\.+|\.+$/g, '')
+      .replace(/ /g, '_');
   };
 
   const isColumnNameDuplicate = (name: string): boolean => {

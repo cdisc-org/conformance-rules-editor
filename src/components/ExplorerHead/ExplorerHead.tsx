@@ -107,7 +107,7 @@ export default function ExplorerHead() {
 
   const sanitizePath = (path: string): string => {
     // Remove all characters that are not alphanumeric, period, or underscore
-    return path.replace(/[^a-zA-Z0-9._@]/g, '')
+    return path.replace(/[^a-zA-Z0-9 ._@]/g, '')
       .replace(/\.\./g, '')
       .replace(/^\.+|\.+$/g, '');
   };

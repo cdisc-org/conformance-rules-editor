@@ -13,6 +13,8 @@ Install Node.js version **16**: https://nodejs.org/en/download/releases
 ### Install dependencies
 
 1. Install frontend dependencies - From the root directory, run the command: `npm install`
+   you may need to run ` --legacy-peer-deps` or ` --force` after this command to resolve
+   dependency installation
 2. Install api dependencies - From the ./api directory, run the command: `npm install`
 3. Install static web app node libraries by running the following commands:
    ```

@@ -89,7 +89,7 @@ jobs:
           RULE_EDITOR_URL: ${{ needs.build_and_deploy_preview.outputs.preview_url }}
         run: |
           echo "Testing on Preview Deployment: $RULE_EDITOR_URL"
-          python test_rule_editor.py
+          python tests/test_rule_editor.py
 
   build_and_deploy_training_job:
     if: github.ref_name == 'main' && (github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed') || github.event_name == 'workflow_dispatch')

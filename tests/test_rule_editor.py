@@ -32,25 +32,15 @@ try:
     print("Opening Rule Editor site...")
     driver.get(RULE_EDITOR_URL)
 
-    # print("Checking username field...")
-    # username_field = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="signInName"]')))
-    # username_field.send_keys('yexame7861@lxheir.com')
-
-    # print("Checking password field...")
-    # password_field = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="password"]')))
-    # password_field.send_keys('@Test@Test123')
-
-    # print("Checking sign-in button...")
-    # sign_in_button = wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="next"]')))
-    # sign_in_button.click()
-
-    # print("Checking cross button...")
-    # cross_button = wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="rulesList"]/table/thead/tr/th[2]/div/div/button')))
-    # cross_button.click()
-
-    # print("Checking first table element...")
-    # first_table_element = wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="rulesList"]/table/tbody/tr[1]')))
-    # first_table_element.click()
+    print("Clicking the search field for rule search...")
+    rule_search_field = wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="mui-10"]')))
+    rule_search_field.click()
+    rule_search_field.send_keys("CG0002")
+    
+    print("Waiting for search results...")
+    search_result = wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="rulesList"]/table/tbody/tr/td[1]')))
+    search_result.click()
+    print("Successfully searched and clicked the rule")
 
     print("Checking test tab button...")
     test_tab_button = wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="root"]/div/div[3]/div/div[1]/div/div/div/button[2]')))
@@ -63,7 +53,7 @@ try:
     print("Checking file upload input field...")
     file_input = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="tabpanel-1"]/div[5]/div[2]/div/div/div/div/label/input')))
 
-    file_path = os.path.abspath('unit-test-coreid-CG0002-negative.xlsx')
+    file_path = os.path.abspath('tests/unit-test-coreid-CG0002-negative.xlsx')
     print(f"Uploading file: {file_path}")
     file_input.send_keys(file_path)
 

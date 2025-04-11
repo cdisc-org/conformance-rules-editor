@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Deploy Preview
     outputs:
-      preview_url: ${{ steps.builddeploypreview.outputs.static_web_app_url }}  # Capture Preview URL
+      preview_url: ${{ steps.builddeploypreview.outputs.static_web_app_url }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -51,18 +51,18 @@ jobs:
           cp staticwebapp.preview.config.json staticwebapp.config.json
           echo "Using preview configuration for this deployment"
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
 
-      - name: Install dependencies with force
+      - name: Install dependencies with --force
         run: npm install --force
 
       - name: Build project
         run: npm run build
 
-      - name: Deploy Preview Build
+      - name: Deploy Preview (skip build)
         id: builddeploypreview
         uses: Azure/static-web-apps-deploy@v1
         with:
@@ -74,6 +74,7 @@ jobs:
           output_location: "build"
           config_file_location: "/"
           production_branch: ${{ github.ref_name }}
+          skip_app_build: true 
   test_rule_editor_job:
     needs: build_and_deploy_preview
     if: github.event_name == 'pull_request'

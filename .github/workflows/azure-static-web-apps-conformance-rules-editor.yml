@@ -35,37 +35,37 @@ jobs:
           NPM_CONFIG_LEGACY_PEER_DEPS: true
 
   build_and_deploy_preview:
-  if: (github.event_name == 'pull_request' && github.event.action != 'closed') || github.event_name == 'workflow_dispatch'
-  runs-on: ubuntu-latest
-  name: Build and Deploy Preview
-  outputs:
-    preview_url: ${{ steps.builddeploypreview.outputs.static_web_app_url }}
-  steps:
-    - uses: actions/checkout@v3
-      with:
-        submodules: true
-        ref: ${{ github.head_ref || github.ref_name }}
+    if: (github.event_name == 'pull_request' && github.event.action != 'closed') || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    name: Build and Deploy Preview
+    outputs:
+      preview_url: ${{ steps.builddeploypreview.outputs.static_web_app_url }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+          ref: ${{ github.head_ref || github.ref_name }}
 
-    - name: Use preview config for PR
-      run: |
-        cp staticwebapp.preview.config.json staticwebapp.config.json
-        echo "Using preview configuration for this deployment"
+      - name: Use preview config for PR
+        run: |
+          cp staticwebapp.preview.config.json staticwebapp.config.json
+          echo "Using preview configuration for this deployment"
 
-    - name: Build And Deploy Preview
-      id: builddeploypreview
-      uses: Azure/static-web-apps-deploy@v1
-      with:
-        azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_CONFORMANCE_RULES_EDITOR_PROD }}
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
-        action: "upload"
-        app_location: "/"
-        api_location: "/api"
-        output_location: "build"
-        config_file_location: "/"
-        production_branch: ${{ github.ref_name }}
-        app_build_command: "npm install --force && npm run build"  # 👈 inject custom build step
-      env:
-        NPM_CONFIG_LEGACY_PEER_DEPS: true
+      - name: Build And Deploy Preview
+        id: builddeploypreview
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_CONFORMANCE_RULES_EDITOR_PROD }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: "upload"
+          app_location: "/"
+          api_location: "/api"
+          output_location: "build"
+          config_file_location: "/"
+          production_branch: ${{ github.ref_name }}
+          app_build_command: "npm install --force && npm run build"
+        env:
+          NPM_CONFIG_LEGACY_PEER_DEPS: true
   test_rule_editor_job:
     needs: build_and_deploy_preview
     if: github.event_name == 'pull_request'

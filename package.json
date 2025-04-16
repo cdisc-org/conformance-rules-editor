@@ -2,6 +2,9 @@
   "name": "conformance-rules-editor-app",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "20"
+  },
   "dependencies": {
     "@azure/msal-browser": "^2.33.0",
     "@azure/msal-react": "^1.5.3",

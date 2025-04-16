@@ -8,7 +8,7 @@ https://cdisc-org.github.io/conformance-rules-editor/
 
 ### Install Node
 
-Install Node.js version **22**: https://nodejs.org/en/download/releases
+Install Node.js version **20**: https://nodejs.org/en/download/releases
 
 ### Install dependencies
 

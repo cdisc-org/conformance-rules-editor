@@ -50,6 +50,6 @@
     ".css": "text/css"
   },
   "platform": {
-    "apiRuntime": "node:22"
+    "apiRuntime": "node:20"
   }
 }

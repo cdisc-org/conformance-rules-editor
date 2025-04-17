@@ -12,7 +12,7 @@ Install Node.js version **20**: https://nodejs.org/en/download/releases
 
 ### Install dependencies
 
-1. Install frontend dependencies - From the root directory, run the command: `npm install --legacy-peer-deps`
+1. Install frontend dependencies - From the root directory, run the command: `npm install`
 2. Install api dependencies - From the ./api directory, run the command: `npm install`
 3. Install static web app node libraries by running the following commands:
    ```

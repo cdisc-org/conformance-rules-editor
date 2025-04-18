@@ -16,7 +16,7 @@
     },
     {
       "route": "/login",
-      "rewrite": "/.auth/login/adb2c?post_login_redirect_uri=/"
+      "rewrite": "/.auth/login/aadbc?post_login_redirect_uri=/"
     },
     {
       "route": "/.auth/login/twitter",
@@ -62,7 +62,7 @@
   "auth": {
     "identityProviders": {
       "customOpenIdConnectProviders": {
-        "adb2c": {
+        "aadbc": {
           "registration": {
             "clientIdSettingName": "SWA_CLIENT_ID",
             "clientCredential": {
@@ -80,6 +80,6 @@
     }
   },
   "platform": {
-    "apiRuntime": "node:16"
+    "apiRuntime": "node:20"
   }
 }

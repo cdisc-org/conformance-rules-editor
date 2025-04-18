@@ -11,6 +11,7 @@ import { IUser } from "../types/IUser";
 import { IUsers } from "../types/IUsers";
 
 const maxChildClauses = 15;
+const GRAPH_BASE_URL = "https://graph.microsoft.com";
 
 const getClient = (): Client => {
   const authProvider = new TokenCredentialAuthenticationProvider(
@@ -20,7 +21,7 @@ const getClient = (): Client => {
       process.env["SWA_CLIENT_SECRET"]
     ),
     {
-      scopes: ["https://graph.microsoft.com/.default"],
+      scopes: [`${GRAPH_BASE_URL}/.default`],
     }
   );
 
@@ -51,7 +52,7 @@ const getUsersByIds = async (
     chunked.map((chunk, chunkIndex) => ({
       id: chunkIndex.toString(),
       request: new Request(
-        `/users?$filter=id+in+(${chunk.map((id) => `'${id}'`).join(", ")})`,
+        `${GRAPH_BASE_URL}/users?$filter=id+in+(${chunk.map((id) => `'${id}'`).join(", ")})`,
         {
           method: "GET",
         }

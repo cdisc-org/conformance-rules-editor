@@ -11,6 +11,11 @@
       "allowedRoles": ["anonymous"]
     },
     {
+      "route": "/api/rules/execute",
+      "methods": ["POST"],
+      "allowedRoles": ["anonymous"]
+    },
+    {
       "route": "/api/*",
       "methods": ["PUT", "POST", "PATCH", "DELETE"],
       "allowedRoles": ["authenticated"]
@@ -22,11 +27,7 @@
     {
       "route": "/*",
       "allowedRoles": ["anonymous"]
-    },
-    {
-      "route": "/login",
-      "rewrite": "/.auth/login/aadbc?post_login_redirect_uri=/"
-  }
+    }
   ],
   "navigationFallback": {
     "rewrite": "index.html",
@@ -53,27 +54,7 @@
     ".js": "text/javascript",
     ".css": "text/css"
   },
-  "auth": {
-    "identityProviders": {
-      "customOpenIdConnectProviders": {
-        "aadbc": {
-          "registration": {
-            "clientIdSettingName": "SWA_CLIENT_ID",
-            "clientCredential": {
-              "clientSecretSettingName": "SWA_CLIENT_SECRET"
-            },
-            "openIdConnectConfiguration": {
-              "wellKnownOpenIdConfiguration": "https://cdisclibrary.b2clogin.com/cdisclibrary.onmicrosoft.com/b2c_1a_signupsigninreset/v2.0/.well-known/openid-configuration"
-            }
-          },
-          "login": {
-            "scopes": ["openid"],
-            "returnUrlTemplate": "{{host}}"
-          }
-        }
-      }
-    }
-  },
+
   "platform": {
     "apiRuntime": "node:20"
   }

@@ -11,6 +11,11 @@
       "allowedRoles": ["anonymous"]
     },
     {
+      "route": "/api/rules/execute",
+      "methods": ["POST"],
+      "allowedRoles": ["anonymous"]
+    },
+    {
       "route": "/api/*",
       "methods": ["PUT", "POST", "PATCH", "DELETE"],
       "allowedRoles": ["authenticated"]
@@ -49,6 +54,7 @@
     ".js": "text/javascript",
     ".css": "text/css"
   },
+
   "platform": {
     "apiRuntime": "node:20"
   }

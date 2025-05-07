@@ -178,3 +178,4 @@ The Wildcard property creates a dynamic pattern that substitutes for domain pref
 - The default wildcard is `**` if not specified
 - Using `--` (two hyphens) is not recommended as the engine has built-in logic to replace the "--" pattern with the current domain name. This happens early in the processing pipeline.
 - Choose the wildcard pattern that makes your rules most readable (`__` or `**` are both common choices)
+- reference variables in your check will match your wildcard i.e. RELREC.__TERM 

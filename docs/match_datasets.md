@@ -170,3 +170,12 @@ Scope:
     Include:
       - FA
 ```
+
+## Wildcard Property
+
+The Wildcard property creates a dynamic pattern that substitutes for domain prefixes in SDTM variable names. This allows you to write rules that work across multiple domains without having to specify each domain-specific variable separately.
+
+- The default wildcard is `**` if not specified
+- Using `--` (two hyphens) is not recommended as the engine has built-in logic to replace the "--" pattern with the current domain name. This happens early in the processing pipeline.
+- Choose the wildcard pattern that makes your rules most readable (`__` or `**` are both common choices)
+- reference variables in your check will match your wildcard i.e. RELREC.__TERM 

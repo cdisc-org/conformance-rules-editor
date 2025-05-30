@@ -77,7 +77,7 @@ try:
             )
         )
     )
-    file_path = os.path.abspath(".github/test/unit-test-coreid-CG0006-negative 1.xlsx")
+    file_path = os.path.abspath("tests/unit-test-coreid-CG0006-negative 1.xlsx")
     file_input.send_keys(file_path)
 
     print("Waiting for error result to appear...")

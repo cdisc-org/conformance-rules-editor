@@ -70,7 +70,7 @@ jobs:
       - name: Print commit SHA
         run: |
           echo "Commit ID: ${GITHUB_SHA}"
-          
+
   test_rule_editor_job:
     needs: build_and_deploy_preview
     if: github.event_name == 'pull_request'
@@ -87,7 +87,8 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          pip install selenium webdriver-manager
+          pip install requests selenium webdriver-manager pyperclip==1.9.0 selenium-wire blinker==1.4 brotli
+
 
       - name: Run Selenium Test on Preview
         env:

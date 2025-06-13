@@ -97,6 +97,37 @@ Scope:
       - BE
 ```
 
+## Child to Parent Merge (Child: true)
+
+By default, dataset merging follows a **parent → child** direction, where the parent dataset (specified in Scope) is merged with the child datasets (specified in Match Datasets). The `Child: true` property reverses this direction to perform a **child → parent** merge.
+
+When `Child: true` is specified:
+- The dataset specified in `Name` becomes the primary dataset (child)  
+- The parent dataset (based on RDOMAIN) becomes the secondary dataset being merged in
+- All records from the child dataset are preserved
+- Only matching records from the parent dataset are included
+
+> Rule: Matching on AE.USUBJID = DM.USUBJID, Check DM records with their corresponding AE values based on USUBJID.  Also checks RELREC which is matched on DOMAIN and USUBJID.  Note: the child is the left dataset in the merge so RDOMAIN must be left
+
+```yaml
+Match Datasets:
+  - Name: DM
+    Keys:
+      - USUBJID
+    Child: true
+  - Name: RELREC
+    Keys:
+      - USUBJID
+      - Left: RDOMAIN
+        Right: DOMAIN
+    Child: true
+Scope:
+  Domains:
+    Include:
+      - DM
+      - RELREC
+```
+
 ## Pivoted (Supp/VL) relationship
 When 'Is Relationship: True' is specified, the system filters a parent dataset using a supplementary dataset that defines allowed column-value pairs. The supplementary dataset must contain two columns - one specifying which columns to filter in the parent dataset (IDVAR) and another containing the allowed values (IDVARVAL) - enabling complex filtering.
 

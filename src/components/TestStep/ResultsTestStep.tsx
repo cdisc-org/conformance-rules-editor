@@ -72,8 +72,8 @@ export default function ResultsTestStep() {
                   currentRecordResult: { errors: [] }
                 ) =>
                   aggregateRecordResult +
-                  (currentRecordResult["executionStatus"] === "success" &&
-                  "errors" in currentRecordResult
+                  (currentRecordResult["executionStatus"] ===
+                    "issue_reported" && "errors" in currentRecordResult
                     ? currentRecordResult["errors"].length
                     : 0),
                 0

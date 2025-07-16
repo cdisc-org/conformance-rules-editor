@@ -71,13 +71,13 @@ Specifies a string prefix that should be present at the beginning of a variable'
 Specifies a string suffix that should be present at the end of a variable's value. Complements prefix validation for comprehensive format checking.
 
 ### target
-Specifies the primary column/variable name that the validation rule evaluates. In the rules engine implementation, this parameter is processed through `replace_prefix()` and represents the column whose values are being validated. The target column typically contains the data being checked for compliance or consistency.  The results of validation rules are typically reported for the target variable.
+Specifies the primary column/variable name that the validation rule evaluates. In the rules engine implementation, this parameter is processed through `replace_prefix()` and represents the column whose values are being validated. The target column typically contains the data being checked for compliance or consistency. The results of validation rules are typically reported for the target variable.
 
 ### value
 Contains the reference value or criteria against which the validation check is performed. The interpretation of this parameter depends on the `value_is_literal` setting.
 
 ### value_is_literal
-Boolean parameter that signifies whether the string in the value key should be treated as a literal string. When value_is_literal is not used within the rule logic, the string in the value key will be assumed as a variable in the dataset.
+Boolean parameter that signifies whether the string in the value key should be treated as a literal string. When value_is_literal is false or not specified, the string in the value key will be interpreted as a variable name in the dataset.
 
 > IDVAR = "VISIT" as a value, not IDVAR = VISIT as a variable in the dataset
 
@@ -97,10 +97,14 @@ The rules engine uses operation parameters defined in the JSON schema to configu
 Specifies the metadata attribute name to extract from variable definitions. Used in operations like `define_variable_metadata` to retrieve specific metadata properties such as variable labels, core status, or other attributes.
 
 ### case_sensitive
-Boolean flag that controls whether string comparisons in operations should be case-sensitive. Default is `True`. Used in external dictionary validation operations to allow flexible matching.
+Boolean flag that controls whether string comparisons in operations should be case-sensitive. Default is `True`. If not explicitly specified, string comparisons will be case-sensitive. Used in external dictionary validation operations to allow flexible matching.
 
+Examples:
+
+Default behavior (case-sensitive):
 ```yaml
 - operator: valid_external_dictionary_value
+  # case_sensitive is not specified, so it defaults to True
   case_sensitive: false  # Enable case-insensitive matching
 ```
 

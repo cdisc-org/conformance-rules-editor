@@ -84,7 +84,7 @@ const cellTypeMappings: { [type: string]: (cell: CellObject) => void } = {
   Num: (cell) => {
     const originalValue = cell.v.toString();
     const trimmedValue = originalValue.trim();
-    if (trimmedValue === '' || trimmedValue === '.') {
+    if (trimmedValue === '') {
       cell.t = "n";
       cell.v = null;
     } else {
@@ -105,7 +105,7 @@ const cellTypeMappings: { [type: string]: (cell: CellObject) => void } = {
   Number: (cell) => {
     const originalValue = cell.v.toString();
     const trimmedValue = originalValue.trim();
-    if (trimmedValue === '' || trimmedValue === '.') {
+    if (trimmedValue === '') {
       cell.t = "n";
       cell.v = null;
     } else {

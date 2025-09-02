@@ -82,8 +82,15 @@ const cellTypeMappings: { [type: string]: (cell: CellObject) => void } = {
     cell.v = cell.v.toString();
   },
   Num: (cell) => {
-    cell.t = "n";
-    cell.v = Number(cell.v);
+    const originalValue = cell.v.toString();
+    const trimmedValue = originalValue.trim();
+    if (trimmedValue === '' || trimmedValue === '.') {
+      cell.t = "n";
+      cell.v = null;
+    } else {
+      cell.t = "n";
+      cell.v = Number(cell.v);
+    }
   },
   /* JSON Types */
   Boolean: (cell) => {
@@ -96,8 +103,15 @@ const cellTypeMappings: { [type: string]: (cell: CellObject) => void } = {
     }
   },
   Number: (cell) => {
-    cell.t = "n";
-    cell.v = Number(cell.v);
+    const originalValue = cell.v.toString();
+    const trimmedValue = originalValue.trim();
+    if (trimmedValue === '' || trimmedValue === '.') {
+      cell.t = "n";
+      cell.v = null;
+    } else {
+      cell.t = "n";
+      cell.v = Number(cell.v);
+    }
   },
   String: (cell) => {
     cell.t = "s";

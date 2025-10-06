@@ -199,7 +199,8 @@ const getLibrary = (workbook: WorkBook): IStandard[] => {
   }));
 };
 
-const isCT = (standard: IStandard): boolean => standard.product.endsWith("ct");
+const isCT = (standard: IStandard): boolean => 
+  standard.product.toLowerCase().includes("ct");
 
 const getStandard = (library: IStandard[]): IStandard =>
   library.find((standard) => !isCT(standard));
@@ -207,7 +208,7 @@ const getStandard = (library: IStandard[]): IStandard =>
 const getCodelists = (library: IStandard[]): string[] =>
   library
     .filter(isCT)
-    .map((standard) => `${standard.product}-${standard.version}`);
+    .map((standard) => standard.product);
 
 export const excelToJsonDatasets = async (file: File): Promise<IDatasets> => {
   const workbook: WorkBook = read(await readFile(file), {

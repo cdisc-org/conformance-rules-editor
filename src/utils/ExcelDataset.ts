@@ -208,7 +208,12 @@ const getStandard = (library: IStandard[]): IStandard =>
 const getCodelists = (library: IStandard[]): string[] =>
   library
     .filter(isCT)
-    .map((standard) => standard.product);
+    .map((standard) => {
+      if (standard.product.includes("-")) {
+        return standard.product;
+      }
+      return `${standard.product}-${standard.version}`;
+    });
 
 export const excelToJsonDatasets = async (file: File): Promise<IDatasets> => {
   const workbook: WorkBook = read(await readFile(file), {

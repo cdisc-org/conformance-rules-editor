@@ -64,6 +64,20 @@ Example usage:
 ordering: "VISITNUM"  # Sort by visit number to ensure proper sequence
 ```
 
+### separator
+Specifies the delimiter character(s) used to split string values into parts for comparison. Used by operators that validate paired data formats to ensure both parts have equal precision or completeness. Default value is "/" (forward slash) if not specified.
+
+Example usage:
+```yaml
+- name: "--DTC"
+  operator: "split_parts_have_equal_length"
+  separator: "/"  # Split by forward slash for date intervals
+```
+
+Used with operators:
+- `split_parts_have_equal_length` - Validates that both parts of a split string have equal length
+- `split_parts_have_unequal_length` - Validates that parts have different lengths (complement)
+
 ### prefix
 Specifies a string prefix that should be present at the beginning of a variable's value. Used for format validation and standardization checks.
 

@@ -84,6 +84,10 @@ Specifies a string prefix that should be present at the beginning of a variable'
 ### suffix
 Specifies a string suffix that should be present at the end of a variable's value. Complements prefix validation for comprehensive format checking.
 
+### regex
+Specifies a regular expression pattern used to extract portions of string values before performing validation operations.
+
+
 ### target
 Specifies the primary column/variable name that the validation rule evaluates. In the rules engine implementation, this parameter is processed through `replace_prefix()` and represents the column whose values are being validated. The target column typically contains the data being checked for compliance or consistency. The results of validation rules are typically reported for the target variable.
 

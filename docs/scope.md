@@ -106,7 +106,7 @@ According to the schema, the following classes are available:
 The following domain options are available:
 - Standard domains like `DM`, `AE`, `LB`, etc.
 - Special values like `ALL`, `AP--`, `APRELSUB`, `POOLDEF`, etc.
-- Split datasets using patterns like `SUPP--`, `SUPP[domain]`
+- Supplementary datasets using patterns like `SUPP--`, `SUPP[domain]`
 
 ### Data Structures
 Alternative to Classes/Domains, you can specify data structures:

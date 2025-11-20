@@ -33,7 +33,9 @@ export default function ExportArtifacts({
           JSON.stringify(jsonCheck.details[0].details, null, 4)
         );
         zip.file("Define.xml", loadDefineXMLCheck.details[1]?.details ?? "");
-        zip.file("Datasets.xlsx", loadDatasetsCheck.details[0]?.details ?? "");
+        if (loadDatasetsCheck.details[0]?.details) {
+          zip.file("Datasets.xlsx", loadDatasetsCheck.details[0].details);
+        }
         zip.file(
           "Datasets.json",
           JSON.stringify(loadDatasetsCheck.details[1]?.details ?? "", null, 4)

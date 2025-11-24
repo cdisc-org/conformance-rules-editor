@@ -36,10 +36,12 @@ export default function ExportArtifacts({
         if (loadDatasetsCheck?.details?.[0]?.details) {
           zip.file("Datasets.xlsx", loadDatasetsCheck.details[0].details);
         }
-        zip.file(
-          "Datasets.json",
-          JSON.stringify(loadDatasetsCheck.details[1]?.details ?? "", null, 4)
-        );
+        if (loadDatasetsCheck?.details?.[1]?.details) {
+            zip.file(
+              "Datasets.json",
+              JSON.stringify(loadDatasetsCheck.details[1].details, null, 4)
+            );
+        }
         zip.file(
           "Request.json",
           JSON.stringify(testCheck.details[1]?.details ?? "", null, 4)

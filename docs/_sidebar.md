@@ -12,5 +12,6 @@
 - [Test Data](test_data.md)
 - [Test Results](test_results.md)
 - [Custom Editor Columns & Rules](customrules.md)
+- [JSONata Functions](jsonata_functions.md)
 - [Ticket Submission](ticket_submission.md)
 - [FAQ](faq.md)

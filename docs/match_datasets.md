@@ -129,9 +129,10 @@ Scope:
 ```
 
 ## Pivoted (Supp/VL) relationship
-When 'Is Relationship: True' is specified, the system filters a parent dataset using a supplementary dataset that defines allowed column-value pairs. The supplementary dataset must contain two columns - one specifying which columns to filter in the parent dataset (IDVAR) and another containing the allowed values (IDVARVAL) - enabling complex filtering.
+When a Supp-- is specified, the system filters a parent dataset using a supplementary dataset that defines allowed column-value pairs. The supplementary dataset must contain two columns - one specifying which columns to filter in the parent dataset (IDVAR) and another containing the allowed values (IDVARVAL) - enabling complex filtering.  If these are blank, it will merge on Keys and still perform the pivot using the QNAM/QVAL.
 
-> If your Supp-- dataset looks like below and 'Is Relationship: True', it will 'keep rows where ECSEQ is 100 or 101 AND ECNUM is 105'
+
+> If your Supp-- dataset looks like below, it will 'add the QNAM/QVAL data to rows where ECSEQ is 100 or 101 AND ECNUM is 105'
 ```
 IDVAR    IDVARVAL
 ECSEQ    100
@@ -157,7 +158,6 @@ Match Datasets:
   - Name: SUPPAE
     Keys:
       - USUBJID
-    Is Relationship: true
 ```
 
 ## RELREC Relationship

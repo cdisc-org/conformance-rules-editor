@@ -32,6 +32,8 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [order, setOrder] = useState<TOrder>("desc");
   const [orderBy, setOrderBy] = useState<string>("created");
   const [searchText, setSearchText] = useState<{ [key: string]: string }>({});
+  const [overwriteRuleDialog, setOverwriteRuleDialog] = useState<boolean>(false);
+  const [existingRuleToOverwrite, setExistingRuleToOverwrite] = useState<string | null>(null);
   const [syntaxCheck, setSyntaxCheck] = useState<IResults>({
     status: Status.Pending,
     details: [],
@@ -126,6 +128,10 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
     setOrderBy,
     searchText,
     setSearchText,
+    overwriteRuleDialog,
+    setOverwriteRuleDialog,
+    existingRuleToOverwrite,
+    setExistingRuleToOverwrite,
     syntaxCheck,
     setSyntaxCheck,
     schemaCheck,

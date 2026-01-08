@@ -93,6 +93,10 @@ export interface IAppContext {
   isRuleModifiable: () => boolean;
   activeColumns: HeadCell[];
   setActiveColumns: React.Dispatch<React.SetStateAction<HeadCell[]>>;
+  overwriteRuleDialog: boolean;
+  setOverwriteRuleDialog: React.Dispatch<React.SetStateAction<boolean>>;
+  existingRuleToOverwrite: string | null;
+  setExistingRuleToOverwrite: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 export const defaultAppContext: IAppContext = {
@@ -194,6 +198,14 @@ export const defaultAppContext: IAppContext = {
   isRuleModifiable: () => false,
   activeColumns: headCells,
   setActiveColumns: () => {
+    /* Placeholder */
+  },
+  overwriteRuleDialog: false,
+  setOverwriteRuleDialog: () => {
+    /* Placeholder */
+  },
+  existingRuleToOverwrite: null,
+  setExistingRuleToOverwrite: () => {
     /* Placeholder */
   },
 };

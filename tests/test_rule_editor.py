@@ -20,26 +20,44 @@ if not RULE_EDITOR_URL:
 
 print(f"Running tests on: {RULE_EDITOR_URL}")
 
+# --- Screenshot helper -------------------------------------------------------
+def save_screenshot(driver, name_prefix="screenshot"):
+    """Save a screenshot with a timestamp into ./screenshots/."""
+    timestamp = time.strftime("%Y%m%d-%H%M%S")
+    os.makedirs("screenshots", exist_ok=True)
+    filename = f"{name_prefix}_{timestamp}.png"
+    path = os.path.join("screenshots", filename)
+    try:
+        driver.save_screenshot(path)
+        print(f"Screenshot saved to: {path}")
+    except Exception as e:
+        print(f"Could not save screenshot: {e}")
+
+
 # Configure Chrome options
 chrome_options = Options()
 chrome_options.add_argument("--ignore-certificate-errors")
 chrome_options.add_argument("--window-size=1920,1080")
 chrome_options.add_argument("--disable-blink-features=AutomationControlled")
-chrome_options.add_argument("--headless=new")  # Headless mode
+# chrome_options.add_argument("--headless=new")  # Headless mode
 
-# Initialize driver using selenium-wire
-service = Service(ChromeDriverManager().install())
-driver = webdriver.Chrome(service=service, options=chrome_options)
-wait = WebDriverWait(driver, 20)
+driver = None
+wait = None
 
 try:
+    # Initialize driver using selenium-wire
+    service = Service(ChromeDriverManager().install())
+    driver = webdriver.Chrome(service=service, options=chrome_options)
+    wait = WebDriverWait(driver, 20)
+
     print("Opening Rule Editor site...")
     driver.get(RULE_EDITOR_URL)
-
+    
     print("Searching for rule CG0006...")
     rule_search_field = wait.until(
-        EC.element_to_be_clickable((By.XPATH, '//*[@id="mui-10"]'))
+        EC.element_to_be_clickable((By.XPATH, '//*[@id="mui-11"]'))
     )
+    
     rule_search_field.click()
     rule_search_field.send_keys("CG0006")
 
@@ -57,7 +75,6 @@ try:
             (By.XPATH, '//*[@id="root"]/div/div[3]/div/div[1]/div/div/div/button[2]')
         )
     )
-
     test_tab_button.click()
     time.sleep(4)  # wait for the schema validation to complete
     print("Opening upload dataset tab...")
@@ -236,15 +253,26 @@ try:
     # Compare result
     if rule_exec_response == expected_json:
         print("Test Passed: API response matches expected JSON.")
+        # Optional: success screenshot
+        save_screenshot(driver, "success")
     else:
         print("Test Failed: API response does NOT match expected JSON.")
         print("Received:")
         print(json.dumps(rule_exec_response, indent=2))
-
+        # Take screenshot on logical failure
+        save_screenshot(driver, "mismatch")
+        sys.exit(1)
 
 except Exception as e:
     print(f"Test Failed due to exception: {e}")
+    # Take screenshot at the point of exception
+    if driver is not None:
+        save_screenshot(driver, "exception")
     sys.exit(1)
 
 finally:
-    driver.quit()
+    if driver is not None:
+        try:
+            driver.quit()
+        except Exception as e:
+            print(f"Error while quitting driver: {e}")

@@ -55,7 +55,7 @@ try:
     
     print("Searching for rule CG0006...")
     rule_search_field = wait.until(
-        EC.element_to_be_clickable((By.XPATH, '//*[@id="mui-11"]'))
+        EC.element_to_be_clickable((By.XPATH, '//*[@id="mui-10"]'))
     )
     
     rule_search_field.click()

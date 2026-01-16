@@ -87,7 +87,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          pip install requests selenium webdriver-manager pyperclip==1.9.0 selenium-wire blinker==1.4 brotli
+          pip install requests selenium webdriver-manager pyperclip==1.9.0 selenium-wire blinker==1.4 brotli setuptools
 
       - name: Run Selenium Test on Preview
         env:

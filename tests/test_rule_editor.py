@@ -20,6 +20,12 @@ if not RULE_EDITOR_URL:
 
 print(f"Running tests on: {RULE_EDITOR_URL}")
 
+username = os.getenv("RULE_EDITOR_USERNAME")
+password = os.getenv("RULE_EDITOR_PASSWORD")
+if not username or not password:
+    print("username or password is not set! Test failed.")
+    sys.exit(1)
+
 # --- Screenshot helper -------------------------------------------------------
 def save_screenshot(driver, name_prefix="screenshot"):
     """Save a screenshot with a timestamp into ./screenshots/."""
@@ -70,6 +76,46 @@ try:
     print("Opening Rule Editor site...")
     driver.get(RULE_EDITOR_URL)
 
+    print("Waiting for login page...")
+    wait.until(
+        EC.presence_of_element_located((By.XPATH, '//*[@id="signInName"]'))
+    )
+
+    print("Entering credentials...")
+    username_field = wait.until(
+        EC.element_to_be_clickable((By.XPATH, '//*[@id="signInName"]'))
+    )
+    username_field.send_keys(username)
+    
+    password_field = wait.until(
+        EC.element_to_be_clickable((By.XPATH, '//*[@id="password"]'))
+    )
+    password_field.send_keys(password)
+    
+    sign_in_button = wait.until(
+        EC.element_to_be_clickable((By.XPATH, '//*[@id="next"]'))
+    )
+    sign_in_button.click()
+    print("Sign in button clicked.")
+    
+    # Wait for login to complete and page to load
+    time.sleep(20)
+    
+    # Wait for the rules list to be visible (confirms successful login)
+    print("Waiting for rules list to load...")
+    name_clear_button = wait.until(
+        EC.visibility_of_element_located(
+            (By.XPATH, '//*[@id="rulesList"]/table/thead/tr/th[2]/div[2]/div/button')
+        )
+    )
+    name_clear_button = wait.until(
+        EC.element_to_be_clickable(
+            (By.XPATH, '//*[@id="rulesList"]/table/thead/tr/th[2]/div[2]/div/button')
+        )
+    )
+    name_clear_button.click()
+    print("Login successful and user is on the correct page.")
+    
     # Search for rule CG0006
     print("Waiting for rule search field to be visible...")
     rule_search_field = wait.until(

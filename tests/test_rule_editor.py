@@ -70,24 +70,6 @@ try:
     print("Opening Rule Editor site...")
     driver.get(RULE_EDITOR_URL)
 
-    # Wait for login to complete and page to load
-    time.sleep(20)
-    
-    # Wait for the rules list to be visible (confirms successful login)
-    print("Waiting for rules list to load...")
-    name_clear_button = wait.until(
-        EC.visibility_of_element_located(
-            (By.XPATH, '//*[@id="rulesList"]/table/thead/tr/th[2]/div[2]/div/button')
-        )
-    )
-    name_clear_button = wait.until(
-        EC.element_to_be_clickable(
-            (By.XPATH, '//*[@id="rulesList"]/table/thead/tr/th[2]/div[2]/div/button')
-        )
-    )
-    name_clear_button.click()
-    print("Login successful and user is on the correct page.")
-    
     # Search for rule CG0006
     print("Waiting for rule search field to be visible...")
     rule_search_field = wait.until(

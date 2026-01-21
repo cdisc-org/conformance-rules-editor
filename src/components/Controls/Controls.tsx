@@ -32,11 +32,13 @@ export default function Controls() {
     isRuleDirty,
     setAlertState,
     isRuleModifiable,
-    overwriteRuleDialog,
-    setOverwriteRuleDialog,
-    existingRuleToOverwrite,
-    setExistingRuleToOverwrite,
+    // overwriteRuleDialog,
+    // setOverwriteRuleDialog,
+    // existingRuleToOverwrite,
+    // setExistingRuleToOverwrite,
   } = useContext(AppContext);
+  const [overwriteRuleDialog, setOverwriteRuleDialog] = useState<boolean>(false);
+  const [existingRuleToOverwrite, setExistingRuleToOverwrite] = useState<string | null>(null);
 
   const newRule = () => {
     setSelectedRule(null);

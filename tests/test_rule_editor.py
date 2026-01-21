@@ -70,17 +70,15 @@ try:
     print("Opening Rule Editor site...")
     driver.get(RULE_EDITOR_URL)
 
-    # Search for rule CG0006
-    print("Waiting for rule search field to be visible...")
-    rule_search_field = wait.until(
-        EC.visibility_of_element_located((By.XPATH, '//*[@id="mui-10"]'))
-    )
-    print("Waiting for rule search field to be clickable...")
-    rule_search_field = wait.until(
-        EC.element_to_be_clickable((By.XPATH, '//*[@id="mui-10"]'))
-    )
-    print("Rule search field is ready.")
+    time.sleep(20)
 
+    # Search for rule CG0006
+    print("Searching for rule search field...")
+    rule_search_field = wait.until(
+        EC.element_to_be_clickable(
+            (By.CSS_SELECTOR, 'input[placeholder="Search YAML..."]')
+        )
+    )
     print("Searching for rule CG0006...")
     rule_search_field.click()
     rule_search_field.send_keys("CG0006")

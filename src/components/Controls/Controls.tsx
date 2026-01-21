@@ -45,6 +45,8 @@ export default function Controls() {
   };
 
  const saveRule = async () => {
+  console.log("=== SAVERULE CALLED ===");
+  console.trace();
   if (isRuleSelected()) {
     // Check if the currently selected rule is published
     try {

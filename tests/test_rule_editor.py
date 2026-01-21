@@ -73,11 +73,11 @@ try:
     # Search for rule CG0006
     print("Waiting for rule search field to be visible...")
     rule_search_field = wait.until(
-        EC.visibility_of_element_located((By.XPATH, '//*[@id="mui-10"]'))
+        EC.visibility_of_element_located((By.XPATH, '//*[@id="mui-11"]'))
     )
     print("Waiting for rule search field to be clickable...")
     rule_search_field = wait.until(
-        EC.element_to_be_clickable((By.XPATH, '//*[@id="mui-10"]'))
+        EC.element_to_be_clickable((By.XPATH, '//*[@id="mui-11"]'))
     )
     print("Rule search field is ready.")
 
@@ -337,3 +337,4 @@ finally:
             driver.quit()
         except Exception as e:
             print(f"Error while quitting driver: {e}")
+            

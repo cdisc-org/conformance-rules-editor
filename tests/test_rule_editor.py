@@ -146,6 +146,7 @@ try:
     print("Uploading dataset file...")
     file_path = os.path.abspath("tests/unit-test-coreid-CG0006-negative 1.xlsx")
     file_input.send_keys(file_path)
+    upload_dataset_tab.click()
 
     # Wait for error result and capture output
     print("Waiting for error result to appear...")
@@ -157,7 +158,7 @@ try:
     print("Error result displayed.")
 
     # Give a few seconds for the POST request to complete
-    time.sleep(3)
+    time.sleep(5)
 
     # Capture /api/rules/execute response
     rule_exec_response = None

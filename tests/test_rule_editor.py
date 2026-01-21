@@ -73,11 +73,11 @@ try:
     # Search for rule CG0006
     print("Waiting for rule search field to be visible...")
     rule_search_field = wait.until(
-        EC.visibility_of_element_located((By.XPATH, '//*[@id="mui-11"]'))
+        EC.visibility_of_element_located((By.XPATH, '//*[@id="mui-10"]'))
     )
     print("Waiting for rule search field to be clickable...")
     rule_search_field = wait.until(
-        EC.element_to_be_clickable((By.XPATH, '//*[@id="mui-11"]'))
+        EC.element_to_be_clickable((By.XPATH, '//*[@id="mui-10"]'))
     )
     print("Rule search field is ready.")
 

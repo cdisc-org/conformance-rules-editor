@@ -46,7 +46,7 @@ export class DataService {
       },
     });
   };
-
+  //test
   public get_user = async (): Promise<IUser> => {
     const mePromise = this.get_me().then(function (response) {
       return response.json();

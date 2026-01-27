@@ -19,6 +19,8 @@ export interface IDataset {
 export interface IStandard {
   product: string;
   version: string;
+  substandard?: string;
+  use_case?: string;  
 }
 
 export interface IVariable {
@@ -196,6 +198,7 @@ const getLibrary = (workbook: WorkBook): IStandard[] => {
     ...(row["Product"] && { product: row["Product"] }),
     ...(row["Version"] && { version: row["Version"] }),
     ...(row["Substandard"] && { substandard: row["Substandard"] }),
+    ...(row["Use Case"] && { use_case: row["Use Case"] })
   }));
 };
 

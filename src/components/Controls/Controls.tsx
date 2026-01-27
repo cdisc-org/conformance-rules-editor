@@ -32,6 +32,10 @@ export default function Controls() {
     isRuleDirty,
     setAlertState,
     isRuleModifiable,
+    overwriteRuleDialog,
+    setOverwriteRuleDialog,
+    existingRuleToOverwrite,
+    setExistingRuleToOverwrite,
   } = useContext(AppContext);
 
   const newRule = () => {
@@ -40,20 +44,50 @@ export default function Controls() {
     setModifiedRule(ruleTemplate);
   };
 
-  const saveRule = async () => {
-    if (isRuleSelected()) {
-      //Patchrule
-      const rule = await dataService.patch_rule(selectedRule, modifiedRule);
+ const saveRule = async () => {
+  console.log("=== SAVERULE CALLED ===");
+  console.trace();
+  if (isRuleSelected()) {
+    // Check if the currently selected rule is published
+    try {
+      const currentRule = await dataService.get_rule(selectedRule);
+      
+      if (currentRule && currentRule.json?.Core?.Status === "Published") {
+        setExistingRuleToOverwrite(selectedRule);
+        setOverwriteRuleDialog(true);
+        return; // Exit and wait for user confirmation
+      }
+    } catch (error) {
+      console.error("Error checking rule status:", error);
+    }
+    const rule = await dataService.patch_rule(selectedRule, modifiedRule);
+    setModifiedRule(rule.content);
+    setUnmodifiedRule(rule);
+  } else {
+    //Postrule
+    const newSelectedRule = await dataService.post_rule(modifiedRule);
+    setSelectedRule(newSelectedRule);
+  }
+  setDirtyExplorerList(true);
+  setAlertState({ message: "Saved successfully", severity: "success" });
+};
+
+const performOverwriteSave = async () => {
+  if (existingRuleToOverwrite) {
+    try {
+      const rule = await dataService.patch_rule(existingRuleToOverwrite, modifiedRule);
+      setSelectedRule(existingRuleToOverwrite);
       setModifiedRule(rule.content);
       setUnmodifiedRule(rule);
-    } else {
-      //Postrule
-      const newSelectedRule = await dataService.post_rule(modifiedRule);
-      setSelectedRule(newSelectedRule);
+      setExistingRuleToOverwrite(null);
+      setDirtyExplorerList(true);
+      setAlertState({ message: "Saved successfully", severity: "success" });
+    } catch (error) {
+      console.error("Error overwriting rule:", error);
+      setAlertState({ message: "Failed to overwrite rule", severity: "error" });
     }
-    setDirtyExplorerList(true);
-    setAlertState({ message: "Saved successfully", severity: "success" });
-  };
+  }
+};
 
   const discardChanges = () => {
     setModifiedRule(unmodifiedRule.content);
@@ -175,6 +209,12 @@ export default function Controls() {
         open={deleteDialog}
         setOpen={setDeleteDialog}
         handleOkay={deleteRule}
+      />
+      <PromptDialog
+        contentText={`You are about to overwrite a published rule (Core ID: ${unmodifiedRule.json?.Core?.Id}). Do you want to continue?`}
+        open={overwriteRuleDialog}
+        setOpen={setOverwriteRuleDialog}
+        handleOkay={performOverwriteSave}
       />
     </>
   );

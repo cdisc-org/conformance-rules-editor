@@ -6,5 +6,12 @@ export interface IRule {
   creator?: IUser;
   history?: IRule[];
   id?: string;
-  json?: object;
+  json?: {
+    Core?: {
+      Id?: string;
+      Status?: string;
+      Version?: string;
+    };
+    [key: string]: any;
+  };
 }

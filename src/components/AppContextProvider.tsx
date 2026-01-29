@@ -9,23 +9,31 @@ import AppContext, {
 } from "./AppContext";
 import { TOrder } from "../types/TOrder";
 import { AlertState } from "./GeneralAlert/GeneralAlert";
-import { SchemasSettings, setDiagnosticsOptions } from "monaco-yaml";
+import { configureMonacoYaml, SchemasSettings } from "monaco-yaml";
 import { IUser } from "../types/IUser";
+import { IRule } from "../types/IRule";
+import { HeadCell, headCells } from "./ExplorerHead/ExplorerHead";
+import * as monaco from "monaco-editor";
 
 const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [dataService] = useState<DataService>(() => new DataService());
   const [ruleTemplate, setRuleTemplate] = useState<string>("");
   const [appError, setAppError] = useState<IAppError>();
   const [selectedRule, setSelectedRule] = useState<string>(null);
-  const [unmodifiedRule, setUnmodifiedRule] = useState<string>("");
+  const [unmodifiedRule, setUnmodifiedRule] = useState<IRule>({
+    content: "",
+    history: [],
+  });
   const [modifiedRule, setModifiedRule] = useState<string>("");
   /* False, because it will be set to true by the initial filter and sort values */
   const [dirtyExplorerList, setDirtyExplorerList] = useState<boolean>(false);
   const [alertState, setAlertState] = useState<AlertState>(null);
   const [user, setUser] = useState<IUser>(null);
   const [order, setOrder] = useState<TOrder>("desc");
-  const [orderBy, setOrderBy] = useState<string>("changed");
+  const [orderBy, setOrderBy] = useState<string>("created");
   const [searchText, setSearchText] = useState<{ [key: string]: string }>({});
+  const [overwriteRuleDialog, setOverwriteRuleDialog] = useState<boolean>(false);
+  const [existingRuleToOverwrite, setExistingRuleToOverwrite] = useState<string | null>(null);
   const [syntaxCheck, setSyntaxCheck] = useState<IResults>({
     status: Status.Pending,
     details: [],
@@ -60,7 +68,7 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
     false
   );
   const [creator, setCreator] = useState<IUser>(null);
-
+  const [activeColumns, setActiveColumns] = useState<HeadCell[]>(headCells);
   const clearError = () => (appError ? setAppError(null) : undefined);
 
   const setError = (title: string, message: string, isUncaught = false) => {
@@ -82,7 +90,7 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
 
   const isRuleDirty = useCallback(
     () =>
-      unmodifiedRule.replaceAll("\r\n", "\n") !==
+      unmodifiedRule.content.replaceAll("\r\n", "\n") !==
       modifiedRule.replaceAll("\r\n", "\n"),
     [unmodifiedRule, modifiedRule]
   );
@@ -120,6 +128,10 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
     setOrderBy,
     searchText,
     setSearchText,
+    overwriteRuleDialog,
+    setOverwriteRuleDialog,
+    existingRuleToOverwrite,
+    setExistingRuleToOverwrite,
     syntaxCheck,
     setSyntaxCheck,
     schemaCheck,
@@ -137,6 +149,8 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
     creator,
     setCreator,
     isRuleModifiable,
+    activeColumns,
+    setActiveColumns,
   };
 
   useEffect(() => {
@@ -164,7 +178,7 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
   /* Load yaml schema for editor validation */
   useEffect(() => {
     dataService.get_rules_schema().then(function (schemas: ISchema[]) {
-      setDiagnosticsOptions({
+      configureMonacoYaml(monaco, {
         validate: true,
         enableSchemaRequest: true,
         format: true,
@@ -184,7 +198,7 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     dataService.get_rule_template().then((template) => {
       setRuleTemplate(template);
-      setUnmodifiedRule(template);
+      setUnmodifiedRule({ content: template, history: [] });
       setModifiedRule(template);
     });
   }, [dataService]);

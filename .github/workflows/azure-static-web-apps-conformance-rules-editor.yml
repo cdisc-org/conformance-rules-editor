@@ -13,11 +13,11 @@ on:
 
 jobs:
   build_and_deploy_prod_job:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed') || github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     name: Build and Deploy Prod Job
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: true
       - name: Build And Deploy Prod
@@ -25,22 +25,92 @@ jobs:
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_CONFORMANCE_RULES_EDITOR_PROD }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
           production_branch: "main"
-          ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
-          # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-          app_location: "/" # App source code path
-          api_location: "/api" # Api source code path - optional
-          output_location: "build" # Built app content directory - optional
-          ###### End of Repository/Build Configurations ######
+          app_location: "/"
+          api_location: "/api"
+          output_location: "build"
+        env:
+          NPM_CONFIG_LEGACY_PEER_DEPS: true
+
+  build_and_deploy_preview:
+    if: (github.event_name == 'pull_request' && github.event.action != 'closed') || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    name: Build and Deploy Preview
+    outputs:
+      preview_url: ${{ steps.builddeploypreview.outputs.static_web_app_url }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+          ref: ${{ github.head_ref || github.ref_name }}
+
+      - name: Use preview config for PR
+        run: |
+          cp staticwebapp.preview.config.json staticwebapp.config.json
+          echo "Using preview configuration for this deployment"
+
+      - name: Build And Deploy Preview
+        id: builddeploypreview
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_CONFORMANCE_RULES_EDITOR_PROD }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: "upload"
+          app_location: "/"
+          api_location: "/api"
+          output_location: "build"
+          config_file_location: "/"
+          production_branch: ${{ github.ref_name }}
+          app_build_command: "npm install --force && npm run build"
+        env:
+          NPM_CONFIG_LEGACY_PEER_DEPS: true
+
+      - name: Print commit SHA
+        run: |
+          echo "Commit ID: ${GITHUB_SHA}"
+
+  test_rule_editor_job:
+    needs: build_and_deploy_preview
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    name: Test Rule Editor on Preview
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Dependencies
+        run: |
+          pip install requests selenium webdriver-manager pyperclip==1.9.0 selenium-wire blinker==1.4 brotli setuptools
+
+      - name: Run Selenium Test on Preview
+        env:
+          RULE_EDITOR_URL: ${{ needs.build_and_deploy_preview.outputs.preview_url }}
+        run: |
+          echo "Testing on Preview Deployment: $RULE_EDITOR_URL"
+          python tests/test_rule_editor.py
+
+      - name: Upload Selenium screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rule-editor-screenshots
+          path: screenshots/
+          if-no-files-found: ignore
+          retention-days: 3
 
   build_and_deploy_training_job:
     if: github.ref_name == 'main' && (github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed') || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     name: Build and Deploy Training Job
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: true
       - name: Build And Deploy Training
@@ -48,14 +118,13 @@ jobs:
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_CONFORMANCE_RULES_EDITOR_TRAINING }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
-          # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-          app_location: "/" # App source code path
-          api_location: "/api" # Api source code path - optional
-          output_location: "build" # Built app content directory - optional
-          ###### End of Repository/Build Configurations ######
+          app_location: "/"
+          api_location: "/api"
+          output_location: "build"
+        env:
+          NPM_CONFIG_LEGACY_PEER_DEPS: true
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'

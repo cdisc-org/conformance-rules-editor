@@ -1,0 +1,45 @@
+Authorities:
+  - Organization: ''
+    Standards:
+      - Name: ''
+        References:
+          - Citations:
+              - Cited Guidance: ''
+                Document: ''
+                Item: ''
+                Section: ''
+            Criteria:
+              Logical Expression:
+                Condition: ''
+                Rule: ''
+              Plain Language Expression: ''
+              Type: ''
+            Origin: ''
+            Release Notes: ''
+            Rule Identifier:
+              Id: ''
+              Version: ''
+            Validator Rule Message: ''
+            Version: ''
+        Version: ''
+Check:
+  all:
+    - operator: ''
+      name: ''
+      value: ''
+Core:
+  Status: Draft
+  Version: '1'
+Description: ''
+Executability: Fully Executable
+Outcome:
+  Message: ''
+Rule Type: Record Data
+Scope:
+  Classes:
+    Include:
+      - ALL
+  Domains:
+    Include:
+      - ALL
+Sensitivity: Record

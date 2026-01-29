@@ -3,6 +3,8 @@ import { DataService } from "../services/DataService";
 import { AlertState } from "./GeneralAlert/GeneralAlert";
 import { TOrder } from "../types/TOrder";
 import { IUser } from "../types/IUser";
+import { IRule } from "../types/IRule";
+import { headCells, HeadCell } from "./ExplorerHead/ExplorerHead";
 
 export interface IAppError {
   title: string;
@@ -55,8 +57,8 @@ export interface IAppContext {
   selectedRule: string;
   setSelectedRule: (selectedRule: string) => void;
   isRuleSelected: () => boolean;
-  unmodifiedRule: string;
-  setUnmodifiedRule: (unmodifiedRule: string) => void;
+  unmodifiedRule: IRule;
+  setUnmodifiedRule: (unmodifiedRule: IRule) => void;
   modifiedRule: string;
   setModifiedRule: (modifiedRule: string) => void;
   dirtyExplorerList: boolean;
@@ -89,6 +91,12 @@ export interface IAppContext {
   creator: IUser;
   setCreator: (creator: IUser) => void;
   isRuleModifiable: () => boolean;
+  activeColumns: HeadCell[];
+  setActiveColumns: React.Dispatch<React.SetStateAction<HeadCell[]>>;
+  overwriteRuleDialog: boolean;
+  setOverwriteRuleDialog: React.Dispatch<React.SetStateAction<boolean>>;
+  existingRuleToOverwrite: string | null;
+  setExistingRuleToOverwrite: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 export const defaultAppContext: IAppContext = {
@@ -129,7 +137,7 @@ export const defaultAppContext: IAppContext = {
   setOrder: () => {
     /* Placeholder */
   },
-  orderBy: "changed",
+  orderBy: "created",
   setOrderBy: () => {
     /* Placeholder */
   },
@@ -188,6 +196,18 @@ export const defaultAppContext: IAppContext = {
     /* Placeholder */
   },
   isRuleModifiable: () => false,
+  activeColumns: headCells,
+  setActiveColumns: () => {
+    /* Placeholder */
+  },
+  overwriteRuleDialog: false,
+  setOverwriteRuleDialog: () => {
+    /* Placeholder */
+  },
+  existingRuleToOverwrite: null,
+  setExistingRuleToOverwrite: () => {
+    /* Placeholder */
+  },
 };
 
 const AppContext = React.createContext<IAppContext>(defaultAppContext);

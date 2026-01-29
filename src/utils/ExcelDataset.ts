@@ -1,4 +1,4 @@
-import { read, utils, WorkBook, WorkSheet } from "xlsx";
+import { CellObject, read, utils, WorkBook, WorkSheet } from "xlsx";
 
 export interface IDatasets {
   datasets: IDataset[];
@@ -11,7 +11,7 @@ export interface IDataset {
   name?: string;
   label?: string;
   domain?: string;
-  filesize?: string;
+  file_size?: string;
   variables?: IVariable[];
   records?: {};
 }
@@ -75,6 +75,50 @@ const getVariables = (cols: string[], rows: {}[]): IVariable[] => {
   );
 };
 
+const cellTypeMappings: { [type: string]: (cell: CellObject) => void } = {
+  /* XPT Types */
+  Char: (cell) => {
+    cell.t = "s";
+    cell.v = cell.v.toString();
+  },
+  Num: (cell) => {
+    const originalValue = cell.v.toString();
+    const trimmedValue = originalValue.trim();
+    if (trimmedValue === '') {
+      cell.t = "n";
+      cell.v = null;
+    } else {
+      cell.t = "n";
+      cell.v = Number(cell.v);
+    }
+  },
+  /* JSON Types */
+  Boolean: (cell) => {
+    cell.t = "b";
+    /* Can't just convert in js, because "false" string is true */
+    if (cell.v.toString().toLowerCase() === "true") {
+      cell.v = true;
+    } else if (cell.v.toString().toLowerCase() === "false") {
+      cell.v = false;
+    }
+  },
+  Number: (cell) => {
+    const originalValue = cell.v.toString();
+    const trimmedValue = originalValue.trim();
+    if (trimmedValue === '') {
+      cell.t = "n";
+      cell.v = null;
+    } else {
+      cell.t = "n";
+      cell.v = Number(cell.v);
+    }
+  },
+  String: (cell) => {
+    cell.t = "s";
+    cell.v = cell.v.toString();
+  },
+};
+
 /* 
 Take a worksheet and for each cell in the worksheet, 
 convert the datatype to the datatype indicated by the type value in the column's header
@@ -86,15 +130,8 @@ const setDatatypes = (sheet: WorkSheet) => {
     const type = typeCell ? typeCell["v"] : null;
     for (var R = range.s.r + 4; R <= range.e.r; ++R) {
       const cell = sheet[utils.encode_cell({ c: C, r: R })];
-      if (cell) {
-        if (type === "Char") {
-          cell["t"] = "s";
-          cell["v"] = cell["v"].toString();
-        }
-        if (type === "Num") {
-          cell["t"] = "n";
-          cell["v"] = Number(cell["v"]);
-        }
+      if (cell && type in cellTypeMappings) {
+        cellTypeMappings[type](cell);
       }
     }
   }
@@ -116,11 +153,12 @@ const getRecords = (cols: IVariable[], rows: {}[]): {} => {
 };
 
 const getDomainName = (rows: {}[], sheetName: string): string => {
-  return rows.length > 3 && rows[3]["DOMAIN"]
-    ? rows[3]["DOMAIN"]
-    : /* This is technically not the domain name, 
-    but it is what the CORE engine currently expects */
-      sheetName.toUpperCase().replace(".XPT", "");
+  if (rows.length > 3) {
+    const domainRow = rows[3];
+    const domainName = domainRow["DOMAIN"];
+    return domainName || sheetName.toUpperCase().replace(".XPT", "");
+  }
+  return sheetName.toUpperCase().replace(".XPT", "");
 };
 
 const mergeDatasetRecords = (
@@ -157,10 +195,12 @@ const getLibrary = (workbook: WorkBook): IStandard[] => {
   return libraryRows.map<IStandard>((row: {}) => ({
     ...(row["Product"] && { product: row["Product"] }),
     ...(row["Version"] && { version: row["Version"] }),
+    ...(row["Substandard"] && { substandard: row["Substandard"] }),
   }));
 };
 
-const isCT = (standard: IStandard): boolean => standard.product.endsWith("ct");
+const isCT = (standard: IStandard): boolean => 
+  standard.product.toLowerCase().includes("ct");
 
 const getStandard = (library: IStandard[]): IStandard =>
   library.find((standard) => !isCT(standard));
@@ -168,7 +208,12 @@ const getStandard = (library: IStandard[]): IStandard =>
 const getCodelists = (library: IStandard[]): string[] =>
   library
     .filter(isCT)
-    .map((standard) => `${standard.product}-${standard.version}`);
+    .map((standard) => {
+      if (standard.product.includes("-")) {
+        return standard.product;
+      }
+      return `${standard.product}-${standard.version}`;
+    });
 
 export const excelToJsonDatasets = async (file: File): Promise<IDatasets> => {
   const workbook: WorkBook = read(await readFile(file), {

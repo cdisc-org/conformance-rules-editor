@@ -3,7 +3,7 @@
   "configurations": [
     {
       "name": "Emulator",
-      "command": "swa start http://localhost:3000 --api-location http://localhost:7071",
+      "command": "swa start http://127.0.0.1:3000 --api-location http://127.0.0.1:7071",
       "request": "launch",
       "type": "node-terminal",
       "presentation": {

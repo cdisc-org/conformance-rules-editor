@@ -8,7 +8,7 @@ https://cdisc-org.github.io/conformance-rules-editor/
 
 ### Install Node
 
-Install Node.js version **16**: https://nodejs.org/en/download/releases
+Install Node.js version **20**: https://nodejs.org/en/download/releases
 
 ### Install dependencies
 
@@ -16,7 +16,7 @@ Install Node.js version **16**: https://nodejs.org/en/download/releases
 2. Install api dependencies - From the ./api directory, run the command: `npm install`
 3. Install static web app node libraries by running the following commands:
    ```
-   npm install -g @azure/static-web-apps-cli
+   npm install -g @azure/static-web-apps-cli@2.0.5
    ```
 4. Using VSCODE, install the "Azure Functions" extension.
 5. Create a local.settings.json in the API folder to support local development of the API. It should contain the following values which provide information for the staticwebapp config and the Microsoft Graph API for Users' name resolution:
@@ -42,44 +42,23 @@ Install Node.js version **16**: https://nodejs.org/en/download/releases
    "USERS_PROVIDER": "Dummy",
    ```
 
-6. Storage - There is a base Storage abstraction which allows for any storage implementation. Currently there are 2 storage implementations. Using one of these implementations requires the additional env variables to be added to the local.settings.json file
+6. Storage - Currently, Rule Editor supports CosmosDB and requires the additional env variables to be added to the local.settings.json file
 
    - CosmosDB (SQL)
 
-     Tell the editor which storage implementation to use:
-
      ```
      "STORAGE_PROVIDER": "CosmosSQL",
-     ```
-
-     ```
      "COSMOS_BASE_URL": <COSMOS_BASE_URL>,
      "COSMOS_KEY": <COSMOS_KEY>,
      "COSMOS_DATABASE": <COSMOS DB Name>,
      "COSMOS_CONTAINER": <COSMOS Container Name>,
+     "COSMOS_HISTORY_CONTAINER": <COSMOS History Container Name>
      ```
 
      Optional env variable to ignore unauthorized https connections when cosmosdb is running in a local emulator:
 
      ```
      "NODE_TLS_REJECT_UNAUTHORIZED": "0",
-     ```
-
-   - Drupal
-
-     Tell the editor which storage implementation to use:
-
-     ```
-     "STORAGE_PROVIDER": "Drupal",
-     ```
-
-     ```
-     "DRUPAL_BASE_URL": "<DRUPAL_API_URL>",
-     "DRUPAL_CLIENT_ID": "<DRUPAL_API_CLIENT_ID>",
-     "DRUPAL_CLIENT_SECRET": "<DRUPAL_API_CLIENT_SECRET>",
-     "DRUPAL_GRANT_TYPE": "<DRUPAL_API_GRANT_TYPE>",
-     "DRUPAL_PATH": "<DRUPAL_API_PATH>",
-     "DRUPAL_SCOPE": "<DRUPAL_API_SCOPE>",
      ```
 
 ## Running the App

@@ -1,9 +1,9 @@
+import { DetailsType, IResultsDetails } from "../components/AppContext";
 import { IQuery } from "../types/IQuery";
 import { IRule } from "../types/IRule";
 import { IRules } from "../types/IRules";
 import { IUser } from "../types/IUser";
 import { IDataset } from "../utils/ExcelDataset";
-import { RuleTemplate } from "../utils/RuleTemplate";
 
 export interface ISchema {
   standard: string;
@@ -13,14 +13,28 @@ export interface ISchema {
   json?: {};
 }
 
+export interface IDataServiceError extends IResultsDetails {
+  message: string;
+}
+
 function responseHasJson(response: Response) {
   const contentType = response.headers.get("content-type");
   return contentType && contentType.includes("application/json");
 }
 
-function DataServiceError(response: Response) {
-  this.message = `Results - Fail: ${response.status} - ${response.statusText}`;
-  this.details = responseHasJson(response) ? response.json() : response.text();
+async function responseToError(response: Response): Promise<IDataServiceError> {
+  const hasJSON = responseHasJson(response);
+  return {
+    details: await (hasJSON ? response.json() : response.text()),
+    detailsType: hasJSON ? DetailsType.json : DetailsType.text,
+    message: `Results - Fail: ${response.status} - ${response.statusText}`,
+  };
+}
+
+function DataServiceError(error: IDataServiceError) {
+  this.details = error.details;
+  this.detailsType = error.detailsType;
+  this.message = error.message;
 }
 
 export class DataService {
@@ -100,6 +114,15 @@ export class DataService {
     ).then((response: Response) => response.json());
   };
 
+  public get_history = async (ruleId: string): Promise<IRule> => {
+    return fetch(`/api/history/${ruleId}`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    }).then((response) => response.json());
+  };
+
   public get_rule = async (ruleId: string): Promise<IRule> => {
     return fetch(`/api/rules/${ruleId}`, {
       method: "GET",
@@ -118,7 +141,10 @@ export class DataService {
       headers: {
         Accept: "application/json",
       },
-      body: JSON.stringify({ content: content }),
+      body: JSON.stringify({
+        content: content,
+        creator: await this.get_user(),
+      }),
     }).then((response) => response.json());
   };
 
@@ -186,10 +212,10 @@ export class DataService {
   };
 
   public get_rule_template = async (): Promise<string> => {
-    const schema = (await this.get_rules_schema()).find(
-      (schema) => schema.standard === "base"
-    ).json;
-    return new RuleTemplate(schema).schemaToTemplate();
+    const template = await fetch("/rule_template.yml").then((res) =>
+      res.text()
+    );
+    return template;
   };
 
   public execute_rule = async (payload: {
@@ -207,7 +233,7 @@ export class DataService {
       if (response.status === 200) {
         return response.json();
       } else {
-        throw new DataServiceError(response);
+        throw new DataServiceError(await responseToError(response));
       }
     });
   };

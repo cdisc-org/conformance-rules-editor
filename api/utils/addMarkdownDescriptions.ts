@@ -18,7 +18,7 @@ export default async (doc: {}, baseURL: string): Promise<void> => {
 
 const fetchMarkdown = async (doc: {}, baseURL: string): Promise<string> => {
   const id = doc["$id"];
-  const fileWithExt = id.substring(id.lastIndexOf("/"));
+  const fileWithExt = id.substring(id.lastIndexOf("/") + 1);
   const fileWithoutExt = fileWithExt.substring(0, fileWithExt.lastIndexOf("."));
   const href = `${baseURL}/${fileWithoutExt}.md`;
   const response: Response = await fetch(href);
@@ -52,7 +52,7 @@ const markdownToDict = (md: string): { [name: string]: string } => {
 
 const attachMarkdownDescriptions = (
   doc: {},
-  markDownDescriptions: { [name: string]: string }
+  markDownDescriptions: { [name: string]: string },
 ) => {
   _.eachDeep(
     doc,
@@ -61,6 +61,6 @@ const attachMarkdownDescriptions = (
         parent["markdownDescription"] = markDownDescriptions[value];
       }
     },
-    {}
+    {},
   );
 };

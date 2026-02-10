@@ -31,7 +31,7 @@ Install Node.js version **20**: https://nodejs.org/en/download/releases
          "SWA_CLIENT_ID": "<Static Web App Client ID>",
          "SWA_CLIENT_SECRET": "<Static Web App Client Secret>",
          "CORE_AUTHOR_GROUP": "<User Group ID for write permissions>",
-         "RULE_SCHEMA_URL": "https://raw.githubusercontent.com/cdisc-org/cdisc-rules-engine/main/resources/schema/CORE-base.json"
+         "RULE_SCHEMA_URL": "https://raw.githubusercontent.com/cdisc-org/cdisc-rules-engine/main/resources/schema/rule/CORE-base.json"
        }
    }
    ```

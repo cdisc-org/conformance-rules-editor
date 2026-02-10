@@ -1,1 +1,1 @@
-[](https://raw.githubusercontent.com/cdisc-org/cdisc-rules-engine/main/resources/schema/Rule_Type.md ":include")
+[](https://raw.githubusercontent.com/cdisc-org/cdisc-rules-engine/main/resources/schema/rule/Rule_Type.md ":include")

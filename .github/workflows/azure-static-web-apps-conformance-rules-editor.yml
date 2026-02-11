@@ -85,9 +85,12 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Ensure setuptools is installed
+        run: python -m pip install --upgrade "pip<25" "setuptools<82"
+
       - name: Install Dependencies
         run: |
-          pip install requests selenium webdriver-manager pyperclip==1.9.0 selenium-wire blinker==1.4 brotli setuptools
+          pip install requests selenium webdriver-manager pyperclip==1.9.0 selenium-wire blinker==1.4 brotli
 
       - name: Run Selenium Test on Preview
         env:

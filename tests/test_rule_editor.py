@@ -199,21 +199,27 @@ try:
         ],
         "FA": [
             {
-                "executionStatus": "success",
+                "executionStatus": "issue_reported",
                 "dataset": "fa.xpt",
                 "domain": "FA",
-                "variables": ["$val_dy", "FADTC", "FADY", "RFSTDTC"],
+                "variables": [
+                    "$val_dy",
+                    "FADY",
+                    "FADTC",
+                    "RFSTDTC",
+                ],
                 "message": (
-                    "FADY is not correctly calculated even though the date portion of FADTC is complete, "
-                    "the date portion of RFSTDTC is complete, and FADY is not empty."
+                    "FADY is not correctly calculated even though the date portion of "
+                    "FADTC is complete, the date portion of RFSTDTC is complete, and "
+                    "FADY is not empty."
                 ),
                 "errors": [
                     {
                         "value": {
-                            "RFSTDTC": "2012-11-15",
                             "$val_dy": 18,
-                            "FADTC": "2012-12-02",
                             "FADY": 35,
+                            "RFSTDTC": "2012-11-15",
+                            "FADTC": "2012-12-02",
                         },
                         "dataset": "fa.xpt",
                         "row": 1,
@@ -222,10 +228,10 @@ try:
                     },
                     {
                         "value": {
-                            "RFSTDTC": "2013-10-08",
                             "$val_dy": 5,
-                            "FADTC": "2013-10-12",
                             "FADY": 3,
+                            "RFSTDTC": "2013-10-08",
+                            "FADTC": "2013-10-12",
                         },
                         "dataset": "fa.xpt",
                         "row": 2,
@@ -234,10 +240,10 @@ try:
                     },
                     {
                         "value": {
-                            "RFSTDTC": "2013-01-05",
                             "$val_dy": -34,
-                            "FADTC": "2012-12-02",
                             "FADY": -30,
+                            "RFSTDTC": "2013-01-05",
+                            "FADTC": "2012-12-02",
                         },
                         "dataset": "fa.xpt",
                         "row": 4,
@@ -246,10 +252,10 @@ try:
                     },
                     {
                         "value": {
-                            "RFSTDTC": "2014-05-11",
                             "$val_dy": 206,
-                            "FADTC": "2014-12-02",
                             "FADY": 230,
+                            "RFSTDTC": "2014-05-11",
+                            "FADTC": "2014-12-02",
                         },
                         "dataset": "fa.xpt",
                         "row": 5,
@@ -261,21 +267,27 @@ try:
         ],
         "IE": [
             {
-                "executionStatus": "success",
+                "executionStatus": "issue_reported",
                 "dataset": "ie.xpt",
                 "domain": "IE",
-                "variables": ["$val_dy", "IEDTC", "IEDY", "RFSTDTC"],
+                "variables": [
+                    "$val_dy",
+                    "IEDY",
+                    "IEDTC",
+                    "RFSTDTC",
+                ],
                 "message": (
-                    "IEDY is not correctly calculated even though the date portion of IEDTC is complete, "
-                    "the date portion of RFSTDTC is complete, and IEDY is not empty."
+                    "IEDY is not correctly calculated even though the date portion of "
+                    "IEDTC is complete, the date portion of RFSTDTC is complete, and "
+                    "IEDY is not empty."
                 ),
                 "errors": [
                     {
                         "value": {
-                            "RFSTDTC": "2022-03-20",
                             "$val_dy": -3,
-                            "IEDTC": "2022-03-17",
                             "IEDY": -4,
+                            "RFSTDTC": "2022-03-20",
+                            "IEDTC": "2022-03-17",
                         },
                         "dataset": "ie.xpt",
                         "row": 1,
@@ -287,19 +299,25 @@ try:
         ],
         "LB": [
             {
-                "executionStatus": "success",
+                "executionStatus": "issue_reported",
                 "dataset": "lb.xpt",
                 "domain": "LB",
-                "variables": ["$val_dy", "LBDTC", "LBDY", "RFSTDTC"],
+                "variables": [
+                    "$val_dy",
+                    "LBDY",
+                    "LBDTC",
+                    "RFSTDTC",
+                ],
                 "message": (
-                    "LBDY is not correctly calculated even though the date portion of LBDTC is complete, "
-                    "the date portion of RFSTDTC is complete, and LBDY is not empty."
+                    "LBDY is not correctly calculated even though the date portion of "
+                    "LBDTC is complete, the date portion of RFSTDTC is complete, and "
+                    "LBDY is not empty."
                 ),
                 "errors": [
                     {
                         "value": {
-                            "RFSTDTC": "2022-03-20",
                             "$val_dy": 11,
+                            "RFSTDTC": "2022-03-20",
                             "LBDTC": "2022-03-30",
                             "LBDY": 2,
                         },
@@ -312,7 +330,6 @@ try:
             }
         ],
     }
-
     # Compare result
     if rule_exec_response == expected_json:
         print("Test Passed: API response matches expected JSON.")

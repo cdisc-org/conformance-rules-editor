@@ -116,7 +116,7 @@ any:
 
 ## Dataset submission metadata guide
 
-For rules that work with dataset submission metadata (for example, rules of type **SDTM**), the user can reference dataset metadata attributes (for example: `name`, `unsplit_name`, `is_supp`, `domain`, `rdomain`, `is_ap`, `ap_suffix`) and apply operations over them (for example: `dataset_is_custom`, `related_domain`, `related_domain_is_custom`). The practical result of using these attributes and operations for different dataset names is illustrated in the table below.
+For rules that work with dataset submission metadata (for example, rules of type Dataset Metadata Check, Dataset Metadata Check against Define XML), the user can reference dataset metadata attributes (for example: `name`, `unsplit_name`, `is_supp`, `domain`, `rdomain`, `is_ap`, `ap_suffix`) and apply operations over them (for example: `dataset_is_custom`, `related_domain`, `related_domain_is_custom`). The practical result of using these attributes and operations for different dataset names is illustrated in the table below.
 
 | name   | unsplit_name | is_supp | domain | rdomain | is_ap | ap_suffix | dataset_is_custom | related_domain | related_domain_is_custom |
 | ------ | ------------ | ------- | ------ | ------- | ----- | --------- | ----------------- | -------------- | ------------------------ |

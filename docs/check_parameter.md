@@ -228,6 +228,16 @@ Terminology term value used in controlled terminology operations for value-based
 ### version
 Version parameter used in codelist operations that require version-specific processing or validation.
 
+### value
+Reference to another operation result, used as the second operand in operations that take two inputs. For example, in the `minus` operation, `name` references the minuend (first list) and `value` references the subtrahend (second list); the operation returns elements in the first list that are not in the second.
+
+```yaml
+- id: $expected_minus_dataset
+  name: $expected_variables
+  operator: minus
+  value: $dataset_variables
+```
+
 ### within
 Specifies the column name used for grouping data before applying validation rules. In the rules engine implementation, this parameter is processed through `replace_prefix()` and used in `groupby()` operations to ensure validation logic is applied within appropriate data boundaries (e.g., by subject, by study).
 

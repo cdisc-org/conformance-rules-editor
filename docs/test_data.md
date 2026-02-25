@@ -62,14 +62,13 @@ To ensure consistency and reduce fatigue, the templates are already prepopulated
   
   ![Test Data Template - datasets worksheet](./screenshots/TestDataTemplate_datasets_worksheet.jpg)
 
- - **\*.xpt**
+- **\*.xpt**
   - There will be one worksheet per domain, fitted with:
     - Variable name (e.g., AETERM)
     - Variable label (e.g., Reported Term for the Adverse Event)
     - Data type (i.e., Char or Num)
     - Default variable length (i.e., 50 for Char, 8 for Num)
-
-- The templates also include additional data for further customization.
+  - The templates also include additional data for further customization.
     - A list of Identifiers and Timing variables from SDTM v2.0.
     - A list of Events, Interventions, and Findings class variables from SDTM v2.0.
 

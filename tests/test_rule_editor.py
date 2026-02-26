@@ -199,7 +199,7 @@ try:
         ],
         "FA": [
             {
-                "executionStatus": "issue_reported",
+                "executionStatus": "issue reported",
                 "dataset": "fa.xpt",
                 "domain": "FA",
                 "variables": [
@@ -267,7 +267,7 @@ try:
         ],
         "IE": [
             {
-                "executionStatus": "issue_reported",
+                "executionStatus": "issue reported",
                 "dataset": "ie.xpt",
                 "domain": "IE",
                 "variables": [
@@ -299,7 +299,7 @@ try:
         ],
         "LB": [
             {
-                "executionStatus": "issue_reported",
+                "executionStatus": "issue reported",
                 "dataset": "lb.xpt",
                 "domain": "LB",
                 "variables": [

@@ -19,8 +19,8 @@ export default function ResultsTestStep() {
       ).length;
 
     const testResultHasErrors = (currentRecordResult: object): boolean =>
-      (currentRecordResult["executionStatus"] ?? "execution_error") ===
-        "execution_error" &&
+      (currentRecordResult["executionStatus"] ?? "execution error") ===
+        "execution error" &&
       ((currentRecordResult["errors"] ?? []).length === 0 ||
         currentRecordResult["errors"].length -
           varSkipCount(currentRecordResult) >
@@ -73,7 +73,7 @@ export default function ResultsTestStep() {
                 ) =>
                   aggregateRecordResult +
                   (currentRecordResult["executionStatus"] ===
-                    "issue_reported" && "errors" in currentRecordResult
+                    "issue reported" && "errors" in currentRecordResult
                     ? currentRecordResult["errors"].length
                     : 0),
                 0

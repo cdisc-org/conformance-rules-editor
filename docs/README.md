@@ -116,28 +116,28 @@ any:
 
 ## Dataset submission metadata guide
 
-For rules that work with dataset submission metadata (for example, rules of type Dataset Metadata Check, Dataset Metadata Check against Define XML), the user can reference dataset metadata attributes (for example: `name`, `domain`, `is_ap`, `ap_suffix`) and apply operations over them (for example: `dataset_is_custom`, `related_domain`, `related_domain_is_custom`). The practical result of using these attributes and operations for different dataset names is illustrated in the table below.
+For rules that work with dataset submission metadata (for example, rules of type Dataset Metadata Check, Dataset Metadata Check against Define XML), the user can reference dataset metadata attributes (for example: `name`, `domain`, `is_ap`, `ap_suffix`) and apply operations over them (for example: `domain_is_custom`, `related_domain`, `related_domain_is_custom`). The practical result of using these attributes and operations for different dataset names is illustrated in the table below.
 
-| name   | unsplit_name | is_supp | domain | rdomain | is_ap | ap_suffix | dataset_is_custom | related_domain | related_domain_is_custom |
-| ------ | ------------ | ------- | ------ | ------- | ----- | --------- | ----------------- | -------------- | ------------------------ |
-| QS     | QS           | False   | QS     | None    | False |           | False             |                |                          |
-| QSX    | QS           | False   | QS     | None    | False |           | False             |                |                          |
-| QSXX   | QS           | False   | QS     | None    | False |           | False             |                |                          |
-| SUPPQS | SUPPQS       | True    | None   | QS      | False |           | False             | QS             |                          |
-| SUPPQSX | SUPPQS      | True    | None   | QS      | False |           | False             | QS             |                          |
-| SUPPQSXX | SUPPQS     | True    | None   | QS      | False |           | False             | QS             |                          |
-| APQS   | APQS         | False   | APQS   | None    | True  | QS        | False             | QS             |                          |
-| APQSX  | APQS         | False   | APQS   | None    | True  | QS        | False             | QS             |                          |
-| APQSXX | APQS         | False   | APQS   | None    | True  | QS        | False             | QS             |                          |
-| SQAPQS | SQAPQS       | True    | None   | APQS    | True  |           | False             | QS             |                          |
-| SQAPQSX | SQAPQS      | True    | None   | APQS    | True  |           | False             | QS             |                          |
-| SQAPQSXX | SQAPQS     | True    | None   | APQS    | True  |           | False             |                |                          |
-| RELREC | RELREC       | False   | None   | None    | False |           | False             |                |                          |
-| XX     | XX           | False   | XX     | None    | False |           | True              |                |                          |
-| SUPPXX | SUPPXX       | True    | None   | XX      | False |           | False             | XX             | True                     |
-| APXX   | APXX         | False   | APXX   | None    | True  | XX        | False             | XX             | True                     |
-| SQAPXX | SQAPXX       | True    | None   | APXX    | True  |           | False             | XX             | True                     |
-| FA     | FA           | False   | FA     | None    | False |           | False             |                |                          |
+| name   | unsplit_name | is_supp | domain | rdomain | is_ap | ap_suffix | domain_is_custom | related_domain | related_domain_is_custom |
+| ------ | ------------ | ------- | ------ | ------- | ----- | --------- |------------------| -------------- | ------------------------ |
+| QS     | QS           | False   | QS     | None    | False |           | False            |                |                          |
+| QSX    | QS           | False   | QS     | None    | False |           | False            |                |                          |
+| QSXX   | QS           | False   | QS     | None    | False |           | False            |                |                          |
+| SUPPQS | SUPPQS       | True    | None   | QS      | False |           | False            | QS             |                          |
+| SUPPQSX | SUPPQS      | True    | None   | QS      | False |           | False            | QS             |                          |
+| SUPPQSXX | SUPPQS     | True    | None   | QS      | False |           | False            | QS             |                          |
+| APQS   | APQS         | False   | APQS   | None    | True  | QS        | False            | QS             |                          |
+| APQSX  | APQS         | False   | APQS   | None    | True  | QS        | False            | QS             |                          |
+| APQSXX | APQS         | False   | APQS   | None    | True  | QS        | False            | QS             |                          |
+| SQAPQS | SQAPQS       | True    | None   | APQS    | True  |           | False            | QS             |                          |
+| SQAPQSX | SQAPQS      | True    | None   | APQS    | True  |           | False            | QS             |                          |
+| SQAPQSXX | SQAPQS     | True    | None   | APQS    | True  |           | False            |                |                          |
+| RELREC | RELREC       | False   | None   | None    | False |           | False            |                |                          |
+| XX     | XX           | False   | XX     | None    | False |           | True             |                |                          |
+| SUPPXX | SUPPXX       | True    | None   | XX      | False |           | False            | XX             | True                     |
+| APXX   | APXX         | False   | APXX   | None    | True  | XX        | False            | XX             | True                     |
+| SQAPXX | SQAPXX       | True    | None   | APXX    | True  |           | False            | XX             | True                     |
+| FA     | FA           | False   | FA     | None    | False |           | False            |                |                          |
 
 ## Business Rule Examples
 

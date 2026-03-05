@@ -31,7 +31,7 @@ The `include_split_datasets` flag (when set to `true`) allows split datasets to 
 
 ### 4. Use Case Selection
 
-The `Use_Case` field enables targeted dataset selection based on specific implementation scenarios. This is particularly important for TIG (Therapeutic Information Guidelines) v1.0, which is an integrated IG with different Use Case categories.
+The `Use_Case` field enables targeted dataset selection based on specific implementation scenarios. This is particularly important for TIG (Tobacco Implementation Guide) v1.0, which is an integrated IG with different Use Case categories.
 
 ## Common Scope Configuration
 
@@ -54,13 +54,13 @@ The `Use_Case` field enables targeted dataset selection based on specific implem
 
 ## Use Case Functionality in TIG
 
-The `Use_Case` field in the Scope section plays a significant role in the TIG (Therapeutic Information Guidelines) implementation. TIG v1.0 is an integrated Implementation Guide with different Use Case categories that help determine which datasets are relevant for specific validation scenarios.
+The `Use_Case` field in the Scope section plays a significant role in the TIG (Tobacco Implementation Guide) implementation. TIG v1.0 is an integrated Implementation Guide with different Use Case categories that help determine which datasets are relevant for specific validation scenarios.
 
 ### Use Case Categories
 
 TIG v1.0 defines several key Use Case categories:
-- `INDH`: Investigational New Drug Human
-- `PROD`: Production/Marketing
+- `INDH`: Investigational Health
+- `PROD`: Product Description
 - `NONCLIN`: Non-Clinical
 - `ANALYSIS`: Analysis datasets
 

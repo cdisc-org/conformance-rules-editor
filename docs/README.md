@@ -110,13 +110,22 @@ any:
         value: "Y"
 ```
 
-- (AESER = 'Y' and (AESCAN = 'Y' or AESCONG = 'Y')
+- (AESER = 'Y' and (AESCAN = 'Y' or AESCONG = 'Y'))
   or # line #1 to the right represents this or operator
   (AESER = 'Y' and AESCAN ^= 'Y' and AESCONG ^= 'Y')
 
-## Dataset submission metadata guide
+## Dataset Metadata Submission Guide
 
-For rules that work with dataset submission metadata (for example, rules of type Dataset Metadata Check, Dataset Metadata Check against Define XML), the user can reference dataset metadata attributes (for example: `name`, `domain`, `is_ap`, `ap_suffix`) and apply operations over them (for example: `domain_is_custom`, `related_domain`, `related_domain_is_custom`). The practical result of using these attributes and operations for different dataset names is illustrated in the table below.
+For rules that work with dataset submission metadata (for example, rules of type Dataset Metadata Check, Dataset Metadata Check against Define XML), the user can reference some dataset metadata attributes (`name`, `domain`, `is_ap`, `ap_suffix`) or apply operations over them (for example: `domain_is_custom`, `related_domain`, `related_domain_is_custom`). The practical result of using these attributes and operations for different dataset names is illustrated in the table below.
+
+Most of the metadata attributes below are derived automatically from the dataset name and its contents:
+- **`name`** is the dataset name as known to the submission system — for XPT files, this is the filename minus the file extension (e.g., `QS` for `qs.xpt`).
+- **`domain`** and **`rdomain`** come directly from the first row of the dataset — specifically the `DOMAIN` and `RDOMAIN` variables if they exist.
+- **`is_supp`** is determined by the dataset name: if it starts with `SUPP` or `SQ`, it's considered a supplemental dataset.  Not exposed for rule check logic.
+- **`is_ap`** (Associated Persons) is determined two ways: for non-supplemental datasets, the dataset must contain an `APID` variable in its first row; for supplemental datasets, the `RDOMAIN` value must be exactly 4 characters and start with `AP` (e.g., `APQS`).
+- **`ap_suffix`** is only populated for non-supplemental AP datasets, and is taken from characters 3–4 of the `DOMAIN` value (e.g., a `DOMAIN` of `APQS` gives a suffix of `QS`).
+- **`unsplit_name`** and **`is_split`** are derived from the above — split datasets have a naming convention defined in the IG and whose name differs from their base domain (e.g., `QSX` is a split of `QS`).  Determined by comparing name and domain with some logic to exclude supplemental domains.  Neither property is available for use in rule check logic.
+- **`domain_is_custom`**, **`related_domain`**, and **`related_domain_is_custom`** are computed by operations applied at rule evaluation time. Note that `domain_is_custom` applies only to the domain itself — supplemental and AP datasets built on top of a custom domain (e.g., `SUPPXX`, `APXX`, `SQAPXX`) are not themselves custom but their **`related_domain_is_custom`**.
 
 | name   | unsplit_name | is_supp | domain | rdomain | is_ap | ap_suffix | domain_is_custom | related_domain | related_domain_is_custom |
 | ------ | ------------ | ------- | ------ | ------- | ----- | --------- |------------------| -------------- | ------------------------ |

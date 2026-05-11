@@ -1,4 +1,18 @@
 {
   "sql-formatter.dialect": "n1ql",
-  "sql-formatter.uppercase": true
+  "sql-formatter.uppercase": true,
+
+  // YAML Sort extension (PeterSchmalfeldt.vscode-yaml-sort)
+  // Sorts keys alphabetically and recursively — matches the app's formatYAML logic.
+  "yaml-sort.sortOrder": "alphabetically",
+  "yaml-sort.useLeadingDashes": false,
+  "yaml-sort.indent": 2,
+  "yaml-sort.forceQuotes": false,
+  "yaml-sort.quotingType": "'",
+
+  // Format YAML files on save using the YAML Sort extension
+  "[yaml]": {
+    "editor.defaultFormatter": "PeterSchmalfeldt.vscode-yaml-sort",
+    "editor.formatOnSave": true
+  }
 }

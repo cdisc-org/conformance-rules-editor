@@ -1,0 +1,27 @@
+name: YAML Format & Sort Check
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  yaml-format-check:
+    runs-on: ubuntu-latest
+    name: Check YAML formatting and sorting
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Check YAML format and sort
+        run: npm run yaml:check
+

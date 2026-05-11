@@ -35,7 +35,10 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "yaml:format": "node scripts/format-yaml.mjs 'public/**/*.yml' 'public/**/*.yaml'",
+    "yaml:check": "node scripts/format-yaml.mjs --check 'public/**/*.yml' 'public/**/*.yaml'",
+    "prepare": "husky"
   },
   "eslintConfig": {
     "extends": [
@@ -67,6 +70,9 @@
     "@types/node": "^20.17.30",
     "@types/react": "^17.0.53",
     "@types/react-dom": "^17.0.19",
-    "typescript": "^4.9.4"
+    "glob": "^10.4.5",
+    "husky": "^9.1.7",
+    "typescript": "^4.9.4",
+    "yaml": "^2.3.1"
   }
 }

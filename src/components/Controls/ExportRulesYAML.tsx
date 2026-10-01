@@ -5,6 +5,7 @@ import { saveAs } from "file-saver";
 import { ColumnOption } from "csv-stringify/browser/esm/sync";
 import { MenuItem } from "@mui/material";
 import JSZip from "jszip";
+import { ruleFileName } from "../../utils/ruleFileName";
 
 const columns: ColumnOption[] = [
   {
@@ -20,9 +21,6 @@ const columns: ColumnOption[] = [
     key: "content",
   },
 ];
-
-const cast = (value) =>
-  Array.isArray(value) ? value.join(",") : JSON.stringify(value);
 
 export default function ExportRulesYAML({ onClose }) {
   const { dataService, orderBy, order, searchText, setAlertState } = useContext(
@@ -70,9 +68,10 @@ export default function ExportRulesYAML({ onClose }) {
     const zip = new JSZip();
     for (const rule of rules) {
       zip.file(
-        `${cast(
-          rule["json.Authorities.Standards.References.Rule Identifier.Id"]
-        )}.${rule["id"]}.yml`,
+        ruleFileName(
+          rule["json.Authorities.Standards.References.Rule Identifier.Id"],
+          rule["id"]
+        ),
         rule["content"]
       );
     }
